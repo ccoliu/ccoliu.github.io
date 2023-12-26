@@ -1,0 +1,117 @@
+body.bg {
+    background: #191919;
+    color: #cccccc;
+    margin: 0;
+    padding: 0;
+}
+
+nav.navbar {
+    background: #323232;
+    color: #cccccc;
+    left: 0;
+    height: 64px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+h1.InnerText {
+    font: 400 40px/1.5 "Noto Sans", sans-serif;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    margin-left: 30px;
+}
+
+div.InnerPage {
+    display: block;   
+}
+p.frontInfo {
+    font: 400 20px/1.5 Helvetica, sans-serif;
+    margin: 0;
+    margin-left: 10px;
+    padding: 0;
+}
+textarea.textEnter {
+    font: 300 20px/1.5 Helvetica, sans-serif;
+    font-weight: lighter;
+    background-color: #ECECEC;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 5px;
+    height: 400px;
+    width: 98%;
+    margin-top: 10px;
+    resize: none;
+}
+textarea.textEnter:focus {
+    outline: none;
+}
+div.buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+button.buttonClear {
+    background-image: url("./icons/clear.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 100px;
+    height: 50px;
+    font-weight: lighter;
+    background-color: #b9b6b6;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-right: 10px;
+    padding: 0;
+}
+button.buttonClear:hover {
+    background-color: #8b8787;
+}
+button.buttonAnalyse {
+    background-image: url("./icons/play.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 100px;
+    height: 50px;
+    font-weight: lighter;
+    background-color: #b9b6b6;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-left: 10px;
+    padding: 0;
+}
+button.buttonAnalyse:hover {
+    background-color: #8b8787;
+}
+input.message {
+    font: 400 20px/1.5 Helvetica, sans-serif;
+    border: none;
+    background-color: #191919;
+    color: #cccccc;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}
+input.message:focus {
+    outline: none;
+}
+a.backInfo {
+    font: 300 20px/1.5 Helvetica, sans-serif;
+    margin: 0;
+    font-weight: lighter;
+    text-decoration: none;
+    color:#cccccc;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
