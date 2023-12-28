@@ -12,6 +12,7 @@ document.getElementById("runButton").addEventListener("click", function() {
     {
         document.getElementById("result").value = "Processing...";
     }
+    sendDataToServer(code);
 });
 
 document.getElementById("result").addEventListener("input", function() {
@@ -26,4 +27,23 @@ document.getElementById("result").addEventListener("input", function() {
     {
         document.getElementById("result").value = "Processing...";
     }
+    sendDataToServer(code);
 });
+
+function sendDataToServer(code) {  
+    fetch('http://localhost:5000/process_code', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      document.getElementById('codeInput').value = data.result;
+      document.getElementById('result').value = "Analyzed successfully";
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
