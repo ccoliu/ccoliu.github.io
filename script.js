@@ -31,7 +31,7 @@ document.getElementById("result").addEventListener("input", function() {
 });
 
 function sendDataToServer(code) {  
-    fetch('http://114.45.133.152:5000/process_code', {
+    fetch('http://192.168.0.107:5000/process_code', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
