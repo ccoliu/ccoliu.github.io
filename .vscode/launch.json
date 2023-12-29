@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "對 localhost 啟動 Chrome",
-            "url": "file:///C:/Users/user/Documents/%E5%B0%88%E9%A1%8C/ccoliu.github.io/index.html",
+            "url": "file:///C:/Users/frgnd/Music/%E5%B0%88%E9%A1%8C/ccoliu.github.io/index.html",
             "webRoot": "${workspaceFolder}"
         }
     ]
