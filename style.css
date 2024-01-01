@@ -1,3 +1,6 @@
+body {
+    overflow-x: hidden;
+}
 body.bg {
     background: #191919;
     color: #cccccc;
@@ -10,10 +13,11 @@ nav.navbar {
     color: #cccccc;
     left: 0;
     height: 64px;
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 10px;
+    width: 100%
 }
 h1.InnerText {
     font: 400 40px/1.5 "Noto Sans", sans-serif;
@@ -27,22 +31,25 @@ div.InnerPage {
     display: block;   
 }
 p.frontInfo {
-    font: 400 20px/1.5 Helvetica, sans-serif;
+    font: 400 20px/1.5 "consolas", sans-serif;
     margin: 0;
-    margin-left: 10px;
+    margin-left: 45px;
     padding: 0;
 }
 textarea.textEnter {
-    font: 300 20px/1.5 Helvetica, sans-serif;
+    font: 300 20px/1.5 "consolas", sans-serif;
     font-weight: lighter;
     background-color: #ECECEC;
     border: 1px solid #D0D0D0;
     border-radius: 5px;
-    margin: 5px;
+    padding: 10px;
     height: 400px;
-    width: 98%;
-    margin-top: 10px;
+    width: 90%;
     resize: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
 }
 textarea.textEnter:focus {
     outline: none;
@@ -104,14 +111,52 @@ input.message {
 input.message:focus {
     outline: none;
 }
-a.backInfo {
-    font: 300 20px/1.5 Helvetica, sans-serif;
-    margin: 0;
-    font-weight: lighter;
-    text-decoration: none;
-    color:#cccccc;
-    padding: 0;
+input.resultmessage {
+    font: 400 20px/1.5 "consolas", sans-serif;
+    border: none;
+    background-color: #191919;
+    color: #cccccc;
+    width: 100%;
     display: flex;
     align-items: center;
+    text-align: center;
     justify-content: center;
+    visibility: hidden;
+}
+input.resultmessage:focus {
+    outline: none;
+}
+footer
+{
+    width: 100%;
+    display: block;
+    position: fixed;
+    bottom: 0;
+    padding: 20px;
+    border-top: 1px solid #323232;
+    background-color: #323232;
+    div.supporters {
+        margin-left: 20px;
+        h5 {
+            font: 400 20px/1.5 "consolas", sans-serif;
+            margin: 0;
+            padding: 0;
+            margin-left: 10px;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            margin-left: 10px;
+            li {
+                font: 300 15px/1.5 "consolas", sans-serif;
+                text-decoration: none;
+                color: #cccccc;
+                a {
+                    text-decoration: none;
+                    color: #cccccc;
+                }
+            }
+        }
+    }
 }

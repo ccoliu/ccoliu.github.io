@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="style.css" />
-
 </head>
 <body class="bg">
     <nav class="navbar">
@@ -15,14 +14,21 @@
         <p class="frontInfo">Enter text below to analyse your code.</p>
     </div>
     <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter your code here..."></textarea>
-    <input class="message" id="result"></p>
+    <input class="message" id="result" readonly></p>
     <div class="buttonContainer">
         <button id="clearButton" class="buttonClear"></button>
         <button id="runButton" class="buttonAnalyse"></button>
     </div>
+    <input class="resultmessage" id="resultmsg" readonly></p>
     <script src="script.js"></script>
-</body>
+    </body>
 <footer>
-   <a class="backInfo" href="https://github.com/ccoliu">Created by ccoliu & whps970083</a>
+    <div class="supporters">
+        <h5>Supporters</h5>
+        <ul>
+            <li><a class="cc" href="https://github.com/ccoliu">ccoliu: Website design</a></li>
+            <li><a class="whps" href="https://github.com/whps970083">DanielHsiao: AI implement</a></li>
+        </ul>
+    </div>
 </footer>
 </html>
