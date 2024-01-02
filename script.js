@@ -4,14 +4,6 @@ document.getElementById("clearButton").addEventListener("click", function() {
 });
 
 document.getElementById("runButton").addEventListener("click", function() {
-<<<<<<< HEAD
-  var code = document.getElementById("codeInput").value;
-  if (code == "") {
-      document.getElementById("result").value = "No code to run! Please retry.";
-  } else {
-      document.getElementById("result").value = "Processing...";
-      sendDataToServer(code);
-=======
     var code = document.getElementById("codeInput").value;
     if (code == "") {
       document.getElementById("result").value = "No code to run! Please retry.";
@@ -97,7 +89,6 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
 
     this.selectionStart =
         this.selectionEnd = start + 1;
->>>>>>> 36bc73517b570ac2f1941abb2f5649677f24f0e1
   }
 });
 
@@ -108,20 +99,6 @@ function sendDataToServer(code) {
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({ code }),
-<<<<<<< HEAD
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-  })
-  .then(data => {
-      document.getElementById('codeInput').value = data.result;
-      document.getElementById('result').value = "Analyzed successfully";
-  })
-  .catch(error => {
-=======
     })
     .then(response => response.json())
     .then(data => {
@@ -133,7 +110,6 @@ function sendDataToServer(code) {
       }  , 5000);
     })
     .catch(error => {
->>>>>>> 36bc73517b570ac2f1941abb2f5649677f24f0e1
       console.error('Error:', error);
       document.getElementById('result').value = "An error occurred while processing the code.";
   });

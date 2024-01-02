@@ -10,7 +10,7 @@ client = OpenAI()
 
 # 指定SSL憑證和私鑰的路徑
 cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
-key_path = 'C:/Users\whps9/ccoliu.github.io/private_key.key'
+key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
 
 @app.route("/", methods=["GET"])
 def index():
