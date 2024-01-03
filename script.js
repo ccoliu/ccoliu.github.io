@@ -13,7 +13,9 @@ document.getElementById("runButton").addEventListener("click", function() {
     }
     else
     {
-        document.getElementById("result").value = "Processing...";
+      document.getElementById("loader").style.display = "block";
+      document.getElementById("blocker").style.display = "block";
+      document.getElementById('loadmsg').style.display = "block";
     }
     sendDataToServer(code);
 });
@@ -102,6 +104,9 @@ function sendDataToServer(code) {
     })
     .then(response => response.json())
     .then(data => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("blocker").style.display = "none";
+      document.getElementById('loadmsg').style.display = "none";
       document.getElementById('resultmsg').style.visibility = "visible";
       document.getElementById('resultmsg').value = data.result;
       document.getElementById("result").value = "Analyze Successful.";
@@ -110,6 +115,9 @@ function sendDataToServer(code) {
       }  , 5000);
     })
     .catch(error => {
+      document.getElementById("loader").style.display = "none";
+      document.getElementById("blocker").style.display = "none";
+      document.getElementById('loadmsg').style.display = "none";
       console.error('Error:', error);
       document.getElementById('result').value = "An error occurred while processing the code.";
   });
