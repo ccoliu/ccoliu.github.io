@@ -1,4 +1,7 @@
 body {
+    position: relative;
+    min-height: 100vh;
+    min-width: 100vw;
     overflow-x: hidden;
 }
 
@@ -16,6 +19,7 @@ div.blocker {
     transform: translate(-50%, -50%);
 }
 h4.loadmsg {
+    box-sizing: border-box;
     display: none;
     font: 400 25px/1.5 "consolas", sans-serif;
     margin: 0;
@@ -137,10 +141,10 @@ input.message:focus {
 }
 
 div.loader {
-    margin: 0;
+    margin-left: -20px;
     position: absolute;
     top: 50%;
-    left: 48.9%;
+    left: 50%;
     transform: translate(-50%, -50%);
     display: none;
     border: 10px solid #2b2a2a; 
