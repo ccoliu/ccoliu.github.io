@@ -174,9 +174,10 @@ footer
 {
     width: 100%;
     display: block;
-    position: absolute;
+    position: static;
     bottom: 0;
     padding: 20px;
+    margin-top: 20px;
     border-top: 1px solid #323232;
     background-color: #323232;
     div.supporters {
