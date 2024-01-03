@@ -95,7 +95,7 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
 });
 
 function sendDataToServer(code) {  
-  fetch('http://192.168.0.107:5000/process_code', {
+  fetch('http://192.168.1.105:5000/process_code', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
@@ -107,8 +107,8 @@ function sendDataToServer(code) {
       document.getElementById("loader").style.display = "none";
       document.getElementById("blocker").style.display = "none";
       document.getElementById('loadmsg').style.display = "none";
-      document.getElementById('resultmsg').style.visibility = "visible";
-      document.getElementById('resultmsg').value = data.result;
+      document.getElementById('textOutput').value = data.result;
+      document.getElementById('textOutput').style.display = "block";
       document.getElementById("result").value = "Analyze Successful.";
       setTimeout(function() {
         document.getElementById("result").value = "";

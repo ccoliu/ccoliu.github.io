@@ -139,7 +139,24 @@ input.message {
 input.message:focus {
     outline: none;
 }
-
+textarea.textOutput {
+    display: none;
+    font: 300 20px/1.5 "consolas", sans-serif;
+    font-weight: lighter;
+    color: #cccccc;
+    background-color: #171717;
+    padding: 10px;
+    height: 400px;
+    width: 90%;
+    resize: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+textarea.textOutput:focus {
+    outline: none;
+}
 div.loader {
     margin-left: -20px;
     position: absolute;
@@ -159,21 +176,7 @@ div.loader {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
-input.resultmessage {
-    font: 400 20px/1.5 "consolas", sans-serif;
-    border: none;
-    background-color: #191919;
-    color: #cccccc;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-    visibility: hidden;
-}
-input.resultmessage:focus {
-    outline: none;
-}
+
 footer
 {
     width: 100%;
