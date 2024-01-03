@@ -95,7 +95,7 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
 });
 
 function sendDataToServer(code) {  
-  fetch('https://192.168.0.107:5000/process_code', {
+  fetch('http://192.168.0.107:5000/process_code', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
