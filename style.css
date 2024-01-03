@@ -208,6 +208,7 @@ footer
 
 @media screen and (max-width: 600px) {
     footer {
+        display: none;
         position: absolute;
         bottom: 50px; /* 調整這個值以避免遮擋按鈕 */
     }
