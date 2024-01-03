@@ -174,7 +174,7 @@ footer
 {
     width: 100%;
     display: block;
-    position: static;
+    position: fixed;
     bottom: 0;
     padding: 20px;
     margin-top: 20px;
@@ -203,5 +203,12 @@ footer
                 }
             }
         }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    footer {
+        position: absolute;
+        bottom: 50px; /* 調整這個值以避免遮擋按鈕 */
     }
 }
