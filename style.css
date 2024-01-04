@@ -155,7 +155,8 @@ textarea.textOutput {
     padding: 20px;
     display: none;
     border: none;
-    font: 300 20px/1.5 "Lexend Deca", sans-serif;
+    font: 200 20px/1.5 "Lexend Deca", sans-serif;
+    font-weight: 200;
     color: #cccccc;
     background-color: #171717;
     padding: 10px;
