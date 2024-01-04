@@ -6,10 +6,6 @@ body {
 }
 
 @font-face {
-    font-family: "Lexend Deca";
-    src: "./fonts/LexendDeca-Regular.ttf";
-}
-@font-face {
     font-family: "Consolas";
     src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot");
     src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot?#iefix")format("embedded-opentype"),
