@@ -5,6 +5,20 @@ body {
     overflow-x: hidden;
 }
 
+@font-face {
+    font-family: "Lexend Deca";
+    src: "./fonts/LexendDeca-Regular.ttf";
+}
+@font-face {
+    font-family: "Consolas";
+    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot");
+    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
+}
+
 div.blocker {
     margin: 0;
     padding: 0;
@@ -21,7 +35,7 @@ div.blocker {
 h4.loadmsg {
     box-sizing: border-box;
     display: none;
-    font: 400 25px/1.5 "consolas", sans-serif;
+    font: 400 25px/1.5 "Consolas", sans-serif;
     margin: 0;
     color: #cccccc;
     position: absolute;
@@ -59,13 +73,13 @@ div.InnerPage {
     display: block;   
 }
 p.frontInfo {
-    font: 400 20px/1.5 "consolas", sans-serif;
+    font: 400 20px/1.5 "Consolas", sans-serif;
     margin: 0;
     margin-left: 45px;
     padding: 0;
 }
 textarea.textEnter {
-    font: 300 20px/1.5 "consolas", sans-serif;
+    font: 300 20px/1.5 "Consolas", sans-serif;
     font-weight: lighter;
     background-color: #ECECEC;
     border: 1px solid #D0D0D0;
@@ -140,9 +154,12 @@ input.message:focus {
     outline: none;
 }
 textarea.textOutput {
+    z-index: 2;
+    margin-top: 20px;
+    padding: 20px;
     display: none;
-    font: 300 20px/1.5 "consolas", sans-serif;
-    font-weight: lighter;
+    border: none;
+    font: 300 20px/1.5 "Lexend Deca", sans-serif;
     color: #cccccc;
     background-color: #171717;
     padding: 10px;
@@ -177,6 +194,15 @@ div.loader {
     100% { transform: rotate(360deg); }
 }
 
+h2.AImsg {
+    display: none;
+    font: 300 20px/1.5 "Lexend Deca", sans-serif;
+    margin: 0;
+    padding: 0;
+    margin-left: 95px;
+    margin-top: 20px;
+}
+
 footer
 {
     width: 100%;
@@ -184,13 +210,14 @@ footer
     position: fixed;
     bottom: 0;
     padding: 20px;
-    margin-top: 20px;
+    margin-top: 50px;
+    z-index: 1;
     border-top: 1px solid #323232;
     background-color: #323232;
     div.supporters {
         margin-left: 20px;
         h5 {
-            font: 400 20px/1.5 "consolas", sans-serif;
+            font: 400 20px/1.5 "Consolas", sans-serif;
             margin: 0;
             padding: 0;
             margin-left: 10px;
@@ -201,7 +228,7 @@ footer
             padding: 0;
             margin-left: 10px;
             li {
-                font: 300 15px/1.5 "consolas", sans-serif;
+                font: 300 15px/1.5 "Consolas", sans-serif;
                 text-decoration: none;
                 color: #cccccc;
                 a {

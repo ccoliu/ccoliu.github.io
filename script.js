@@ -16,8 +16,8 @@ document.getElementById("runButton").addEventListener("click", function() {
       document.getElementById("loader").style.display = "block";
       document.getElementById("blocker").style.display = "block";
       document.getElementById('loadmsg').style.display = "block";
+      sendDataToServer(code);
     }
-    sendDataToServer(code);
 });
 
 document.getElementById('codeInput').addEventListener('keydown', function(e) {
@@ -108,7 +108,11 @@ function sendDataToServer(code) {
       document.getElementById("blocker").style.display = "none";
       document.getElementById('loadmsg').style.display = "none";
       document.getElementById('textOutput').value = data.result;
-      document.getElementById('textOutput').style.display = "block";
+      document.getElementById('textOutput').style.display = "flex";
+      document.getElementById('textOutput').style.border = "1px solid #D0D0D0";
+      document.getElementById('textOutput').style.backgroundColor = "#0f0f0f";
+      document.getElementById('textOutput').style.marginBottom = "200px"
+      document.getElementById('AImsg').style.display = "block";
       document.getElementById("result").value = "Analyze Successful.";
       setTimeout(function() {
         document.getElementById("result").value = "";
