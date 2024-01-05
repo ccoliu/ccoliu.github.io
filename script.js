@@ -95,7 +95,7 @@ document.getElementById('codeInput').addEventListener('keydown', function(e) {
 });
 
 function sendDataToServer(code) {  
-  fetch('http://192.168.1.105:5000/process_code', {
+  fetch('https://whps970083.tplinkdns.com/process_code', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
