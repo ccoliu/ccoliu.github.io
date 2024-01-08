@@ -7,8 +7,13 @@ import ssl # for local https key
 app = Flask(__name__)
 CORS(app)
 #client = OpenAI()
-api_key_model_1 = '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'
-api_key_model_2 = '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'
+# 讀取 key.txt 檔案
+with open('key.txt', 'r') as file:
+    keys = file.readlines()
+
+# 去除換行符號並分配到變數
+api_key_model_1 = keys[0].strip()
+api_key_model_2 = keys[1].strip()
 
 client_model_1 = OpenAI(api_key=api_key_model_1) # For gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2) # For gpt-3.5-turbo-B
