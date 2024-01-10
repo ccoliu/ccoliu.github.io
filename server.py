@@ -2,72 +2,120 @@
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import ssl # for local https key
+import ssl  # for local https key
 
 app = Flask(__name__)
 CORS(app)
-#client = OpenAI()
-# 讀取 key.txt 檔案
+
+# Read API keys from key file.
 with open('key.txt', 'r') as file:
     keys = file.readlines()
 
-# 去除換行符號並分配到變數
 api_key_model_1 = keys[0].strip()
 api_key_model_2 = keys[1].strip()
 
-client_model_1 = OpenAI(api_key=api_key_model_1) # For gpt-3.5-turbo-A
-client_model_2 = OpenAI(api_key=api_key_model_2) # For gpt-3.5-turbo-B
+# Assign API keys to different models.
+client_model_1 = OpenAI(api_key=api_key_model_1)  # For gpt-3.5-turbo-A
+client_model_2 = OpenAI(api_key=api_key_model_2)  # For gpt-3.5-turbo-B
 
-# SSL key's path
+# Set up SSL key for Flask to use https.
 cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
 key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
 
-# Check if the server is running now. 
+# Check if the server is running.
 @app.route("/", methods=["GET"])
 def index():
     return "Hello, this is the code assistance server home page!"
 
-systemRole = "You are a programming expert. When others give you code, you assess what the code is intended for and help them fix it. You correct any bugs in the code and enhance its readability, reliability, and coding style without changing the program's functionality. Then, you return the complete source code. There is no need for explanation; just add the reason for the modification next to the modified line. If the code is perfect or you don't see any possiable improvement, simply return perfect to user, and do not explain why or what to do only mark after the changed line, simply says what's the different."
+# Define system roles and their instructions.
+analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
 
+codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. Just return the optimized source code and the comments of the code. There's no need to explain the reasons."
+
+styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enter."
+
+def analyzeCode(inputCode):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {
+                    "role": "system",
+                    "content": analyst,
+                },
+                {
+                    "role": "user",
+                    "content": inputCode,
+                }
+        ],
+    )
+    return analyzeResult.choices[0].message.content
+
+def optimizeCode(inputCode, problemList=None):
+    if problemList is None:
+        # 只有 source code 的處理方式
+        analyzeResult = client_model_2.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": codeMaster,
+                },
+                {
+                    "role": "user",
+                    "content": inputCode,
+                }
+            ],
+        )
+    else:
+        # 有 source code 和問題列表的處理方式
+        analyzeResult = client_model_1.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": codeMaster,
+                },
+                {
+                    "role": "user",
+                    "content": "Here is the source code\n" + inputCode + "Here are the problems that may occur\n" + problemList,
+                }
+            ],
+        )
+    return analyzeResult.choices[0].message.content
+
+def adjustStyle(inputCode):
+    analyzeResult = client_model_2.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {
+                    "role": "system",
+                    "content": styleChecker,
+                },
+                {
+                    "role": "user",
+                    "content": inputCode,
+                }
+        ],
+    )
+    return analyzeResult.choices[0].message.content
+# Process the code received from the frontend.
 @app.route("/process_code", methods=["POST"])
 def process_code():
     try:
         data = request.get_json()
         code = data.get("code", "")
 
-        # 在這裡進行後端處理，這裡只是一個示例，你可以插入你的處理邏輯
-        result = f"{code}"
-        completionA = client_model_1.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": systemRole,
-                },
-                {
-                    "role": "user",
-                    "content": code,
-                }
-            ],
-            
-        )
-        result = f"{completionA.choices[0].message.content}"
+        result = f"{code}"  # Initialize the result.
         
-        completionB = client_model_2.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": systemRole,
-                },
-                {
-                    "role": "user",
-                    "content": result,
-                }
-            ],
-        )
-        result = f"{completionB.choices[0].message.content}"
-        # 返回處理結果到前端
+        firstOp = optimizeCode(code)
+        print ( firstOp + "\n")
+        ana = analyzeCode(firstOp)
+        print ( ana + "\n")
+        secondOp = optimizeCode(firstOp , ana)
+        print ( secondOp + "\n")
+        finalOp = adjustStyle(secondOp)
+        result = f"{finalOp}"
+        # Return the processed result to the frontend
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)})
