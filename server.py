@@ -2,7 +2,7 @@
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import ssl  # for local https key
+import ssl  # Local https key
 
 app = Flask(__name__)
 CORS(app)
@@ -15,22 +15,22 @@ api_key_model_1 = keys[0].strip()
 api_key_model_2 = keys[1].strip()
 
 # Assign API keys to different models.
-client_model_1 = OpenAI(api_key=api_key_model_1)  # For gpt-3.5-turbo-A
-client_model_2 = OpenAI(api_key=api_key_model_2)  # For gpt-3.5-turbo-B
+client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
+client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 
 # Set up SSL key for Flask to use https.
 cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
 key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
 
-# Check if the server is running.
+# Display the server's web page.
 @app.route("/", methods=["GET"])
 def index():
-    return "Hello, this is the code assistance server home page!"
+    return "Hello! This is the code assistance server home page!"
 
 # Define system roles and their instructions.
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
 
-codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. Just return the optimized source code and the comments of the code. There's no need to explain the reasons."
+codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. You only need to return the source code and the comments."
 
 styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enter."
 
@@ -107,14 +107,14 @@ def process_code():
 
         result = f"{code}"  # Initialize the result.
         
-        firstOp = optimizeCode(code)
-        print ( firstOp + "\n")
-        ana = analyzeCode(firstOp)
+        #firstOp = optimizeCode(code)
+        #print ( firstOp + "\n")
+        ana = analyzeCode(code)
         print ( ana + "\n")
-        secondOp = optimizeCode(firstOp , ana)
+        secondOp = optimizeCode(code , ana)
         print ( secondOp + "\n")
-        finalOp = adjustStyle(secondOp)
-        result = f"{finalOp}"
+        #finalOp = adjustStyle(secondOp)
+        result = f"{secondOp}"
         # Return the processed result to the frontend
         return jsonify({"result": result})
     except Exception as e:
