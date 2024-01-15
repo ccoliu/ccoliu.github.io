@@ -31,9 +31,11 @@ client.fine_tuning.jobs.list_events(fine_tuning_job_id="ftjob-abc123", limit=10)
 # Delete a fine-tuned model (must be an owner of the org the model was created in)
 client.models.delete("ft:gpt-3.5-turbo:acemeco:suffix:abc123")
 
-# 使用訓練好的模型進行預測
-response = OpenAI.Completion.create(
-    #model=trained_model_id,  # 使用訓練後的模型 ID
-    #prompt="這裡輸入你的提示文字",
-    #max_tokens=50
+response = client.chat.completions.create(
+  model="ft:gpt-3.5-turbo:my-org:custom_suffix:id",
+  messages=[
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Hello!"}
+  ]
 )
+print(response.choices[0].message)

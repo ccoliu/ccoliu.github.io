@@ -83,6 +83,7 @@ def optimizeCode(inputCode, problemList=None):
         )
     return analyzeResult.choices[0].message.content
 
+
 def adjustStyle(inputCode):
     analyzeResult = client_model_2.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -98,6 +99,7 @@ def adjustStyle(inputCode):
         ],
     )
     return analyzeResult.choices[0].message.content
+
 # Process the code received from the frontend.
 @app.route("/process_code", methods=["POST"])
 def process_code():
@@ -107,20 +109,20 @@ def process_code():
 
         result = f"{code}"  # Initialize the result.
         
-        #firstOp = optimizeCode(code)
-        #print ( firstOp + "\n")
-        ana = analyzeCode(code)
-        print ( ana + "\n")
-        secondOp = optimizeCode(code , ana)
-        print ( secondOp + "\n")
-        #finalOp = adjustStyle(secondOp)
-        result = f"{secondOp}"
+        anaList = analyzeCode(code)
+        print ( anaList + "\n")
+        
+        optimizedResult = optimizeCode(code , anaList)
+        print ( optimizedResult + "\n")
+        
+        result = f"{optimizedResult}"
         # Return the processed result to the frontend
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)})
 
-
+optimizedResult = optimizeCode("test",)
+print ( optimizedResult + "\n")
 if __name__ == "__main__":
     context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
     context.load_cert_chain(certfile=cert_path, keyfile=key_path)

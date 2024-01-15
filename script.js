@@ -20,6 +20,20 @@ function clearFields() {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
   }
 }
+const sidebar = document.querySelector('.sidebar');
+const content = document.querySelector('.content');
+
+// 側邊欄展開時觸發事件
+sidebar.addEventListener('mouseenter', () => {
+    // 添加內容區域的暗化效果
+    content.classList.add('content-darkened');
+});
+
+// 側邊欄縮回時觸發事件
+sidebar.addEventListener('mouseleave', () => {
+    // 移除內容區域的暗化效果
+    content.classList.remove('content-darkened');
+});
 
 // Function to process code input
 function processCodeInput() {
