@@ -8,27 +8,34 @@
     <link href='https://fonts.googleapis.com/css?family=Lexend Deca' rel='stylesheet'>
 </head>
 <body class="bg" id="bg">
+    <div class="background"></div>
     <div class="hover-area"></div>
     <div class="sidebar">
         <h2>Menu</h2>
         <ul>
-            <li><a href="index.html">Modify</a></li>
+            <li><a href="index.html" >Modify</a></li>
             <li><a href="generate.html">Generate</a></li>
-            <li><a href="more1.html">more1</a></li>
-            <li><a href="more2.html">more2</a></li>
-            <li><a href="more3.html">more3</a></li>
+            <li><a href="more1.html">comming...</a></li>
+            <li><a href="more2.html">comming...</a></li>
+            <li><a href="more3.html">comming...</a></li>
+        </ul>
+        <h3>Supporters</h3>
+        <ul>
+            <li><a class="cc" href="https://github.com/ccoliu" target="_blank">ccoliu</a></li>
+            <li><a class="whps" href="https://github.com/whps970083" target="_blank">DanielHsiao</a></li>
+            <li><a class="OpenAI" href="https://openai.com/product" target="_blank">OpenAI</a></li>
         </ul>
     </div>
     <div class="content">
         <div class="blocker" id="blocker"></div>
         <py-script src="server.py"></py-script>
         <nav class="navbar">
-            <h1 class="InnerText">Code Assistant</h1>
+            <h1 class="InnerText">Code Assistants</h1>
         </nav>
         <div class="InnerPage">
             <p class="frontInfo">Enter text below to analyze your code.</p>
         </div>
-        <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter your code here..."></textarea>
+        <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter your code here to analyze your code."></textarea>
         <input class="message" id="result" readonly></p>
         <h4 class="loadmsg" id="loadmsg">Loading...</h4>
         <div class="loader" id="loader"></div>
@@ -41,7 +48,7 @@
     </div>
     <script src="script.js"></script>
 </body>
-    <footer>
+<!--     <footer>
         <div class="supporters">
             <h5>Supporters</h5>
             <ul>
@@ -49,6 +56,6 @@
                 <li><a class="whps" href="https://github.com/whps970083">DanielHsiao: AI implement</a></li>
             </ul>
         </div>
-    </footer>
+    </footer> -->
 </body>
 </html>

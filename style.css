@@ -14,7 +14,10 @@ body {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
-
+.textEnter {
+    color: white;
+    caret-color: white;
+}
 div.blocker {
     margin: 0;
     padding: 0;
@@ -45,9 +48,9 @@ body.bg {
     margin: 0;
     padding: 0;
 }
-
+  
 nav.navbar {
-    background: #323232;
+    background: transparent;
     color: #cccccc;
     left: 0;
     height: 64px;
@@ -55,18 +58,23 @@ nav.navbar {
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    width: 100%
+    width: 100%;
+    display: flex; /* This will lay out the children in a row */
+    align-items: center; /* This will vertically center the children in the navbar */
+    justify-content: flex-start; /* This will align children to the start of the navbar */
 }
+
 h1.InnerText {
     font: 400 40px/1.5 "Noto Sans", sans-serif;
     font-weight: bold;
     margin: 0;
     padding: 0;
     margin-left: 60px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
 }
 
 div.InnerPage {
-    display: block;   
+    display: none;   
 }
 p.frontInfo {
     font: 400 20px/1.5 "Consolas", sans-serif;
@@ -77,8 +85,8 @@ p.frontInfo {
 textarea.textEnter {
     font: 300 20px/1.5 "Consolas", sans-serif;
     font-weight: lighter;
-    background-color: #ECECEC;
-    border: 1px solid #D0D0D0;
+    border: 1px solid rgb(252, 254, 255); /* 設置邊框 */
+    background-color: transparent;
     border-radius: 5px;
     padding: 10px;
     height: 400px;
@@ -138,7 +146,7 @@ button.buttonAnalyse:hover {
 input.message {
     font: 400 20px/1.5 Helvetica, sans-serif;
     border: none;
-    background-color: #191919;
+    background-color: transparent;
     color: #cccccc;
     width: 100%;
     display: flex;
@@ -158,7 +166,7 @@ textarea.textOutput {
     font: 200 20px/1.5 "Lexend Deca", sans-serif;
     font-weight: 200;
     color: #cccccc;
-    background-color: #171717;
+    background-color: transparent;
     padding: 10px;
     height: 400px;
     width: 90%;
@@ -209,8 +217,8 @@ footer
     padding: 20px;
     margin-top: 50px;
     z-index: 1;
-    border-top: 1px solid #323232;
-    background-color: #323232;
+    border-top: 1px solid transparent;
+    background-color:transparent;
     div.supporters {
         margin-left: 20px;
         h5 {
@@ -237,6 +245,17 @@ footer
     }
 }
 
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('./icons/OldestOct.png');
+    filter: brightness(0.15);
+    z-index: -1;
+}
+
 @media screen and (max-width: 600px) {
     footer {
         display: none;
@@ -250,7 +269,7 @@ footer
 /* 定義側邊欄的樣式 */
 .sidebar {
     width: 20px; /* 收合時的寬度 */ 
-    height: 90%; /* 收合時的高度 */ 
+    height: 100%; /* 收合時的高度 */ 
     position: fixed; /* 固定定位，使其不隨捲動而移動 */
     z-index: 1; /* 設定堆疊順序，確保在內容之上 */
     top: 0; /* 距離頁面頂部的距離 */
@@ -351,6 +370,43 @@ footer
     opacity: 1;
 }
 
+/* 鼠標懸停時顯示列表 */
+.sidebar:hover h3 {
+    transform: none; /* 取消旋轉 */
+    margin-top: 50px; /* 重置上邊距 */
+}
+.sidebar h3 {
+    transform: rotate(90deg); /* 旋轉標題 */
+    transform-origin: center center; /* 設定旋轉的基點為中心 */
+    transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
+    white-space: nowrap; /* 防止文字折行 */
+    margin-top: 0; /* 確保標題沒有額外的上邊距 */
+}
+
+/* 針對 h3 下的 ul 元素進行設定 */
+.sidebar h3 + ul {
+    order: 3; /* 控制 ul 的順序，將其移到最下方 */
+    padding: 0; /* 去掉內邊距 */
+    margin: 0; /* 去掉外邊距 */
+    opacity: 0; /* 初始時隱藏列表 */
+    transition: opacity 0.5s ease-in-out; /* 添加平滑過渡效果 */
+}
+
+/* 針對 h3 下的 ul 中的列表項進行設定 */
+.sidebar h3 + ul li {
+    padding: 8px 0; /* 列表項的上下內邊距 */
+    transition: transform 0.5s; /* 平滑過渡效果 */
+    transform: translateX(-100%); /* 初始時向左隱藏 */
+}
+
+/* 針對 h3 下的 ul 中的鏈接進行設定 */
+.sidebar h3 + ul li a {
+    color: #ddd; 
+    text-decoration: none; 
+    transition: color 0.3s; 
+    display: block; /* 塊級顯示 */
+    font-size: 16px; /* 調整字體大小為 16 像素，根據需要調整值 */
+}
 /* 定義懸停區域的樣式 */
 .hover-area {
     position: fixed;

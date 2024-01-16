@@ -22,18 +22,23 @@ function clearFields() {
 }
 const sidebar = document.querySelector('.sidebar');
 const content = document.querySelector('.content');
-
+const supporters = document.querySelector('.supporters');
+const h3Supporters = document.querySelector('h3.supporters');
 // 側邊欄展開時觸發事件
 sidebar.addEventListener('mouseenter', () => {
     // 添加內容區域的暗化效果
     content.classList.add('content-darkened');
+    supporters.style.display = 'block'; // 顯示 supporters
 });
 
 // 側邊欄縮回時觸發事件
 sidebar.addEventListener('mouseleave', () => {
     // 移除內容區域的暗化效果
     content.classList.remove('content-darkened');
+    supporters.style.display = 'none'; // 隱藏 supporters
 });
+
+
 
 // Function to process code input
 function processCodeInput() {
