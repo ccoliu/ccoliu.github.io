@@ -3,6 +3,7 @@ body {
     min-height: 100vh;
     min-width: 100vw;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 @font-face {
@@ -48,29 +49,14 @@ body.bg {
     margin: 0;
     padding: 0;
 }
-  
-nav.navbar {
-    background: transparent;
-    color: #cccccc;
-    left: 0;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    width: 100%;
-    display: flex; /* This will lay out the children in a row */
-    align-items: center; /* This will vertically center the children in the navbar */
-    justify-content: flex-start; /* This will align children to the start of the navbar */
-}
 
 h1.InnerText {
     font: 400 40px/1.5 "Noto Sans", sans-serif;
     font-weight: bold;
-    margin: 0;
-    padding: 0;
-    margin-left: 60px;
-    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20%;
 }
 
 h1 a {
@@ -82,24 +68,13 @@ h1 a:hover {
     text-decoration: none;
 }
 
-p.InnerShort {
+div.InnerPage {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    margin: 0;
-    padding: 0;
-    margin-top: 13px;
-    margin-left: 20px;
-    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    display: flex;
+    justify-content: center;
+    align-items: center;   
 }
 
-div.InnerPage {
-    display: none;   
-}
-p.frontInfo {
-    font: 400 20px/1.5 "Consolas", sans-serif;
-    margin: 0;
-    margin-left: 72px;
-    padding: 0;
-}
 textarea.textEnter {
     font: 300 20px/1.5 "Consolas", sans-serif;
     font-weight: lighter;
@@ -123,15 +98,22 @@ div.buttonContainer {
     justify-content: center;
     align-items: center;
 }
-button.buttonClear {
-    background-image: url("./icons/clear.png");
+
+a.GotoGenerate {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    text-decoration: none;
+    padding-top: 10px;
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50px 50px;
-    width: 100px;
+    width: 150px;
     height: 50px;
-    font-weight: lighter;
-    background-color: #b9b6b6;
+    background-color: transparent;
     color: white;
     border: 1px solid #D0D0D0;
     border-radius: 5px;
@@ -139,28 +121,58 @@ button.buttonClear {
     margin-right: 10px;
     padding: 0;
 }
-button.buttonClear:hover {
-    background-color: #8b8787;
+
+a.GotoGenerate:hover {
+    background-color: #363636;
 }
-button.buttonAnalyse {
-    background-image: url("./icons/play.png");
+
+a.GotoModify {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    padding-top: 10px;
+    text-decoration: none;
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 50px 50px;
-    width: 100px;
+    width: 150px;
     height: 50px;
-    font-weight: lighter;
-    background-color: #b9b6b6;
+    background-color: transparent;
     color: white;
     border: 1px solid #D0D0D0;
     border-radius: 5px;
     margin: 0;
-    margin-left: 10px;
+    margin-right: 10px;
     padding: 0;
 }
-button.buttonAnalyse:hover {
-    background-color: #8b8787;
+
+a span img.GenerateIcon {
+    text-align: center;
+    line-height: 50px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    margin-top: 8px;
+    margin-left: 5px;
 }
+
+a span img.ModifyIcon {
+    text-align: center;
+    line-height: 50px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    margin-top: 8px;
+    margin-left: 10px;
+}
+
+a.GotoModify:hover {
+    background-color: #363636;
+}
+
 input.message {
     font: 400 20px/1.5 Helvetica, sans-serif;
     border: none;

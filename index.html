@@ -4,44 +4,48 @@
     <title>CS Project</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" type="text/css" href="homestyle.css" />
     <link href='https://fonts.googleapis.com/css?family=Lexend Deca' rel='stylesheet'>
 </head>
 <body class="bg" id="bg">
+    <div class="background"></div>
     <div class="hover-area"></div>
     <div class="sidebar">
         <h2>Menu</h2>
         <ul>
-            <li><a href="index.html">Modify</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="modify.html" >Modify</a></li>
             <li><a href="generate.html">Generate</a></li>
-            <li><a href="more1.html">more1</a></li>
-            <li><a href="more2.html">more2</a></li>
-            <li><a href="more3.html">more3</a></li>
+            <!-- <li><a href="more1.html">comming...</a></li>
+            <li><a href="more2.html">comming...</a></li>
+            <li><a href="more3.html">comming...</a></li> -->
+        </ul>
+        <h3>Supporters</h3>
+        <ul>
+            <li><a class="cc" href="https://github.com/ccoliu" target="_blank">ccoliu</a></li>
+            <li><a class="whps" href="https://github.com/whps970083" target="_blank">DanielHsiao</a></li>
+            <li><a class="OpenAI" href="https://openai.com/product" target="_blank">Powered by OpenAI</a></li>
         </ul>
     </div>
     <div class="content">
         <div class="blocker" id="blocker"></div>
         <py-script src="server.py"></py-script>
-        <nav class="navbar">
-            <h1 class="InnerText">Code Assistant</h1>
-        </nav>
+        <h1 class="InnerText"><a href="index.html">Code Assistants</a></h1>
         <div class="InnerPage">
-            <p class="frontInfo">Enter text below to analyze your code.</p>
+            <p class="frontInfo">Modify and Correct your code by using the New-Generation AI.</p>
         </div>
-        <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter your code here..."></textarea>
         <input class="message" id="result" readonly></p>
         <h4 class="loadmsg" id="loadmsg">Loading...</h4>
         <div class="loader" id="loader"></div>
         <div class="buttonContainer">
-            <button id="clearButton" class="buttonClear"></button>
-            <button id="runButton" class="buttonAnalyse"></button>
+            <a class="GotoGenerate" href="generate.html">Generate<span><img class="GenerateIcon" src="icons/add.png"/></span></a>
+            <a class="GotoModify" href="modify.html">Modify<span><img class="ModifyIcon" src="icons/pencil.png"/></span></a>
         </div>
         <h2 class="AImsg" id="AImsg" display="none">AI response (GPT-3.5)</h2>
-        <textarea cols="100" rows="20" class="textOutput" id="textOutput" display="none" readonly></textarea>
     </div>
     <script src="script.js"></script>
 </body>
-    <footer>
+<!--     <footer>
         <div class="supporters">
             <h5>Supporters</h5>
             <ul>
@@ -49,6 +53,5 @@
                 <li><a class="whps" href="https://github.com/whps970083">DanielHsiao: AI implement</a></li>
             </ul>
         </div>
-    </footer>
-</body>
+    </footer> -->
 </html>
