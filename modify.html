@@ -26,7 +26,7 @@
             <li><a class="whps" href="https://github.com/whps970083" target="_blank">DanielHsiao</a></li>
         </ul>
         <div class="sidebar-footer">
-            <a href="https://openai.com/product" target="_blank">Powered by OpenAI</a>
+            <a href="https://openai.com/product" target="_blank"><span><img class="openaiicon" src="icons/OpenAIWhite.png" /></span>Powered by <br>OpenAI</br></a>
         </div>
     </div>
     <div class="content">
@@ -39,12 +39,18 @@
             <p class="frontInfo">Enter text below to analyze your code.</p>
         </div>
         <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter your code here to analyze your code."></textarea>
+        <div class="uploadsys">
+            <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" id="fileInput" class="inputfile" />
+            </form>
+        <a id="uploadButton" class="buttonUpload">Upload<span><img class="uploadIcon" src="icons/upload.png"/></span></a>
+        </div>
         <input class="message" id="result" readonly></p>
         <h4 class="loadmsg" id="loadmsg">Loading...</h4>
         <div class="loader" id="loader"></div>
         <div class="buttonContainer">
-            <button id="clearButton" class="buttonClear"></button>
-            <button id="runButton" class="buttonAnalyse"></button>
+            <a id="clearButton" class="buttonClear">Clear<span><img class="clearIcon" src="icons/clean.png"/></span></a>
+            <a id="runButton" class="buttonAnalyse">Execute<span><img class="executeIcon" src="icons/play.png"/></span></a>
         </div>
         <h2 class="AImsg" id="AImsg" display="none">AI response (GPT-3.5)</h2>
         <textarea cols="100" rows="20" class="textOutput" id="textOutput" display="none" readonly></textarea>

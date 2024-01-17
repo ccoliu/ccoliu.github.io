@@ -15,6 +15,19 @@ body {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
+
+#myVideo {
+    position: fixed; /* 將影片固定在背景 */
+    display: flex;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1; /* 確保影片在其他內容之下 */
+    filter: brightness(0.1);
+    object-fit: cover;
+}
+
 .textEnter {
     color: white;
     caret-color: white;
@@ -120,6 +133,7 @@ a.GotoGenerate {
     margin: 0;
     margin-right: 10px;
     padding: 0;
+    transition: background-color 0.2s ease;
 }
 
 a.GotoGenerate:hover {
@@ -147,6 +161,7 @@ a.GotoModify {
     margin: 0;
     margin-right: 10px;
     padding: 0;
+    transition: background-color 0.2s ease;
 }
 
 a span img.GenerateIcon {
@@ -283,7 +298,7 @@ footer
     height: 100%;
     background-image: url('./icons/OldestOct.png');
     filter: brightness(0.15);
-    z-index: -1;
+    z-index: -2;
 }
 
 @media screen and (max-width: 600px) {
@@ -431,6 +446,7 @@ footer
 }
 
 .sidebar-footer a{
+    font-family: "Lexend Deca", sans-serif;
     position: absolute;
     bottom: 25px;
     left: 0; /* 確保元素從左邊界開始 */
@@ -438,10 +454,24 @@ footer
     text-align:left; /* 文字居中 */
     padding: 10px; /* 添加一些內邊距 */
     color: #fff; /* 文字顏色 */
-    background: #333; /* 背景顏色，根據您的側邊欄樣式調整 */
-    font-size: 15px; /* 字體大小 */
+    background: transparent; /* 背景顏色，根據您的側邊欄樣式調整 */
+    font-size: 12px; /* 字體大小 */
     padding-left: 15px; /* 左側內邊距，根據需要調整這個值 */
     opacity: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: -20px;
+}
+
+.sidebar-footer a img {
+    width: 40px;
+    height: 40px;
+}
+
+.sidebar-footer a:hover {
+    color: #fff;
+    text-decoration: none;
 }
 
 .sidebar:hover .sidebar-footer a {

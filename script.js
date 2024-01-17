@@ -12,10 +12,12 @@ function toggleVisibility(elementId, display) {
 function clearFields() {
   const codeInput = document.getElementById("codeInput");
   const result = document.getElementById("result");
+  const fileInput = document.getElementById("fileInput");
 
   if (codeInput && result) {
     codeInput.value = "";
     result.value = "";
+    fileInput.value = "";
   } else {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
   }
@@ -24,6 +26,7 @@ const sidebar = document.querySelector('.sidebar');
 const content = document.querySelector('.content');
 const supporters = document.querySelector('.supporters');
 const h3Supporters = document.querySelector('h3.supporters');
+const video = document.getElementById('myVideo');
 // 側邊欄展開時觸發事件
 sidebar.addEventListener('mouseenter', () => {
     // 添加內容區域的暗化效果
@@ -129,6 +132,7 @@ function sendDataToServer(code) {
 const clearButton = document.getElementById("clearButton");
 const runButton = document.getElementById("runButton");
 const codeInput = document.getElementById("codeInput");
+const uploadButton = document.getElementById("uploadButton");
 
 if (clearButton) {
   clearButton.addEventListener("click", clearFields);
@@ -148,4 +152,58 @@ if (codeInput) {
   });
 } else {
   console.error("Element with ID 'codeInput' not found.");
+}
+
+if (uploadButton) {
+  uploadButton.addEventListener("click", function () {
+    const codeInput = document.getElementById("codeInput");
+    const result = document.getElementById("result");
+    var fileInput = document.getElementById("fileInput");
+    var file = fileInput.files[0];
+    const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java"];
+
+    toggleVisibility("loader", true);
+    toggleVisibility("blocker", true);
+    toggleVisibility("loadmsg", true);
+
+    if (!file) {
+        toggleVisibility("loader", false);
+        toggleVisibility("blocker", false);
+        toggleVisibility("loadmsg", false);
+        result.value = "No file selected! Please retry.";
+        setTimeout(() => (result.value = ""), 5000);
+        return;
+    }
+
+    var fileName = file.name;
+    var fileExtension = fileName.split(".").pop().toLowerCase();
+
+    if (!availableExtensions.includes(fileExtension)) {
+        toggleVisibility("loader", false);
+        toggleVisibility("blocker", false);
+        toggleVisibility("loadmsg", false);
+        result.value = "Invalid file type! Please retry.";
+        setTimeout(() => (result.value = ""), 5000);
+        return;
+    }
+
+    var reader = new FileReader();
+
+    reader.onload = function () {
+        codeInput.value = reader.result;
+    };
+
+    reader.onerror = function () {
+        result.value = "Error reading file!";
+        setTimeout(() => (result.value = ""), 5000);
+    };
+
+    reader.readAsText(file);
+
+    result.value = "File uploaded successfully!";
+    toggleVisibility("loader", false);
+    toggleVisibility("blocker", false);
+    toggleVisibility("loadmsg", false);
+    setTimeout(() => (result.value = ""), 5000);
+  });
 }
