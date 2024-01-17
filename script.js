@@ -201,6 +201,7 @@ if (uploadButton) {
     reader.readAsText(file);
 
     result.value = "File uploaded successfully!";
+    fileInput.value = "";
     toggleVisibility("loader", false);
     toggleVisibility("blocker", false);
     toggleVisibility("loadmsg", false);

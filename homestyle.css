@@ -28,23 +28,7 @@ body {
     object-fit: cover;
 }
 
-.textEnter {
-    color: white;
-    caret-color: white;
-}
-div.blocker {
-    margin: 0;
-    padding: 0;
-    display: none;
-    background:#191919;
-    opacity: 0.95;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+
 h4.loadmsg {
     box-sizing: border-box;
     display: none;
@@ -88,24 +72,6 @@ div.InnerPage {
     align-items: center;   
 }
 
-textarea.textEnter {
-    font: 300 20px/1.5 "Consolas", sans-serif;
-    font-weight: lighter;
-    border: 1px solid rgb(252, 254, 255); /* 設置邊框 */
-    background-color: transparent;
-    border-radius: 5px;
-    padding: 10px;
-    height: 400px;
-    width: 90%;
-    resize: none;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-textarea.textEnter:focus {
-    outline: none;
-}
 div.buttonContainer {
     display: flex;
     justify-content: center;
@@ -188,107 +154,6 @@ a.GotoModify:hover {
     background-color: #363636;
 }
 
-input.message {
-    font: 400 20px/1.5 Helvetica, sans-serif;
-    border: none;
-    background-color: transparent;
-    color: #cccccc;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    text-align: center;
-    justify-content: center;
-}
-input.message:focus {
-    outline: none;
-}
-textarea.textOutput {
-    z-index: 2;
-    margin-top: 20px;
-    padding: 20px;
-    display: none;
-    border: none;
-    font: 200 20px/1.5 "Lexend Deca", sans-serif;
-    font-weight: 200;
-    color: #cccccc;
-    background-color: transparent;
-    padding: 10px;
-    height: 400px;
-    width: 90%;
-    resize: none;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-}
-textarea.textOutput:focus {
-    outline: none;
-}
-div.loader {
-    margin-left: -20px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;
-    border: 10px solid #2b2a2a; 
-    border-top: 10px solid #f29d13;
-    border-radius: 50%;
-    width: 25px;
-    height: 25px;
-    animation: spin 2s linear infinite;
-}
-  
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-h2.AImsg {
-    display: none;
-    font: 300 20px/1.5 "Lexend Deca", sans-serif;
-    margin: 0;
-    padding: 0;
-    margin-left: 95px;
-    margin-top: 20px;
-}
-
-footer
-{
-    width: 100%;
-    display: block;
-    position: fixed;
-    bottom: 0;
-    padding: 20px;
-    margin-top: 50px;
-    z-index: 1;
-    border-top: 1px solid transparent;
-    background-color:transparent;
-    div.supporters {
-        margin-left: 20px;
-        h5 {
-            font: 400 20px/1.5 "Consolas", sans-serif;
-            margin: 0;
-            padding: 0;
-            margin-left: 10px;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            margin-left: 10px;
-            li {
-                font: 300 15px/1.5 "Consolas", sans-serif;
-                text-decoration: none;
-                color: #cccccc;
-                a {
-                    text-decoration: none;
-                    color: #cccccc;
-                }
-            }
-        }
-    }
-}
 
 .background {
     position: fixed;
@@ -299,14 +164,6 @@ footer
     background-image: url('./icons/OldestOct.png');
     filter: brightness(0.15);
     z-index: -2;
-}
-
-@media screen and (max-width: 600px) {
-    footer {
-        display: none;
-        position: absolute;
-        bottom: 50px;
-    }
 }
 
 /* Dealing with side bar */

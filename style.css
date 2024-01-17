@@ -224,6 +224,7 @@ input.message {
     text-align: center;
     justify-content: center;
     cursor: default;
+    margin-top: 10px;
 }
 input.message:focus {
     outline: none;
