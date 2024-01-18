@@ -92,7 +92,7 @@ function enhanceTextInput(event, element) {
 
 // Function to send code data to the server
 function sendDataToServer(code) {
-  fetch("https://192.168.0.108:5000/process_code", {
+  fetch("http://127.0.0.1:5000/process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
