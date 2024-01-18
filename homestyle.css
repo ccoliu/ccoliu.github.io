@@ -16,6 +16,15 @@ body {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
 
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 #myVideo {
     position: fixed; /* 將影片固定在背景 */
     display: flex;
@@ -26,6 +35,7 @@ body {
     z-index: -1; /* 確保影片在其他內容之下 */
     filter: brightness(0.1);
     object-fit: cover;
+    animation: fadeIn .5s ease-in;
 }
 
 
@@ -70,6 +80,7 @@ div.InnerPage {
     display: flex;
     justify-content: center;
     align-items: center;   
+    margin-bottom: 40px;
 }
 
 div.buttonContainer {
@@ -161,7 +172,7 @@ a.GotoModify:hover {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('./icons/OldestOct.png');
+    background-color: #363636;
     filter: brightness(0.15);
     z-index: -2;
 }
