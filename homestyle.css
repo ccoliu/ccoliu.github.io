@@ -25,6 +25,18 @@ body {
     }
 }
 
+@keyframes breathEffect {
+    0% {
+        background-color: #363636;
+    }
+    50% {
+        background-color: #8f8f8f;
+    }
+    100% {
+        background-color: #363636;
+    }
+}
+
 #myVideo {
     position: fixed; /* 將影片固定在背景 */
     display: flex;
@@ -33,9 +45,8 @@ body {
     min-width: 100%;
     min-height: 100%;
     z-index: -1; /* 確保影片在其他內容之下 */
-    filter: brightness(0.1);
-    object-fit: cover;
-    animation: fadeIn .5s ease-in;
+    filter: brightness(0.15);
+    animation: fadeIn .5s;
 }
 
 
@@ -175,6 +186,7 @@ a.GotoModify:hover {
     background-color: #363636;
     filter: brightness(0.15);
     z-index: -2;
+    animation: breathEffect 3.5s infinite;
 }
 
 /* Dealing with side bar */
@@ -376,3 +388,4 @@ a.GotoModify:hover {
     filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
     transition: filter 0.5s; /* 添加平滑過渡效果 */
 }
+
