@@ -277,14 +277,17 @@ a.GotoModify:hover {
 .sidebar:hover h3 {
     transform: none; /* 取消旋轉 */
     margin-top: 50px; /* 重置上邊距 */
+    opacity: 1;
 }
 .sidebar h3 {
-    transform: rotate(90deg); /* 旋轉標題 */
+    transform: rotate(-90deg); /* 旋轉標題 */
     transform-origin: center center; /* 設定旋轉的基點為中心 */
     transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
     white-space: nowrap; /* 防止文字折行 */
     margin-top: 0; /* 確保標題沒有額外的上邊距 */
+    opacity: 0;
 }
+
 
 /* 針對 h3 下的 ul 元素進行設定 */
 .sidebar h3 + ul {
