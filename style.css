@@ -62,8 +62,7 @@ nav.navbar {
     display: flex; /* This will lay out the children in a row */
     align-items: center; /* This will vertically center the children in the navbar */
     justify-content: flex-start; /* This will align children to the start of the navbar */
-    border-bottom: 1px solid #191919;
-    background: #101111;
+    background: transparent;
 }
 
 h1.InnerText {
