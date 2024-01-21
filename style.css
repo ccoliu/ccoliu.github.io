@@ -575,3 +575,39 @@ a.buttonUpload {
 a.buttonUpload:hover {
     background-color: #363636;
 }
+
+.languageSelect {
+    display: flex;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 75px;
+}
+
+.selectDesc {
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    margin: 0;
+    padding: 0;
+    margin-left: 20px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+}
+
+.myselect {
+    margin-left: 100px;
+    height: 50px;
+    width: 1100px;
+    color: #cccccc;
+    background-color: transparent;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    font: 400 15px/1.5 "Lexend Deca", sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.myselect option {
+    color: black;
+    font: 400 15px/1.5 "Lexend Deca", sans-serif;
+}
+
+.myselect:focus {
+    outline: none;
+}

@@ -38,6 +38,33 @@
         <div class="InnerPage">
             <p class="frontInfo">Enter text below to analyze your code.</p>
         </div>
+        <div class="languageSelect">
+            <p class="selectDesc">Select the language you'd like to generate:<span>
+                    <select id="myselect" class="myselect">
+                    <option value="c">C</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="php">PHP</option>
+                    <option value="ruby">Ruby</option>
+                    <option value="go">Go</option>
+                    <option value="swift">Swift</option>
+                    <option value="sql">SQL</option>
+                    <option value="html">HTML</option>
+                    <option value="css">CSS</option>
+                    <option value="bash">Bash</option>
+                    <option value="powershell">PowerShell</option>
+                    <option value="r">R</option>
+                    <option value="matlab">MATLAB</option>
+                    <option value="perl">Perl</option>
+                    <option value="haskell">Haskell</option>
+                    <option value="lua">Lua</option>
+                    <option value="rust">Rust</option>
+                    </select>
+                </span>
+            </p>
+        </div>
         <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter description of the code that you'd like to create."></textarea>
         <div class="uploadsys">
             <form action="/upload" method="post" enctype="multipart/form-data">
