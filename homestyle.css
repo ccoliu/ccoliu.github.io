@@ -392,3 +392,12 @@ a.GotoModify:hover {
     transition: filter 0.5s; /* 添加平滑過渡效果 */
 }
 
+@media screen and (max-height: 550px) {
+    body {
+        overflow-y: auto;
+    }
+    .sidebar-footer a {
+        display: none;
+    }
+}
+
