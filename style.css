@@ -337,7 +337,7 @@ h2.AImsg {
 /* 定義側邊欄的樣式 */
 .sidebar {
     width: 20px; /* 收合時的寬度 */ 
-    height: 100%; /* 收合時的高度 */ 
+    height: 100vh; /* 收合時的高度 */ 
     position: fixed; /* 固定定位，使其不隨捲動而移動 */
     z-index: 1; /* 設定堆疊順序，確保在內容之上 */
     top: 0; /* 距離頁面頂部的距離 */
@@ -351,19 +351,15 @@ h2.AImsg {
     display: flex; /* 使用Flex佈局 */
     flex-direction: column; /* 子項垂直排列 */
     justify-content: center; /* 垂直居中對齊 */
+    background-color: #193631; 
+    color: #ddd; 
+    padding: 20px; 
+    font-family: 'Lexend Deca', sans-serif;
 }
 
 /* 定義內容區域的樣式 */
 .content {
     margin-left: 20px; /* 內容區域距離側邊欄的左邊距 */
-}
-
-/* 定義側邊欄的樣式 */
-.sidebar {
-    background-color: #193631; 
-    color: #ddd; 
-    padding: 20px; 
-    font-family: 'Lexend Deca', sans-serif;
 }
 
 /* 定義側邊欄的標題樣式 */
