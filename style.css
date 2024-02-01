@@ -3,7 +3,7 @@ body {
     min-height: 100vh;
     min-width: 100vw;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 @font-face {
@@ -69,9 +69,10 @@ h1.InnerText {
     font: 400 40px/1.5 "Noto Sans", sans-serif;
     font-weight: bold;
     margin: 0;
-    padding: 0;
-    margin-left: 60px;
+    padding-left: 25px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-top: 5px;
+    line-height: 48px;
 }
 
 h1 a {
@@ -90,6 +91,7 @@ p.InnerShort {
     margin-top: 13px;
     margin-left: 20px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
 }
 
 div.InnerPage {
@@ -359,7 +361,7 @@ h2.AImsg {
 
 /* 定義內容區域的樣式 */
 .content {
-    margin-left: 20px; /* 內容區域距離側邊欄的左邊距 */
+    margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
 }
 
 /* 定義側邊欄的標題樣式 */
@@ -578,28 +580,34 @@ a.buttonUpload:hover {
     margin-bottom: 20px;
     align-items: center;
     justify-content: center;
+    margin-left: 20px;
+    margin-right: 40px;
 }
 
 .selectDesc {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     margin: 0;
     padding: 0;
-    margin-right: 120px; /* Add a margin to the right of the text for spacing */
-    margin-left: 100px;
+    margin-right: 0;
+    margin-left: auto;
+    padding-right: 50px;
+    padding-left: 20px;
 }
 
 .myselect {
     display: flex;
-    margin-left: 150px;
-    margin-right: 75px;
+    margin-left: auto;
+    margin-right: auto;
     height: 50px;
-    width: 50%;
-    min-width: 50px;
+    width: 50vw;
+    max-width: 100%;
+    min-width: 10px;
     color: #cccccc;
     background-color: transparent;
     border: 1px solid #D0D0D0;
     border-radius: 5px;
     font: 400 15px/1.5 "Lexend Deca", sans-serif;
+    box-sizing: border-box;
 }
 
 .myselect option {

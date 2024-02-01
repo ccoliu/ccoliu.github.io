@@ -94,6 +94,10 @@ div.InnerPage {
     margin-bottom: 40px;
 }
 
+p.frontInfo {
+    text-align: center;
+}
+
 div.buttonContainer {
     display: flex;
     justify-content: center;
@@ -217,7 +221,7 @@ a.GotoModify:hover {
 /* 定義內容區域的樣式 */
 .content {
     position: static;
-    margin-left: 20px; /* 內容區域距離側邊欄的左邊距 */
+    padding-left: 50px; /* 內容區域距離側邊欄的左邊距 */
 }
 
 /* 定義側邊欄的標題樣式 */
