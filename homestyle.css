@@ -1,9 +1,22 @@
 body {
     position: static;
-    height: 75vh;
+    height: 60vh;
     width: 100vw;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
+}
+
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
 }
 
 @font-face {
@@ -57,10 +70,12 @@ h4.loadmsg {
     margin: 0;
     color: #cccccc;
     position: absolute;
-    top: 46.5%;
-    left: 50.5%;
+    margin-left: -150px;
     transform: translate(-50%, -50%);
+    justify-content: center;
+    align-items: center;
 }
+
 body.bg {
     background: #191919;
     color: #cccccc;
@@ -197,7 +212,7 @@ a.GotoModify:hover {
 
 /* 定義側邊欄的樣式 */
 .sidebar {
-    width: 20px; /* 收合時的寬度 */ 
+    width: 0.4em; /* 收合時的寬度 */ 
     height: 100vh; /* 收合時的高度 */ 
     position: fixed; /* 固定定位，使其不隨捲動而移動 */
     z-index: 1; /* 設定堆疊順序，確保在內容之上 */
@@ -205,7 +220,7 @@ a.GotoModify:hover {
     left: 0; /* 距離頁面左側的距離 */
     background-color: #2c2405; /* 背景顏色 */
     overflow-x: hidden; /* 水平溢出內容隱藏 */
-    overflow-y: auto;
+    overflow-y: hidden;
     transition: 0.5s; /* 添加平滑過渡效果 */
     padding-top: 60px; /* 頂部內邊距，用於標題 */
     white-space: nowrap; /* 防止文字折行 */
@@ -230,7 +245,7 @@ a.GotoModify:hover {
     transform-origin: center center; /* 設定旋轉的基點為中心 */
     transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
     white-space: nowrap; /* 防止文字折行 */
-    margin-top: 0; /* 確保標題沒有額外的上邊距 */
+    margin-top: 400px; /* 確保標題沒有額外的上邊距 */
 }
 
 /* 刪除默認的列表樣式（圓點） */
@@ -285,6 +300,20 @@ a.GotoModify:hover {
 .sidebar:hover {
     width: 150px; /* 展開多寬 */
     padding-top: 0px;
+    overflow-y: auto;
+}
+
+.sidebar:hover::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar:hover::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
 }
 
 /* 鼠標懸停時顯示列表項 */

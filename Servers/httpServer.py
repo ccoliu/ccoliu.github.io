@@ -31,6 +31,8 @@ codeMaster = "You are a coding master, skilled at helping others modify their so
 
 styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enter."
 
+generator = "You are a code generator. You can generate code based on the user's request. Please return the code as is."
+
 def analyzeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",

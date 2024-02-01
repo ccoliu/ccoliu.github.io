@@ -50,20 +50,31 @@ function processCodeInput() {
   const loader = document.getElementById("loader");
   const blocker = document.getElementById("blocker");
   const loadmsg = document.getElementById("loadmsg");
+  const myselect = document.getElementById("myselect");
 
   if (codeInput && result && loader && blocker && loadmsg) {
     if (codeInput.value.trim() === "") {
       result.value = "No code to run! Please retry.";
-      setTimeout(() => (result.value = ""), 5000);
+      setTimeout(() => (result.value = ""), 3000);
     } else {
       toggleVisibility("loader", true);
       toggleVisibility("blocker", true);
       toggleVisibility("loadmsg", true);
-      sendDataToServer(codeInput.value);
+      if (window.location.href.includes("modify")){
+        console.log("modify");
+        sendDataToAnalyzeServer(codeInput.value);
+      }
+      else {
+        console.log("generate");
+        sendDataToGenerateServer(codeInput.value, myselect.value);
+        console.log(myselect.value);
+      }
     }
   } else {
     console.error("One or more required elements not found.");
   }
+  console.log("ok");
+  return;
 }
 
 // Function to enhance text input experience
@@ -91,7 +102,7 @@ function enhanceTextInput(event, element) {
 }
 
 // Function to send code data to the server
-function sendDataToServer(code) {
+function sendDataToAnalyzeServer(code) {
   fetch("http://127.0.0.1:5000/process_code", {
     method: "POST",
     headers: {
@@ -111,9 +122,11 @@ function sendDataToServer(code) {
         textOutput.style.border = "1px solid #D0D0D0";
         textOutput.style.backgroundColor = "#0f0f0f";
         textOutput.style.marginBottom = "200px";
+        textOutput.style.height = "400px";
+        textOutput.style.overflowY = "auto";
         document.getElementById("AImsg").style.display = "block";
         document.getElementById("result").value = "Analyze Successful.";
-        setTimeout(() => (document.getElementById("result").value = ""), 5000);
+        setTimeout(() => (document.getElementById("result").value = ""), 3000);
       } else {
         console.error("Element with ID 'textOutput' not found.");
       }
@@ -126,6 +139,17 @@ function sendDataToServer(code) {
       document.getElementById("result").value =
         "An error occurred while processing the code.";
     });
+}
+
+function sendDataToGenerateServer(code, lang) {
+    //done later
+    toggleVisibility("loader", false);
+    toggleVisibility("blocker", false);
+    toggleVisibility("loadmsg", false);
+    console.log("sendDataToGenerateServer");
+    document.getElementById("result").value = "Generate Target: \"" + lang + "\" Successful."
+    setTimeout(() => document.getElementById("result").value = "", 3000);
+    return;
 }
 
 // Event listeners
@@ -171,7 +195,7 @@ if (uploadButton) {
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
         result.value = "No file selected! Please retry.";
-        setTimeout(() => (result.value = ""), 5000);
+        setTimeout(() => (result.value = ""), 3000);
         return;
     }
 
@@ -183,7 +207,7 @@ if (uploadButton) {
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
         result.value = "Invalid file type! Please retry.";
-        setTimeout(() => (result.value = ""), 5000);
+        setTimeout(() => (result.value = ""), 3000);
         return;
     }
 
@@ -195,7 +219,7 @@ if (uploadButton) {
 
     reader.onerror = function () {
         result.value = "Error reading file!";
-        setTimeout(() => (result.value = ""), 5000);
+        setTimeout(() => (result.value = ""), 3000);
     };
 
     reader.readAsText(file);
@@ -205,6 +229,6 @@ if (uploadButton) {
     toggleVisibility("loader", false);
     toggleVisibility("blocker", false);
     toggleVisibility("loadmsg", false);
-    setTimeout(() => (result.value = ""), 5000);
+    setTimeout(() => (result.value = ""), 3000);
   });
 }

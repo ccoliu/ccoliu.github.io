@@ -3,7 +3,20 @@ body {
     min-height: 100vh;
     min-width: 100vw;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
+}
+
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
 }
 
 @font-face {
@@ -15,10 +28,12 @@ body {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
+
 .textEnter {
     color: white;
     caret-color: white;
 }
+
 div.blocker {
     margin: 0;
     padding: 0;
@@ -26,12 +41,13 @@ div.blocker {
     background:#191919;
     opacity: 0.95;
     position: fixed;
-    height: 100%;
+    height: 150vh;
     width: 100%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 h4.loadmsg {
     box-sizing: border-box;
     display: none;
@@ -43,6 +59,7 @@ h4.loadmsg {
     left: 50.5%;
     transform: translate(-50%, -50%);
 }
+
 body.bg {
     background: #191919;
     color: #cccccc;
@@ -97,12 +114,14 @@ p.InnerShort {
 div.InnerPage {
     display: none;   
 }
+
 p.frontInfo {
     font: 400 20px/1.5 "Consolas", sans-serif;
     margin: 0;
     margin-left: 72px;
     padding: 0;
 }
+
 textarea.textEnter {
     font: 300 20px/1.5 "Consolas", sans-serif;
     font-weight: lighter;
@@ -120,14 +139,17 @@ textarea.textEnter {
     margin-left: auto;
     margin-right: auto;
 }
+
 textarea.textEnter:focus {
     outline: none;
 }
+
 div.buttonContainer {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 a.buttonClear {
     display: flex;
     justify-content: center;
@@ -182,8 +204,6 @@ a.buttonAnalyse {
     cursor: pointer;
 }
 
-
-
 a span img.uploadIcon {
     text-align: center;
     line-height: 50px;
@@ -231,9 +251,11 @@ input.message {
     cursor: default;
     margin-top: 10px;
 }
+
 input.message:focus {
     outline: none;
 }
+
 textarea.textOutput {
     z-index: 2;
     margin-top: 20px;
@@ -244,8 +266,9 @@ textarea.textOutput {
     font-weight: 200;
     color: #cccccc;
     background-color: transparent;
+    overflow-y: hidden;
     padding: 10px;
-    height: 400px;
+    height: 0px;
     width: 90%;
     resize: none;
     display: block;
@@ -254,9 +277,24 @@ textarea.textOutput {
     box-sizing: border-box;
     cursor: default
 }
+
 textarea.textOutput:focus {
     outline: none;
 }
+
+textarea.textOutput::-webkit-scrollbar {
+    width: 8px;
+}
+
+textarea.textOutput::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+textarea.textOutput::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
+}
+
 div.loader {
     margin-left: -20px;
     position: absolute;
@@ -287,43 +325,6 @@ h2.AImsg {
     cursor: default;
 }
 
-/* footer
-{
-    width: 100%;
-    display: block;
-    position: fixed;
-    bottom: 0;
-    padding: 20px;
-    margin-top: 50px;
-    z-index: 1;
-    border-top: 1px solid transparent;
-    background-color:transparent;
-    div.supporters {
-        margin-left: 20px;
-        h5 {
-            font: 400 20px/1.5 "Consolas", sans-serif;
-            margin: 0;
-            padding: 0;
-            margin-left: 10px;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            margin-left: 10px;
-            li {
-                font: 300 15px/1.5 "Consolas", sans-serif;
-                text-decoration: none;
-                color: #cccccc;
-                a {
-                    text-decoration: none;
-                    color: #cccccc;
-                }
-            }
-        }
-    }
-} */
-
 .background {
     position: fixed;
     top: 0;
@@ -338,7 +339,7 @@ h2.AImsg {
 
 /* 定義側邊欄的樣式 */
 .sidebar {
-    width: 20px; /* 收合時的寬度 */ 
+    width: 0.4em; /* 收合時的寬度 */ 
     height: 100vh; /* 收合時的高度 */ 
     position: fixed; /* 固定定位，使其不隨捲動而移動 */
     z-index: 1; /* 設定堆疊順序，確保在內容之上 */
@@ -346,7 +347,7 @@ h2.AImsg {
     left: 0; /* 距離頁面左側的距離 */
     background-color: #2c2405; /* 背景顏色 */
     overflow-x: hidden; /* 水平溢出內容隱藏 */
-    overflow-y: auto;
+    overflow-y: hidden;
     transition: 0.5s; /* 添加平滑過渡效果 */
     padding-top: 60px; /* 頂部內邊距，用於標題 */
     white-space: nowrap; /* 防止文字折行 */
@@ -370,7 +371,7 @@ h2.AImsg {
     transform-origin: center center; /* 設定旋轉的基點為中心 */
     transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
     white-space: nowrap; /* 防止文字折行 */
-    margin-top: 0; /* 確保標題沒有額外的上邊距 */
+    margin-top: 400px; /* 確保標題沒有額外的上邊距 */
 }
 
 /* 刪除默認的列表樣式（圓點） */
@@ -426,6 +427,20 @@ h2.AImsg {
     z-index: 2;
     width: 150px; /* 展開多寬 */
     padding-top: 0px;
+    overflow-y: auto;
+}
+
+.sidebar:hover::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar:hover::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
 }
 
 /* 鼠標懸停時顯示列表項 */
