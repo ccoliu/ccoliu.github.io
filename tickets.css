@@ -19,6 +19,17 @@ body::-webkit-scrollbar-thumb {
     border-radius: 10px;
 }
 
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('./icons/OldestOct.png');
+    filter: brightness(0.15);
+    z-index: -1;
+}
+
 @font-face {
     font-family: "Consolas";
     src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot");
@@ -29,67 +40,29 @@ body::-webkit-scrollbar-thumb {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
 
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes breathEffect {
-    0% {
-        background-color: #363636;
-    }
-    50% {
-        background-color: #8f8f8f;
-    }
-    100% {
-        background-color: #363636;
-    }
-}
-
-#myVideo {
-    position: fixed; /* 將影片固定在背景 */
+nav.navbar {
+    color: #cccccc;
+    left: 0;
+    height: 64px;
     display: flex;
-    right: 0;
-    bottom: 0;
-    min-width: 100%;
-    min-height: 100%;
-    z-index: -1; /* 確保影片在其他內容之下 */
-    filter: brightness(0.15);
-    animation: fadeIn .5s;
-}
-
-
-h4.loadmsg {
-    box-sizing: border-box;
-    display: none;
-    font: 400 25px/1.5 "Consolas", sans-serif;
-    margin: 0;
-    color: #cccccc;
-    position: absolute;
-    margin-left: -150px;
-    transform: translate(-50%, -50%);
-    justify-content: center;
     align-items: center;
-}
-
-body.bg {
-    background: #191919;
-    color: #cccccc;
-    margin: 0;
-    padding: 0;
+    justify-content: space-between;
+    padding: 10px;
+    width: 100%;
+    display: flex; /* This will lay out the children in a row */
+    align-items: center; /* This will vertically center the children in the navbar */
+    justify-content: flex-start; /* This will align children to the start of the navbar */
+    background: transparent;
 }
 
 h1.InnerText {
     font: 400 40px/1.5 "Noto Sans", sans-serif;
     font-weight: bold;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20%;
+    margin: 0;
+    padding-left: 25px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-top: 5px;
+    line-height: 48px;
 }
 
 h1 a {
@@ -101,165 +74,26 @@ h1 a:hover {
     text-decoration: none;
 }
 
-div.InnerPage {
+p.InnerShort {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;   
-    margin-bottom: 40px;
-}
-
-p.frontInfo {
-    text-align: center;
-}
-
-div.buttonContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-div.buttonContainer2 {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-a.GotoGenerate {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    line-height: 50px;
-    text-decoration: none;
-    padding-top: 10px;
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 50px 50px;
-    width: 150px;
-    height: 50px;
-    background-color: transparent;
-    color: white;
-    border: 1px solid #D0D0D0;
-    border-radius: 5px;
     margin: 0;
-    margin-right: 10px;
     padding: 0;
-    transition: background-color 0.2s ease;
+    margin-top: 13px;
+    margin-left: 20px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
 }
 
-a.GotoGenerate:hover {
-    background-color: #363636;
-}
-
-a.GotoModify {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    line-height: 50px;
-    padding-top: 10px;
-    text-decoration: none;
+h2.beginText {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 50px 50px;
-    width: 150px;
-    height: 50px;
-    background-color: transparent;
-    color: white;
-    border: 1px solid #D0D0D0;
-    border-radius: 5px;
-    margin: 0;
-    margin-right: 10px;
     padding: 0;
-    transition: background-color 0.2s ease;
+    margin-top: 13px;
+    margin-left: 40px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
+    color: #cccccc;
 }
 
-a.GotoTicket {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    line-height: 50px;
-    text-decoration: none;
-    padding-top: 10px;
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: 50px 50px;
-    width: 150px;
-    height: 50px;
-    background-color: transparent;
-    color: white;
-    border: 1px solid #D0D0D0;
-    border-radius: 5px;
-    margin: 0;
-    margin-right: 10px;
-    padding: 0;
-    transition: background-color 0.2s ease;
-}
-
-a.GotoTicket:hover {
-    background-color: #363636;
-}
-
-a.GotoGenerate:hover {
-    background-color: #363636;
-}
-
-a span img.TicketIcon {
-    text-align: center;
-    line-height: 50px;
-    width: 30px;
-    height: 30px;
-    color: white;
-    margin-top: 8px;
-    margin-left: 5px;
-}
-
-a span img.GenerateIcon {
-    text-align: center;
-    line-height: 50px;
-    width: 30px;
-    height: 30px;
-    color: white;
-    margin-top: 8px;
-    margin-left: 5px;
-}
-
-a span img.ModifyIcon {
-    text-align: center;
-    line-height: 50px;
-    width: 30px;
-    height: 30px;
-    color: white;
-    margin-top: 8px;
-    margin-left: 10px;
-}
-
-a.GotoModify:hover {
-    background-color: #363636;
-}
-
-
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #363636;
-    filter: brightness(0.15);
-    z-index: -2;
-    animation: breathEffect 3.5s infinite;
-}
-
-/* Dealing with side bar */
-
-/* 定義側邊欄的樣式 */
 .sidebar {
     width: 0.4em; /* 收合時的寬度 */ 
     height: 100vh; /* 收合時的高度 */ 
@@ -284,8 +118,7 @@ a.GotoModify:hover {
 
 /* 定義內容區域的樣式 */
 .content {
-    position: static;
-    padding-left: 50px; /* 內容區域距離側邊欄的左邊距 */
+    margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
 }
 
 /* 定義側邊欄的標題樣式 */
@@ -347,6 +180,7 @@ a.GotoModify:hover {
 
 /* 鼠標懸停時展開側邊欄 */
 .sidebar:hover {
+    z-index: 2;
     width: 150px; /* 展開多寬 */
     padding-top: 0px;
     overflow-y: auto;
@@ -389,7 +223,6 @@ a.GotoModify:hover {
     margin-top: 0; /* 確保標題沒有額外的上邊距 */
     opacity: 0;
 }
-
 
 /* 針對 h3 下的 ul 元素進行設定 */
 .sidebar h3 + ul {
@@ -443,7 +276,6 @@ a.GotoModify:hover {
 .sidebar:hover .sidebar-footer a {
     opacity: 1;
 }
-
 /* 針對 h3 下的 ul 中的鏈接進行設定 */
 .sidebar h3 + ul li a {
     color: #ddd; 
@@ -457,30 +289,3 @@ a.GotoModify:hover {
     text-decoration: none;
     color: #a7a7a7;
 }
-
-/* 定義懸停區域的樣式 */
-.hover-area {
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 10px;
-    z-index: 2;
-    background-color: transparent;
-    transition: background-color 0.5s;
-}
-
-.content-darkened {
-    filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
-    transition: filter 0.5s; /* 添加平滑過渡效果 */
-}
-
-@media screen and (max-height: 550px) {
-    body {
-        overflow-y: auto;
-    }
-    .sidebar h2 {
-        padding-top: 270px;
-    }
-}
-

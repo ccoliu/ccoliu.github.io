@@ -31,7 +31,7 @@ codeMaster = "You are a coding master, skilled at helping others modify their so
 
 styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enter."
 
-generator = "You are a code generator. You can generate code based on the user's request. Please return the code as is."
+generator = "You are a code generator. You can generate code based on the user's request. Please return the code in"
 
 def analyzeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
@@ -40,6 +40,22 @@ def analyzeCode(inputCode):
                 {
                     "role": "system",
                     "content": analyst,
+                },
+                {
+                    "role": "user",
+                    "content": inputCode,
+                }
+        ],
+    )
+    return analyzeResult.choices[0].message.content
+
+def generateCode(inputCode, target):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {
+                    "role": "system",
+                    "content": generator + target + ".",
                 },
                 {
                     "role": "user",
@@ -107,11 +123,8 @@ def process_code():
         code = data.get("code", "")
 
         result = f"{code}"  # Initialize the result.
-        
-        anaList = analyzeCode(code)
-        print ( anaList + "\n")
-        
-        optimizedResult = optimizeCode(code , anaList)
+
+        optimizedResult = optimizeCode(code)
         print ( optimizedResult + "\n")
         
         result = f"{optimizedResult}"
@@ -120,6 +133,23 @@ def process_code():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route("/gen_code", methods=["POST"])
+def gen_code():
+    try:
+        data = request.get_json()
+        code = data.get("code", "")
+        
+        lang = data.get("lang", "")
+        target = f"{lang}"
+
+        genList = generateCode(code,target)
+        print ( genList + "\n")
+        
+        genresult = f"{genList}"
+        # Return the processed result to the frontend
+        return jsonify({"result": genresult})
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

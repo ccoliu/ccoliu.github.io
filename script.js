@@ -31,14 +31,16 @@ const video = document.getElementById('myVideo');
 sidebar.addEventListener('mouseenter', () => {
     // 添加內容區域的暗化效果
     content.classList.add('content-darkened');
-    supporters.style.display = 'block'; // 顯示 supporters
+    document.body.style.overflowY = 'hidden'; // 鎖定網頁滾動
+    document.getElementById("textOutput").style.overflowY = "hidden";
 });
 
 // 側邊欄縮回時觸發事件
 sidebar.addEventListener('mouseleave', () => {
     // 移除內容區域的暗化效果
     content.classList.remove('content-darkened');
-    supporters.style.display = 'none'; // 隱藏 supporters
+    document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
+    document.getElementById("textOutput").style.overflowY = "auto";
 });
 
 
@@ -122,7 +124,7 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.border = "1px solid #D0D0D0";
         textOutput.style.backgroundColor = "#0f0f0f";
         textOutput.style.marginBottom = "200px";
-        textOutput.style.height = "400px";
+        textOutput.style.height = "50%";
         textOutput.style.overflowY = "auto";
         document.getElementById("AImsg").style.display = "block";
         document.getElementById("result").value = "Analyze Successful.";
@@ -142,14 +144,42 @@ function sendDataToAnalyzeServer(code) {
 }
 
 function sendDataToGenerateServer(code, lang) {
-    //done later
-    toggleVisibility("loader", false);
-    toggleVisibility("blocker", false);
-    toggleVisibility("loadmsg", false);
-    console.log("sendDataToGenerateServer");
-    document.getElementById("result").value = "Generate Target: \"" + lang + "\" Successful."
-    setTimeout(() => document.getElementById("result").value = "", 3000);
-    return;
+    fetch("http://127.0.0.1:5000/gen_code", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code, lang }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+        const textOutput = document.getElementById("textOutput");
+        if (textOutput) {
+            toggleVisibility("loader", false);
+            toggleVisibility("blocker", false);
+            toggleVisibility("loadmsg", false);
+            textOutput.value = data.result;
+            textOutput.style.display = "flex";
+            textOutput.style.border = "1px solid #D0D0D0";
+            textOutput.style.backgroundColor = "#0f0f0f";
+            textOutput.style.marginBottom = "200px";
+            textOutput.style.height = "400px";
+            textOutput.style.overflowY = "auto";
+            document.getElementById("AImsg").style.display = "block";
+            document.getElementById("result").value = "Generate Successful.";
+            setTimeout(() => (document.getElementById("result").value = ""), 3000);
+        } else {
+            console.error("Element with ID 'textOutput' not found.");
+        }
+    })
+    .catch((error) => {
+        toggleVisibility("loader", false);
+        toggleVisibility("blocker", false);
+        toggleVisibility("loadmsg", false);
+        console.error("Error:", error);
+        document.getElementById("result").value =
+            "An error occurred while processing the code.";
+    });
 }
 
 // Event listeners
@@ -232,3 +262,4 @@ if (uploadButton) {
     setTimeout(() => (result.value = ""), 3000);
   });
 }
+

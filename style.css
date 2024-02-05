@@ -275,7 +275,8 @@ textarea.textOutput {
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
-    cursor: default
+    cursor: default;
+    border-radius: 10px;
 }
 
 textarea.textOutput:focus {
@@ -320,7 +321,7 @@ h2.AImsg {
     font: 300 20px/1.5 "Lexend Deca", sans-serif;
     margin: 0;
     padding: 0;
-    margin-left: 95px;
+    margin-left: 5em;
     margin-top: 20px;
     cursor: default;
 }
@@ -557,6 +558,8 @@ h2.AImsg {
     justify-content: center;
     align-items: center;
     font: "Lexend Deca", sans-serif;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 a.buttonUpload {
