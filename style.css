@@ -29,6 +29,12 @@ body::-webkit-scrollbar-thumb {
     url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
 }
 
+@keyframes borderLighten {
+    0% { box-shadow: none; }
+    50% { box-shadow:  0 0 10px 0 #cccccc; }
+    100% { box-shadow: none; }
+}
+
 .textEnter {
     color: white;
     caret-color: white;
@@ -277,6 +283,13 @@ textarea.textOutput {
     box-sizing: border-box;
     cursor: default;
     border-radius: 10px;
+    overflow-y: hidden;
+}
+
+textarea.textOutput:hover {
+    display: none;
+    overflow-y: auto;
+    animation: borderLighten 3.5s linear infinite;
 }
 
 textarea.textOutput:focus {

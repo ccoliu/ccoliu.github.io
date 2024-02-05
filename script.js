@@ -27,6 +27,7 @@ const content = document.querySelector('.content');
 const supporters = document.querySelector('.supporters');
 const h3Supporters = document.querySelector('h3.supporters');
 const video = document.getElementById('myVideo');
+const textOutput = document.getElementById('textOutput');
 // 側邊欄展開時觸發事件
 sidebar.addEventListener('mouseenter', () => {
     // 添加內容區域的暗化效果
@@ -43,7 +44,13 @@ sidebar.addEventListener('mouseleave', () => {
     document.getElementById("textOutput").style.overflowY = "auto";
 });
 
+textOutput.addEventListener('mouseenter', () => {
+    document.body.style.overflowY = 'hidden'; // 解鎖網頁滾動
+});
 
+textOutput.addEventListener('mouseleave', () => {
+    document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
+});
 
 // Function to process code input
 function processCodeInput() {
@@ -123,9 +130,9 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.display = "flex";
         textOutput.style.border = "1px solid #D0D0D0";
         textOutput.style.backgroundColor = "#0f0f0f";
-        textOutput.style.marginBottom = "200px";
-        textOutput.style.height = "50%";
-        textOutput.style.overflowY = "auto";
+        textOutput.style.marginBottom = "100px";
+        textOutput.style.height = "30%";
+        textOutput.style.hover.display = "block";
         document.getElementById("AImsg").style.display = "block";
         document.getElementById("result").value = "Analyze Successful.";
         setTimeout(() => (document.getElementById("result").value = ""), 3000);
@@ -140,6 +147,7 @@ function sendDataToAnalyzeServer(code) {
       console.error("Error:", error);
       document.getElementById("result").value =
         "An error occurred while processing the code.";
+      setTimeout(() => (document.getElementById("result").value = ""), 5000);
     });
 }
 
@@ -162,9 +170,9 @@ function sendDataToGenerateServer(code, lang) {
             textOutput.style.display = "flex";
             textOutput.style.border = "1px solid #D0D0D0";
             textOutput.style.backgroundColor = "#0f0f0f";
-            textOutput.style.marginBottom = "200px";
-            textOutput.style.height = "400px";
-            textOutput.style.overflowY = "auto";
+            textOutput.style.marginBottom = "100px";
+            textOutput.style.height = "50%";
+            textOutput.style.hover.display = "block";
             document.getElementById("AImsg").style.display = "block";
             document.getElementById("result").value = "Generate Successful.";
             setTimeout(() => (document.getElementById("result").value = ""), 3000);
@@ -177,8 +185,8 @@ function sendDataToGenerateServer(code, lang) {
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
         console.error("Error:", error);
-        document.getElementById("result").value =
-            "An error occurred while processing the code.";
+        document.getElementById("result").value = "An error occurred while processing the code.";
+        setTimeout(() => (document.getElementById("result").value = ""), 5000);
     });
 }
 
