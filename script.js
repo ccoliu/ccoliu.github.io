@@ -220,7 +220,8 @@ function createTicket(data) {
   }
   var ticket = [numberseq, recordText, data, codeType, processTime];
   console.log(ticket);
-  localStorage.setItem(JSON.stringify(numberseq), JSON.stringify(ticket));
+  localStorage.setItem('ticket' + JSON.stringify(numberseq), ticket);
+  console.log('ticket' + JSON.stringify(numberseq));
   numberseq++;
   localStorage.setItem("numberseq", numberseq);
   console.log(numberseq);

@@ -317,7 +317,7 @@ div.templateTicketContainer {
     height: 80vh;
 }
 
-div.ticket {
+.ticket1, .ticket2, .ticket3, .ticket4, .ticket5, .ticket6, .ticket7, .ticket8, .ticket9, .ticket10 {
     display: block;
     justify-content: center;
     align-items: center;
