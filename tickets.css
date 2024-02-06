@@ -1,6 +1,6 @@
 body {
     position: static;
-    height: 60vh;
+    height: 100vh;
     width: 100vw;
     overflow-x: hidden;
     overflow-y: auto;
@@ -288,4 +288,101 @@ h2.beginText {
 .sidebar ul li a:hover {
     text-decoration: none;
     color: #a7a7a7;
+}
+
+.content-darkened {
+    filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
+    transition: filter 0.5s; /* 添加平滑過渡效果 */
+}
+
+@media screen and (max-height: 550px) {
+    body {
+        overflow-y: auto;
+    }
+    .sidebar h2 {
+        padding-top: 270px;
+    }
+}
+
+div.templateTicketContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    justify-content: center;
+    margin-top: 500px;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100vw;
+    height: 80vh;
+}
+
+div.ticket {
+    display: block;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    background-color: #111111;
+    border: 1.5px solid #cccccc;
+    border-radius: 10px;
+    width: 30vw;
+    min-width: 200px;
+    height: 150px;
+    font: 200 16px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+}
+
+
+h3.ticketTitle {
+    margin-top: 5px;
+    white-space: nowrap;
+}
+
+p.ticketseq {
+    font: 200 14px/1.2 "Lexend Deca", sans-serif;
+    font-weight: lighter;
+    margin-left: 10px;
+}
+
+
+.ticketTitle, .ticketseq {
+    display:inline-block;
+}
+
+div.ticketdesc {
+    width:inherit;
+    height: 55px;
+}
+
+p.ticketDescription {
+    font: 200 14px/1.2 "Lexend Deca", sans-serif;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #ababab;
+    font-weight: lighter;
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    white-space: normal;
+}
+
+p.ticketCreateTime {
+    font: 100 12px/1.1 "Lexend Deca", sans-serif;
+    font-weight: lighter;
+    padding-top: 0.1em;
+}
+
+p.footerText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: 200 12px/1.1 "Lexend Deca", sans-serif;
+    font-weight: lighter;
+    padding-top: 0.1em;
+    margin-top: 500px;
+    margin-bottom: 100px;
+    margin-left: 50px;
+    color: #ababab;
 }

@@ -22,35 +22,50 @@ function clearFields() {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
   }
 }
+
+
 const sidebar = document.querySelector('.sidebar');
 const content = document.querySelector('.content');
 const supporters = document.querySelector('.supporters');
 const h3Supporters = document.querySelector('h3.supporters');
 const video = document.getElementById('myVideo');
 const textOutput = document.getElementById('textOutput');
+let originBodyOverflowY = document.body.style.overflowY;
+
+if (textOutput) {
+  let originTextOutputOverflowY = textOutput.style.overflowY;
+}
+
+let recordText = "";
+let codeType = "";
+let processTime = 0;
+
+
 // 側邊欄展開時觸發事件
 sidebar.addEventListener('mouseenter', () => {
     // 添加內容區域的暗化效果
     content.classList.add('content-darkened');
     document.body.style.overflowY = 'hidden'; // 鎖定網頁滾動
-    document.getElementById("textOutput").style.overflowY = "hidden";
+    if (textOutput) document.getElementById("textOutput").style.overflowY = "hidden";
 });
 
 // 側邊欄縮回時觸發事件
 sidebar.addEventListener('mouseleave', () => {
     // 移除內容區域的暗化效果
     content.classList.remove('content-darkened');
-    document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
-    document.getElementById("textOutput").style.overflowY = "auto";
+    document.body.style.overflowY = originBodyOverflowY; // 解鎖網頁滾動
+    if (textOutput) document.getElementById("textOutput").style.overflowY = originTextOutputOverflowY;
 });
 
-textOutput.addEventListener('mouseenter', () => {
-    document.body.style.overflowY = 'hidden'; // 解鎖網頁滾動
-});
+if (textOutput){
+    textOutput.addEventListener('mouseenter', () => {
+        document.body.style.overflowY = 'hidden'; // 解鎖網頁滾動
+    });
 
-textOutput.addEventListener('mouseleave', () => {
-    document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
-});
+    textOutput.addEventListener('mouseleave', () => {
+        document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
+    });
+}
 
 // Function to process code input
 function processCodeInput() {
@@ -66,14 +81,18 @@ function processCodeInput() {
       result.value = "No code to run! Please retry.";
       setTimeout(() => (result.value = ""), 3000);
     } else {
+      recordText = codeInput.value;
+      processTime = new Date().getTime();
       toggleVisibility("loader", true);
       toggleVisibility("blocker", true);
       toggleVisibility("loadmsg", true);
       if (window.location.href.includes("modify")){
+        codeType = "Modify Code";
         console.log("modify");
         sendDataToAnalyzeServer(codeInput.value);
       }
       else {
+        codeType = "Generate Code";
         console.log("generate");
         sendDataToGenerateServer(codeInput.value, myselect.value);
         console.log(myselect.value);
@@ -85,6 +104,7 @@ function processCodeInput() {
   console.log("ok");
   return;
 }
+
 
 // Function to enhance text input experience
 function enhanceTextInput(event, element) {
@@ -135,6 +155,7 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.hover.display = "block";
         document.getElementById("AImsg").style.display = "block";
         document.getElementById("result").value = "Analyze Successful.";
+        createTicket(data.result);
         setTimeout(() => (document.getElementById("result").value = ""), 3000);
       } else {
         console.error("Element with ID 'textOutput' not found.");
@@ -172,9 +193,9 @@ function sendDataToGenerateServer(code, lang) {
             textOutput.style.backgroundColor = "#0f0f0f";
             textOutput.style.marginBottom = "100px";
             textOutput.style.height = "50%";
-            textOutput.style.hover.display = "block";
             document.getElementById("AImsg").style.display = "block";
             document.getElementById("result").value = "Generate Successful.";
+            createTicket(data.result);
             setTimeout(() => (document.getElementById("result").value = ""), 3000);
         } else {
             console.error("Element with ID 'textOutput' not found.");
@@ -188,6 +209,21 @@ function sendDataToGenerateServer(code, lang) {
         document.getElementById("result").value = "An error occurred while processing the code.";
         setTimeout(() => (document.getElementById("result").value = ""), 5000);
     });
+}
+
+// Function to create a ticket
+
+function createTicket(data) {
+  var numberseq = localStorage.getItem("numberseq");
+  if (numberseq == null) {
+    numberseq = 0;
+  }
+  var ticket = [numberseq, recordText, data, codeType, processTime];
+  console.log(ticket);
+  localStorage.setItem(JSON.stringify(numberseq), JSON.stringify(ticket));
+  numberseq++;
+  localStorage.setItem("numberseq", numberseq);
+  console.log(numberseq);
 }
 
 // Event listeners
