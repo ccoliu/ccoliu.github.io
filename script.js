@@ -54,7 +54,7 @@ sidebar.addEventListener('mouseleave', () => {
     // 移除內容區域的暗化效果
     content.classList.remove('content-darkened');
     document.body.style.overflowY = originBodyOverflowY; // 解鎖網頁滾動
-    if (textOutput) document.getElementById("textOutput").style.overflowY = originTextOutputOverflowY;
+    if (textOutput && originBodyOverflowY) document.getElementById("textOutput").style.overflowY = originTextOutputOverflowY;
 });
 
 if (textOutput){
@@ -152,7 +152,6 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.backgroundColor = "#0f0f0f";
         textOutput.style.marginBottom = "100px";
         textOutput.style.height = "30%";
-        textOutput.style.hover.display = "block";
         document.getElementById("AImsg").style.display = "block";
         document.getElementById("result").value = "Analyze Successful.";
         createTicket(data.result);
@@ -214,14 +213,16 @@ function sendDataToGenerateServer(code, lang) {
 // Function to create a ticket
 
 function createTicket(data) {
-  var numberseq = localStorage.getItem("numberseq");
+  let numberseq = localStorage.getItem("numberseq");
   if (numberseq == null) {
-    numberseq = 0;
+    numberseq = 1;
   }
-  var ticket = [numberseq, recordText, data, codeType, processTime];
+  var ticket = [numberseq, codeType, processTime];
   console.log(ticket);
-  localStorage.setItem('ticket' + JSON.stringify(numberseq), ticket);
-  console.log('ticket' + JSON.stringify(numberseq));
+  localStorage.setItem('ticket'+ numberseq, ticket);
+  localStorage.setItem('record'+numberseq, recordText);
+  localStorage.setItem('response'+ numberseq, data);
+  console.log('ticket' + numberseq);
   numberseq++;
   localStorage.setItem("numberseq", numberseq);
   console.log(numberseq);

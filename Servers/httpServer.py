@@ -124,7 +124,7 @@ def process_code():
 
         result = f"{code}"  # Initialize the result.
 
-        optimizedResult = optimizeCode(code)
+        optimizedResult = analyzeCode(code)
         print ( optimizedResult + "\n")
         
         result = f"{optimizedResult}"

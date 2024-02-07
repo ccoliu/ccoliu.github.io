@@ -84,15 +84,21 @@ p.InnerShort {
     padding-right: 20px;
 }
 
-h2.beginText {
+h2.beginText, h2.TicketInfo {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     padding: 0;
-    margin-top: 13px;
+    margin-top: 10px;
     margin-left: 40px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-right: 20px;
+    margin-bottom: 10px;
     color: #cccccc;
 }
+
+.container {
+    margin-bottom: 10px;
+}
+
 
 .sidebar {
     width: 0.4em; /* 收合時的寬度 */ 
@@ -339,22 +345,24 @@ div.templateTicketContainer {
 h3.ticketTitle {
     margin-top: 5px;
     white-space: nowrap;
+    margin-bottom: 2.5px;
 }
 
 p.ticketseq {
     font: 200 14px/1.2 "Lexend Deca", sans-serif;
     font-weight: lighter;
     margin-left: 10px;
+    margin-bottom: 2.5px;
 }
 
 
 .ticketTitle, .ticketseq {
-    display:inline-block;
+    display: inline-block;
 }
 
 div.ticketdesc {
-    width:inherit;
-    height: 55px;
+    width: inherit;
+    height: 75px;
 }
 
 p.ticketDescription {
@@ -363,7 +371,7 @@ p.ticketDescription {
     padding-right: 10px;
     color: #ababab;
     font-weight: lighter;
-    margin-top: 0.3em;
+    margin-top: 0.15em;
     margin-bottom: 0.3em;
     white-space: normal;
 }
@@ -385,4 +393,69 @@ p.footerText {
     margin-bottom: 100px;
     margin-left: 50px;
     color: #ababab;
+}
+
+.ticketref1, .ticketref2, .ticketref3, .ticketref4, .ticketref5, .ticketref6, .ticketref7, .ticketref8, .ticketref9, .ticketref10 {
+    text-decoration: none;
+    color:#ababab;
+}
+
+.ticketref1:hover {
+    .ticket1 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref2:hover {
+    .ticket2 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref3:hover {
+    .ticket3 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref4:hover {
+    .ticket4 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref5:hover {
+    .ticket5 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref6:hover {
+    .ticket6 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref7:hover {
+    .ticket7 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref8:hover {
+    .ticket8 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref9:hover {
+    .ticket9 {
+        background-color: #0a0a0a;
+    }
+}
+
+.ticketref10:hover {
+    .ticket10 {
+        background-color: #0a0a0a;
+    }
 }
