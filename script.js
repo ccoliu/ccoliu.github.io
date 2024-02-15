@@ -219,9 +219,9 @@ function createTicket(data) {
   }
   var ticket = [numberseq, codeType, processTime];
   console.log(ticket);
-  localStorage.setItem('ticket'+ numberseq, ticket);
-  localStorage.setItem('record'+numberseq, recordText);
-  localStorage.setItem('response'+ numberseq, data);
+  localStorage.setItem('ticket' + numberseq, ticket);
+  localStorage.setItem('record' + numberseq, recordText);
+  localStorage.setItem('response' + numberseq, data);
   console.log('ticket' + numberseq);
   numberseq++;
   localStorage.setItem("numberseq", numberseq);

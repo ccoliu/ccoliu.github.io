@@ -1,4 +1,6 @@
 
+let associatedTicketSeq = new Array(11);
+
 function uploadTicket() {
     let avaliableTicket = 0;
     let numberseq = localStorage.getItem('numberseq');
@@ -9,6 +11,8 @@ function uploadTicket() {
         if (numberseqInt > 0)
         {
             avaliableTicket++;
+
+            associatedTicketSeq[i] = numberseqInt;
 
             let ticket = localStorage.getItem('ticket' + numberseqInt); //numberseq, codeType, processTime
             let record = localStorage.getItem('record' + numberseqInt); //response
@@ -79,4 +83,116 @@ window.addEventListener('load', function() {
     console.log('ticket.js loaded');
     let Tickets = uploadTicket();
     document.querySelector('.TicketInfo').innerHTML = "Available Tickets: " + Tickets;
+});
+
+
+let ticket1 = document.querySelector('.ticket1');
+let ticket2 = document.querySelector('.ticket2');
+let ticket3 = document.querySelector('.ticket3');
+let ticket4 = document.querySelector('.ticket4');
+let ticket5 = document.querySelector('.ticket5');
+let ticket6 = document.querySelector('.ticket6');
+let ticket7 = document.querySelector('.ticket7');
+let ticket8 = document.querySelector('.ticket8');
+let ticket9 = document.querySelector('.ticket9');
+let ticket10 = document.querySelector('.ticket10');
+
+ticket1.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[1]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[1]); //record
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[1]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket2.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[2]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[2]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[2]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket3.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[3]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[3]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[3]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket4.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[4]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[4]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[4]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket5.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[5]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[5]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[5]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket6.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[6]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[6]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[6]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket7.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[7]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[7]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[7]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket8.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[8]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[8]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[8]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket9.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[9]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[9]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[9]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
+});
+
+ticket10.addEventListener('click', () => {
+    chosedticket = localStorage.getItem('ticket' + associatedTicketSeq[10]); //numberseq, codeType, processTime
+    chosedrecord = localStorage.getItem('record' + associatedTicketSeq[10]); //response
+    chosedresponse = localStorage.getItem('response' + associatedTicketSeq[10]); //response
+    localStorage.setItem('currentTicket', chosedticket);
+    localStorage.setItem('currentRecord', chosedrecord);
+    localStorage.setItem('currentResponse', chosedresponse);
+    window.location.href = 'tickethistory.html';
 });
