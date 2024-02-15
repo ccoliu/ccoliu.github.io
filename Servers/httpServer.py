@@ -13,16 +13,17 @@ with open('key.txt', 'r') as file:
 
 api_key_model_1 = keys[0].strip()
 api_key_model_2 = keys[1].strip()
+api_key_model_3 = keys[2].strip()
 
 # Assign API keys to different models.
 client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
-
+client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 # Display the server's web page.
 @app.route("/", methods=["GET"])
 def index():
-    return "Hello! This is the code assistance server home page!"
+    return "Hello! This is the Code Assistance's Server home page!"
 
 # Define system roles and their instructions.
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
