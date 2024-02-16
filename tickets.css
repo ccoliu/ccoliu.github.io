@@ -99,214 +99,14 @@ h2.beginText, h2.TicketInfo {
     margin-bottom: 10px;
 }
 
-
-.sidebar {
-    width: 0.4em; /* 收合時的寬度 */ 
-    height: 100vh; /* 收合時的高度 */ 
-    position: fixed; /* 固定定位，使其不隨捲動而移動 */
-    z-index: 1; /* 設定堆疊順序，確保在內容之上 */
-    top: 0; /* 距離頁面頂部的距離 */
-    left: 0; /* 距離頁面左側的距離 */
-    background-color: #2c2405; /* 背景顏色 */
-    overflow-x: hidden; /* 水平溢出內容隱藏 */
-    overflow-y: hidden;
-    transition: 0.5s; /* 添加平滑過渡效果 */
-    padding-top: 60px; /* 頂部內邊距，用於標題 */
-    white-space: nowrap; /* 防止文字折行 */
-    display: flex; /* 使用Flex佈局 */
-    flex-direction: column; /* 子項垂直排列 */
-    justify-content: center; /* 垂直居中對齊 */
-    background-color: #193631; 
-    color: #ddd; 
-    padding: 20px; 
-    font-family: 'Lexend Deca', sans-serif;
-}
-
 /* 定義內容區域的樣式 */
 .content {
     margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
 }
 
-/* 定義側邊欄的標題樣式 */
-.sidebar h2 {
-    transform: rotate(-90deg); /* 旋轉標題 */
-    transform-origin: center center; /* 設定旋轉的基點為中心 */
-    transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
-    white-space: nowrap; /* 防止文字折行 */
-    margin-top: 400px; /* 確保標題沒有額外的上邊距 */
-}
-
-/* 刪除默認的列表樣式（圓點） */
-.sidebar ul {
-    list-style-type: none; /* 去掉列表項的默認圓點 */
-    padding: 0; /* 去掉內邊距 */
-    margin: 0; /* 去掉外邊距 */
-    opacity: 0; /* 初始時隱藏列表 */
-    transition: opacity 0.5s ease-in-out; /* 添加平滑過渡效果 */
-}
-
-/* 定義側邊欄的列表項樣式 */
-.sidebar ul li {
-    padding: 8px 0; /* 列表項的上下內邊距 */
-    transition: transform 0.5s; /* 平滑過渡效果 */
-    transform: translateX(-100%); /* 初始時向左隱藏 */
-}
-
-/* 自訂樣式 */
-.sidebar ul li a {
-    color: #ddd; 
-    text-decoration: none; 
-    transition: color 0.3s; 
-    display: block; /* 塊級顯示 */
-}
-
-.sidebar a {
-    padding: 8px 8px 8px 32px; /* 鏈接內邊距 */
-    text-decoration: none; /* 去掉下劃線 */
-    font-size: 20px; /* 字體大小 */
-    color: #818181; /* 字體顏色 */
-    display: block; /* 顯示為塊級元素 */
-    transition: 0.3s; /* 平滑過渡效果 */
-}
-
-/* 鼠標懸停時的效果 */
-.sidebar:hover h2 {
-    transform: none; /* 取消旋轉 */
-    margin-top: 50px; /* 重置上邊距 */
-}
-
-.sidebar ul li a:hover {
-    color: rgb(138, 130, 184);
-    text-decoration: underline;
-}
-
-.sidebar a:hover {
-    color: #8763f4;
-}
-
-/* 鼠標懸停時展開側邊欄 */
-.sidebar:hover {
-    z-index: 2;
-    width: 150px; /* 展開多寬 */
-    padding-top: 0px;
-    overflow-y: auto;
-}
-
-.sidebar:hover::-webkit-scrollbar {
-    width: 8px;
-}
-
-.sidebar:hover::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.sidebar:hover::-webkit-scrollbar-thumb {
-    background: #c7c7c7;
-    border-radius: 10px;
-}
-
-/* 鼠標懸停時顯示列表項 */
-.sidebar:hover ul li {
-    transform: translateX(0%);
-}
-
-/* 鼠標懸停時顯示列表 */
-.sidebar:hover ul {
-    opacity: 1;
-}
-
-/* 鼠標懸停時顯示列表 */
-.sidebar:hover h3 {
-    transform: none; /* 取消旋轉 */
-    margin-top: 50px; /* 重置上邊距 */
-    opacity: 1;
-}
-.sidebar h3 {
-    transform: rotate(-90deg); /* 旋轉標題 */
-    transform-origin: center center; /* 設定旋轉的基點為中心 */
-    transition: transform 0.5s, margin-top 0.5s; /* 添加平滑過渡效果 */
-    white-space: nowrap; /* 防止文字折行 */
-    margin-top: 0; /* 確保標題沒有額外的上邊距 */
-    opacity: 0;
-}
-
-/* 針對 h3 下的 ul 元素進行設定 */
-.sidebar h3 + ul {
-    order: 3; /* 控制 ul 的順序，將其移到最下方 */
-    padding: 0; /* 去掉內邊距 */
-    margin: 0; /* 去掉外邊距 */
-    opacity: 0; /* 初始時隱藏列表 */
-    transition: opacity 0.5s ease-in-out; /* 添加平滑過渡效果 */
-}
-
-/* 針對 h3 下的 ul 中的列表項進行設定 */
-.sidebar h3 + ul li {
-    padding: 8px 0; /* 列表項的上下內邊距 */
-    transition: transform 0.5s; /* 平滑過渡效果 */
-    transform: translateX(-100%); /* 初始時向左隱藏 */
-}
-
-.sidebar-footer {
-    position: relative;
-    top: 70%;
-    padding-bottom: 20px;
-}
-
-.sidebar-footer a{
-    font-family: "Lexend Deca", sans-serif;
-    left: 0; /* 確保元素從左邊界開始 */
-    width: 100%; /* 確保元素寬度與側邊欄相同 */
-    text-align:left; /* 文字居中 */
-    padding: 10px; /* 添加一些內邊距 */
-    color: #fff; /* 文字顏色 */
-    background: transparent; /* 背景顏色，根據您的側邊欄樣式調整 */
-    font-size: 12px; /* 字體大小 */
-    padding-left: 15px; /* 左側內邊距，根據需要調整這個值 */
-    opacity: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: -15px;
-}
-
-.sidebar-footer a img {
-    width: 40px;
-    height: 40px;
-}
-
-.sidebar-footer a:hover {
-    color: #fff;
-    text-decoration: none;
-}
-
-.sidebar:hover .sidebar-footer a {
-    opacity: 1;
-}
-/* 針對 h3 下的 ul 中的鏈接進行設定 */
-.sidebar h3 + ul li a {
-    color: #ddd; 
-    text-decoration: none; 
-    transition: color 0.3s; 
-    display: block; /* 塊級顯示 */
-    font-size: 16px; /* 調整字體大小為 16 像素，根據需要調整值 */
-}
-
-.sidebar ul li a:hover {
-    text-decoration: none;
-    color: #a7a7a7;
-}
-
-.content-darkened {
-    filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
-    transition: filter 0.5s; /* 添加平滑過渡效果 */
-}
-
 @media screen and (max-height: 550px) {
     body {
         overflow-y: auto;
-    }
-    .sidebar h2 {
-        padding-top: 270px;
     }
 }
 
@@ -315,12 +115,12 @@ div.templateTicketContainer {
     flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
-    margin-top: 34em;
+    margin-top: 2em;
     margin-bottom: 0.5em;
     margin-left: auto;
     margin-right: auto;
     width: 100vw;
-    height: 80vh;
+    height: auto;
 }
 
 .ticket1, .ticket2, .ticket3, .ticket4, .ticket5, .ticket6, .ticket7, .ticket8, .ticket9, .ticket10 {
@@ -334,13 +134,13 @@ div.templateTicketContainer {
     background-color: #111111;
     border: 1.5px solid #cccccc;
     border-radius: 10px;
-    width: 30vw;
+    width: auto;
     min-width: 200px;
-    height: 150px;
+    min-height: 10px;
+    height: auto;
     font: 200 16px/1.5 "Lexend Deca", sans-serif;
     color: #cccccc;
 }
-
 
 h3.ticketTitle {
     margin-top: 5px;
@@ -362,7 +162,7 @@ p.ticketseq {
 
 div.ticketdesc {
     width: inherit;
-    height: 75px;
+    height: auto;
 }
 
 p.ticketDescription {
@@ -373,7 +173,7 @@ p.ticketDescription {
     font-weight: lighter;
     margin-top: 0.15em;
     margin-bottom: 0.3em;
-    white-space: normal;
+    white-space: pre;
 }
 
 p.ticketCreateTime {
@@ -389,10 +189,11 @@ p.footerText {
     font: 200 12px/1.1 "Lexend Deca", sans-serif;
     font-weight: lighter;
     padding-top: 0.1em;
-    margin-top: 500px;
+    margin-top: 2em;
     margin-bottom: 100px;
-    margin-left: 50px;
+    margin-left: 40px;
     color: #ababab;
+    text-align: center;
 }
 
 .ticketref1, .ticketref2, .ticketref3, .ticketref4, .ticketref5, .ticketref6, .ticketref7, .ticketref8, .ticketref9, .ticketref10 {
@@ -461,14 +262,10 @@ p.footerText {
 }
 
 @media screen and (max-width: 1100px) {
-    div.templateTicketContainer {
-        margin-top: 62em;
+    .templateTicketContainer {
+        margin-left: 50px;
     }
-    .ticket1, .ticket2, .ticket3, .ticket4, .ticket5, .ticket6, .ticket7, .ticket8, .ticket9, .ticket10 {
-        height: 220px;
-    }
-    div.ticketdesc {
-        width: inherit;
-        height: 150px;
+    .footerText {
+        margin-left: 50px;
     }
 }

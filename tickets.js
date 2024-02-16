@@ -73,7 +73,7 @@ function uploadTicket() {
         else
         {
             let ticket = document.querySelector('.ticket' + i);
-            ticket.style.visibility = 'hidden';
+            ticket.remove();
         }
     }
     return avaliableTicket;

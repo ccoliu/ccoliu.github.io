@@ -1,3 +1,4 @@
+
 const yesBtn = document.querySelector('.yesbtn');
 let yesBtnClicked = false;
 
@@ -14,7 +15,7 @@ window.onload = () => {
     const chosedRecord = localStorage.getItem('currentRecord'); //desc
     const chosedResponse = localStorage.getItem('currentResponse'); //response
 
-    if (chosedTicket == null || chosedRecord == null) {
+    if (chosedTicket == null || chosedRecord == null || chosedResponse == null) {
         window.location.href = 'tickets.html';
     }
 
@@ -67,6 +68,7 @@ yesBtn.addEventListener('click', () => {
     if (buttonFirstClicked == false) {
         document.querySelector('.comment').style.display = "block";
         document.querySelector('.sendbtncontent').style.display = "flex";
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 500);
         buttonFirstClicked = true;
     }
     yesBtn.style.backgroundColor = "#5ae366";
@@ -82,6 +84,7 @@ noBtn.addEventListener('click', () => {
     if (buttonFirstClicked == false) {
         document.querySelector('.comment').style.display = "block";
         document.querySelector('.sendbtncontent').style.display = "flex";
+        setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 500);
         buttonFirstClicked = true;
     }
     noBtn.style.backgroundColor = "#f66868";
