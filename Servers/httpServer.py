@@ -157,7 +157,7 @@ def retreive_code():
     try:
         data = request.get_json()
 
-        f = open('comment.txt', "w")
+        f = open('comment.txt', "a")
         comments = f"{data}"
         f.write(comments + '\n')
 

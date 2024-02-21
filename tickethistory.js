@@ -9,21 +9,18 @@ const sendBtn = document.querySelector('.sendbtn');
 
 let buttonFirstClicked = false;
 
+let commentPosted = false;
+
 function sendCode(dataChunk) {
-    fetch('http://127.0.0.1:5000/retrieve_comment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({dataChunk}),
-        })
-        .then((response) => response.json())
-        .then((data) => {
-            console.log('Success:', data);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    setTimeout(() => {
+        fetch('http://127.0.0.1:5000/retrieve_comment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({dataChunk}),
+    })
+    }, 3500);
 }
 
 window.onload = () => {
@@ -37,6 +34,7 @@ window.onload = () => {
     if (chosedTicket == null || chosedRecord == null || chosedResponse == null) {
         window.location.href = 'tickets.html';
     }
+
 
     let processTicket = chosedTicket.split(',');
     let ticketSeq = document.querySelector('.ticketseq');
@@ -63,6 +61,8 @@ window.onload = () => {
         ticketSeq.innerHTML = '#' + processTicket[0];
     }
 
+    document.querySelector('.tickethistorytitle').innerHTML = 'Ticket ' + ticketSeq.innerHTML + ' - Code Assistant';
+
     let tickettype = document.querySelector('.tickettype');
     tickettype.innerHTML = processTicket[1];
 
@@ -76,6 +76,16 @@ window.onload = () => {
     ticketTime.innerHTML = year + '/' + month + '/' + day + ' ' + 
                            weekdayStr[weekday] + ' ' + (hour > 10 ? hour : '0'+ hour) + ':'
                            + (minute > 10 ? minute : '0'+ minute) + ':' + (second > 10 ? second : '0'+ second);
+
+    console.log('commentPosted' + document.querySelector('.ticketseq').innerHTML);
+        if (localStorage.getItem('commentPosted' + document.querySelector('.ticketseq').innerHTML) != null){
+            document.querySelector('.Youropinion').innerHTML = "Thank you for your feedback!";
+            document.querySelector('.Youropinion').style.display = "flex";
+            document.querySelector('.Youropinion').style.justifyContent = "center";
+            document.querySelector('.Youropinion').style.alignItems = "center";
+            document.querySelector('.yesbtn').style.display = "none";
+            document.querySelector('.nobtn').style.display = "none";
+        }
 }
 
 function ButtonReturn(button) {
@@ -154,7 +164,10 @@ sendBtn.addEventListener('click', (e) => {
             userInvoice
         }
 
-        sendCode(dataChunk);             
+        sendCode(dataChunk);
+        localStorage.setItem('commentPosted' + document.querySelector('.ticketseq').innerHTML , 'true');
     }
+
+    return;
 })
 
