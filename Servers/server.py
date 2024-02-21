@@ -7,6 +7,10 @@ import ssl  # Local https key
 app = Flask(__name__)
 CORS(app)
 
+# Set up SSL key for Flask to use https.
+cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
+key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
+
 # Read API keys from key file.
 with open('key.txt', 'r') as file:
     keys = file.readlines()
@@ -20,14 +24,10 @@ client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
-# Set up SSL key for Flask to use https.
-cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
-key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
-
 # Display the server's web page.
 @app.route("/", methods=["GET"])
 def index():
-    return "Hello! This is the code assistance server home page!"
+    return "Hello! This is the Code Assistance's Server home page!"
 
 # Define system roles and their instructions.
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
@@ -36,6 +36,8 @@ codeMaster = "You are a coding master, skilled at helping others modify their so
 
 styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enter."
 
+generator = "You are a code generator. You can generate code based on the user's request. Please return the code in"
+
 def analyzeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -43,6 +45,22 @@ def analyzeCode(inputCode):
                 {
                     "role": "system",
                     "content": analyst,
+                },
+                {
+                    "role": "user",
+                    "content": inputCode,
+                }
+        ],
+    )
+    return analyzeResult.choices[0].message.content
+
+def generateCode(inputCode, target):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+                {
+                    "role": "system",
+                    "content": generator + target + ".",
                 },
                 {
                     "role": "user",
@@ -110,16 +128,31 @@ def process_code():
         code = data.get("code", "")
 
         result = f"{code}"  # Initialize the result.
-        
-        anaList = analyzeCode(code)
-        print ( anaList + "\n")
-        
-        optimizedResult = optimizeCode(code , anaList)
+
+        optimizedResult = analyzeCode(code)
         print ( optimizedResult + "\n")
         
         result = f"{optimizedResult}"
         # Return the processed result to the frontend
         return jsonify({"result": result})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/gen_code", methods=["POST"])
+def gen_code():
+    try:
+        data = request.get_json()
+        code = data.get("code", "")
+        
+        lang = data.get("lang", "")
+        target = f"{lang}"
+
+        genList = generateCode(code,target)
+        print ( genList + "\n")
+        
+        genresult = f"{genList}"
+        # Return the processed result to the frontend
+        return jsonify({"result": genresult})
     except Exception as e:
         return jsonify({"error": str(e)})
 
