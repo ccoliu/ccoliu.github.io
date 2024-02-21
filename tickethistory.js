@@ -5,7 +5,26 @@ let yesBtnClicked = false;
 const noBtn = document.querySelector('.nobtn');
 let noBtnClicked = false;
 
+const sendBtn = document.querySelector('.sendbtn');
+
 let buttonFirstClicked = false;
+
+function sendCode(dataChunk) {
+    fetch('http://127.0.0.1:5000/retrieve_comment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({dataChunk}),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log('Success:', data);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+}
 
 window.onload = () => {
     yesBtnClicked = false;
@@ -95,4 +114,47 @@ noBtn.addEventListener('click', () => {
         yesBtnClicked = false;
     }
 });
+
+sendBtn.addEventListener('click', (e) => {
+    let comment = document.querySelector('.comment')
+    if (comment.value == "") {
+        comment.style.border = "1px solid #f66868";
+        setTimeout(() => {
+            comment.style.border = "1px solid #818181";
+        }, 2000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "Please write a comment!";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+        return;
+    }
+    else
+    {
+
+        const chosedRecord = localStorage.getItem('currentRecord'); //desc
+        const chosedResponse = localStorage.getItem('currentResponse'); //response
+        const YesNo = (yesBtnClicked ? "Yes" : "No");
+        const userComment = comment.value;
+        const userInvoice = {YesNo, userComment}
+
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+        document.querySelector('.footerdesc').innerHTML = "Comment sent!";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+
+        const dataChunk = {
+            chosedRecord,
+            chosedResponse,
+            userInvoice
+        }
+
+        sendCode(dataChunk);             
+    }
+})
 

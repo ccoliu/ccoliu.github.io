@@ -152,5 +152,20 @@ def gen_code():
     except Exception as e:
         return jsonify({"error": str(e)})
 
+@app.route("/retrieve_comment", methods=["POST"])
+def retreive_code():
+    try:
+        data = request.get_json()
+
+        f = open('comment.txt', "w")
+        comments = f"{data}"
+        f.write(comments + '\n')
+
+        return jsonify({"result": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
