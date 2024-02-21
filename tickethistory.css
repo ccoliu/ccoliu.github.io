@@ -161,7 +161,7 @@ p.ticketseq, p.tickettype {
     overflow: auto;
 }
 
-.ticketDesc:focus {
+.ticketDesc:focus, .AIresp:focus, .comment:focus {
     outline: none;
 }
 
