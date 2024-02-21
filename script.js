@@ -30,10 +30,10 @@ const supporters = document.querySelector('.supporters');
 const h3Supporters = document.querySelector('h3.supporters');
 const video = document.getElementById('myVideo');
 const textOutput = document.getElementById('textOutput');
-let originBodyOverflowY = document.body.style.overflowY;
+const originBodyOverflowY = document.body.style.overflowY;
 
 if (textOutput) {
-  let originTextOutputOverflowY = textOutput.style.overflowY;
+  const originTextOutputOverflowY = textOutput.style.overflowY;
 }
 
 let recordText = "";
@@ -54,16 +54,18 @@ sidebar.addEventListener('mouseleave', () => {
     // 移除內容區域的暗化效果
     content.classList.remove('content-darkened');
     document.body.style.overflowY = originBodyOverflowY; // 解鎖網頁滾動
-    if (textOutput && originBodyOverflowY) document.getElementById("textOutput").style.overflowY = originTextOutputOverflowY;
+    if (textOutput && originBodyOverflowY) textOutput.style.overflowY = "auto";
 });
 
 if (textOutput){
     textOutput.addEventListener('mouseenter', () => {
         document.body.style.overflowY = 'hidden'; // 解鎖網頁滾動
+        textOutput.style.overflowY = "auto";
     });
 
     textOutput.addEventListener('mouseleave', () => {
         document.body.style.overflowY = 'auto'; // 解鎖網頁滾動
+        textOutput.style.overflowY = "hidden";
     });
 }
 
@@ -132,7 +134,7 @@ function enhanceTextInput(event, element) {
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
-  fetch("https://140.118.153.212:5000/process_code", {
+  fetch("http://127.0.0.1:5000/process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -172,7 +174,7 @@ function sendDataToAnalyzeServer(code) {
 }
 
 function sendDataToGenerateServer(code, lang) {
-    fetch("https://140.118.153.212:5000/gen_code", {
+    fetch("http://127.0.0.1:5000/gen_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

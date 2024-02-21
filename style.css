@@ -283,7 +283,6 @@ textarea.textOutput {
     box-sizing: border-box;
     cursor: default;
     border-radius: 10px;
-    overflow-y: hidden;
 }
 
 textarea.textOutput:hover {
