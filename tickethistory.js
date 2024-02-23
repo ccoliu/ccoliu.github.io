@@ -66,6 +66,14 @@ window.onload = () => {
     let tickettype = document.querySelector('.tickettype');
     tickettype.innerHTML = processTicket[1];
 
+    let ticketLang = document.querySelector('.ticketLang');
+    document.querySelector('.ticketLang').innerHTML = processTicket[3];
+    console.log(processTicket[3]);
+    if (processTicket[3] == 'N/A' || processTicket[3] == 'undefined' || processTicket[3] == '' || processTicket[3] == null) {
+        ticketLang.style.display = "none";
+        document.querySelector('.codeLang').style.display = "none";
+    }
+
     let ticketDesc = document.querySelector('.ticketDesc');
     ticketDesc.value = chosedRecord;
 

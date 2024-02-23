@@ -196,7 +196,7 @@ function sendDataToGenerateServer(code, lang) {
             textOutput.style.height = "50%";
             document.getElementById("AImsg").style.display = "block";
             document.getElementById("result").value = "Generate Successful.";
-            createTicket(data.result);
+            createTicket(data.result, lang);
             setTimeout(() => (document.getElementById("result").value = ""), 3000);
         } else {
             console.error("Element with ID 'textOutput' not found.");
@@ -214,12 +214,12 @@ function sendDataToGenerateServer(code, lang) {
 
 // Function to create a ticket
 
-function createTicket(data) {
+function createTicket(data, lang) {
   let numberseq = localStorage.getItem("numberseq");
   if (numberseq == null) {
     numberseq = 1;
   }
-  var ticket = [numberseq, codeType, processTime];
+  var ticket = [numberseq, codeType, processTime, (lang ? lang : "N/A")];
   console.log(ticket);
   localStorage.setItem('ticket' + numberseq, ticket);
   localStorage.setItem('record' + numberseq, recordText);
