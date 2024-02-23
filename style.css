@@ -154,6 +154,7 @@ div.buttonContainer {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 50px;
 }
 
 a.buttonClear {
@@ -256,6 +257,7 @@ input.message {
     justify-content: center;
     cursor: default;
     margin-top: 10px;
+    margin-left: 1em;
 }
 
 input.message:focus {
@@ -364,6 +366,10 @@ h2.AImsg {
     margin-right: auto;
 }
 
+.inputfile {
+    margin-left: 60px;
+}
+
 a.buttonUpload {
     display: flex;
     justify-content: center;
@@ -377,6 +383,7 @@ a.buttonUpload {
     background-position: center;
     background-size: 50px 50px;
     width: 120px;
+    min-width: 90px;
     height: 30px;
     background-color: transparent;
     color: white;
@@ -444,3 +451,10 @@ a.buttonUpload:hover {
         overflow-y: auto;
     }
 }
+
+/* @media screen and (max-width: 600px) {
+    .uploadsys {
+        margin-left: 0;
+    }
+} */
+
