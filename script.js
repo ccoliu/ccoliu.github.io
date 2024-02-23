@@ -11,12 +11,10 @@ function toggleVisibility(elementId, display) {
 // Function to clear the input and result fields
 function clearFields() {
   const codeInput = document.getElementById("codeInput");
-  const result = document.getElementById("result");
   const fileInput = document.getElementById("fileInput");
 
-  if (codeInput && result) {
+  if (codeInput) {
     codeInput.value = "";
-    result.value = "";
     fileInput.value = "";
   } else {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
@@ -72,16 +70,20 @@ if (textOutput){
 // Function to process code input
 function processCodeInput() {
   const codeInput = document.getElementById("codeInput");
-  const result = document.getElementById("result");
   const loader = document.getElementById("loader");
   const blocker = document.getElementById("blocker");
   const loadmsg = document.getElementById("loadmsg");
   const myselect = document.getElementById("myselect");
 
-  if (codeInput && result && loader && blocker && loadmsg) {
+  if (codeInput && loader && blocker && loadmsg) {
     if (codeInput.value.trim() === "") {
-      result.value = "No code to run! Please retry.";
-      setTimeout(() => (result.value = ""), 3000);
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "No code to run! Please retry.";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     } else {
       recordText = codeInput.value;
       processTime = new Date().getTime();
@@ -155,9 +157,14 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.marginBottom = "100px";
         textOutput.style.height = "30%";
         document.getElementById("AImsg").style.display = "block";
-        document.getElementById("result").value = "Analyze Successful.";
         createTicket(data.result);
-        setTimeout(() => (document.getElementById("result").value = ""), 3000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+        document.querySelector('.footerdesc').innerHTML = "Analyze Successful.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
       } else {
         console.error("Element with ID 'textOutput' not found.");
       }
@@ -167,9 +174,13 @@ function sendDataToAnalyzeServer(code) {
       toggleVisibility("blocker", false);
       toggleVisibility("loadmsg", false);
       console.error("Error:", error);
-      document.getElementById("result").value =
-        "An error occurred while processing the code.";
-      setTimeout(() => (document.getElementById("result").value = ""), 5000);
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the code.";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     });
 }
 
@@ -195,9 +206,14 @@ function sendDataToGenerateServer(code, lang) {
             textOutput.style.marginBottom = "100px";
             textOutput.style.height = "50%";
             document.getElementById("AImsg").style.display = "block";
-            document.getElementById("result").value = "Generate Successful.";
             createTicket(data.result, lang);
-            setTimeout(() => (document.getElementById("result").value = ""), 3000);
+            document.querySelector('.footerdesc').style.display = "flex";
+            document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+            document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
+            setTimeout(() => {
+                document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+            }, 2000);
+            document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
         } else {
             console.error("Element with ID 'textOutput' not found.");
         }
@@ -207,8 +223,13 @@ function sendDataToGenerateServer(code, lang) {
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
         console.error("Error:", error);
-        document.getElementById("result").value = "An error occurred while processing the code.";
-        setTimeout(() => (document.getElementById("result").value = ""), 5000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the code.";
+        setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     });
 }
 
@@ -259,7 +280,6 @@ if (codeInput) {
 if (uploadButton) {
   uploadButton.addEventListener("click", function () {
     const codeInput = document.getElementById("codeInput");
-    const result = document.getElementById("result");
     var fileInput = document.getElementById("fileInput");
     var file = fileInput.files[0];
     const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java"];
@@ -272,8 +292,13 @@ if (uploadButton) {
         toggleVisibility("loader", false);
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
-        result.value = "No file selected! Please retry.";
-        setTimeout(() => (result.value = ""), 3000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "No file selected! Please retry.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
         return;
     }
 
@@ -284,8 +309,13 @@ if (uploadButton) {
         toggleVisibility("loader", false);
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
-        result.value = "Invalid file type! Please retry.";
-        setTimeout(() => (result.value = ""), 3000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "Invalid file type! Please retry.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
         return;
     }
 
@@ -296,18 +326,28 @@ if (uploadButton) {
     };
 
     reader.onerror = function () {
-        result.value = "Error reading file!";
-        setTimeout(() => (result.value = ""), 3000);
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "Error reading file!";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     };
 
     reader.readAsText(file);
 
-    result.value = "File uploaded successfully!";
     fileInput.value = "";
     toggleVisibility("loader", false);
     toggleVisibility("blocker", false);
     toggleVisibility("loadmsg", false);
-    setTimeout(() => (result.value = ""), 3000);
+    document.querySelector('.footerdesc').style.display = "flex";
+    document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+    document.querySelector('.footerdesc').innerHTML = "File uploaded successfully!";
+    setTimeout(() => {
+        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+    }, 2000);
+    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
   });
 }
 

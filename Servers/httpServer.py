@@ -156,9 +156,11 @@ def gen_code():
 def retreive_code():
     try:
         data = request.get_json()
+        #data = data.replace("\'", "\"")
 
         f = open('comment.txt', "a")
         comments = f"{data}"
+        comments = comments.replace("\'", "\"")
         f.write(comments + '\n')
 
         return jsonify({"result": "success"})

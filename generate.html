@@ -60,6 +60,7 @@
                 <option value="Haskell">Haskell</option>
                 <option value="Lua">Lua</option>
                 <option value="Rust">Rust</option>
+                <option value="brainfuck">Brainfuck</option>
             </select>
         </div>
         <textarea id="codeInput" cols="100" rows="20" class="textEnter" placeholder="Enter description of the code that you'd like to create."></textarea>
@@ -69,7 +70,6 @@
             </form>
         <a id="uploadButton" class="buttonUpload">Upload<span><img class="uploadIcon" src="icons/upload.png"/></span></a>
         </div>
-        <input class="message" id="result" readonly></p>
         <h4 class="loadmsg" id="loadmsg">Loading...</h4>
         <div class="loader" id="loader"></div>
         <div class="buttonContainer">
@@ -78,6 +78,9 @@
         </div>
         <h2 class="AImsg" id="AImsg" display="none">AI response (GPT-3.5)</h2>
         <textarea cols="100" rows="20" class="textOutput" id="textOutput" display="none" readonly></textarea>
+    </div>
+    <div class="footerdesc">
+        <p class="footerdesc">#inputfooterhere</p>
     </div>
     <script src="script.js"></script>
 </body>

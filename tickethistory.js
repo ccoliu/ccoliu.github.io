@@ -21,9 +21,13 @@ function sendCode(dataChunk) {
         body: JSON.stringify({dataChunk}),
     })
     }, 3500);
+    setTimeout(() => {
+        window.location.reload();
+    }, 3500)
 }
 
 window.onload = () => {
+    localStorage.removeItem('current');
     yesBtnClicked = false;
     noBtnClicked = false;
     buttonFirstClicked = false;
@@ -152,7 +156,7 @@ sendBtn.addEventListener('click', (e) => {
     else
     {
 
-        const chosedRecord = localStorage.getItem('currentRecord'); //desc
+        const chosedRecord = localStorage.getItem('currentRecord'); //replace all " to \"
         const chosedResponse = localStorage.getItem('currentResponse'); //response
         const YesNo = (yesBtnClicked ? "Yes" : "No");
         const userComment = comment.value;
@@ -160,7 +164,7 @@ sendBtn.addEventListener('click', (e) => {
 
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
-        document.querySelector('.footerdesc').innerHTML = "Comment sent!";
+        document.querySelector('.footerdesc').innerHTML = "Comment sent! the page will be reloaded later....";
         setTimeout(() => {
             document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
