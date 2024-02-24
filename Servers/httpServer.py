@@ -2,7 +2,7 @@
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
+import subprocess
 
 app = Flask(__name__)
 CORS(app)
@@ -20,10 +20,12 @@ client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
+
 # Display the server's web page.
 @app.route("/", methods=["GET"])
 def index():
     return "Hello! This is the Code Assistance's Server home page!"
+
 
 # Define system roles and their instructions.
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
@@ -34,37 +36,40 @@ styleChecker = "You are a coding style optimizer. You optimize the source code b
 
 generator = "You are a code generator. You can generate code based on the user's request. Please return the code in"
 
+
 def analyzeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-                {
-                    "role": "system",
-                    "content": analyst,
-                },
-                {
-                    "role": "user",
-                    "content": inputCode,
-                }
+            {
+                "role": "system",
+                "content": analyst,
+            },
+            {
+                "role": "user",
+                "content": inputCode,
+            },
         ],
     )
     return analyzeResult.choices[0].message.content
+
 
 def generateCode(inputCode, target):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-                {
-                    "role": "system",
-                    "content": generator + target + ".",
-                },
-                {
-                    "role": "user",
-                    "content": inputCode,
-                }
+            {
+                "role": "system",
+                "content": generator + target + ".",
+            },
+            {
+                "role": "user",
+                "content": inputCode,
+            },
         ],
     )
     return analyzeResult.choices[0].message.content
+
 
 def optimizeCode(inputCode, problemList=None):
     if problemList is None:
@@ -79,7 +84,7 @@ def optimizeCode(inputCode, problemList=None):
                 {
                     "role": "user",
                     "content": inputCode,
-                }
+                },
             ],
         )
     else:
@@ -93,8 +98,11 @@ def optimizeCode(inputCode, problemList=None):
                 },
                 {
                     "role": "user",
-                    "content": "Here is the source code\n" + inputCode + "Here are the problems that may occur\n" + problemList,
-                }
+                    "content": "Here is the source code\n"
+                    + inputCode
+                    + "Here are the problems that may occur\n"
+                    + problemList,
+                },
             ],
         )
     return analyzeResult.choices[0].message.content
@@ -104,17 +112,18 @@ def adjustStyle(inputCode):
     analyzeResult = client_model_2.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-                {
-                    "role": "system",
-                    "content": styleChecker,
-                },
-                {
-                    "role": "user",
-                    "content": inputCode,
-                }
+            {
+                "role": "system",
+                "content": styleChecker,
+            },
+            {
+                "role": "user",
+                "content": inputCode,
+            },
         ],
     )
     return analyzeResult.choices[0].message.content
+
 
 # Process the code received from the frontend.
 @app.route("/process_code", methods=["POST"])
@@ -126,37 +135,39 @@ def process_code():
         result = f"{code}"  # Initialize the result.
 
         optimizedResult = analyzeCode(code)
-        print ( optimizedResult + "\n")
-        
+        print(optimizedResult + "\n")
+
         result = f"{optimizedResult}"
         # Return the processed result to the frontend
         return jsonify({"result": result})
     except Exception as e:
         return jsonify({"error": str(e)})
 
+
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
         data = request.get_json()
         code = data.get("code", "")
-        
+
         lang = data.get("lang", "")
         target = f"{lang}"
 
-        genList = generateCode(code,target)
-        print ( genList + "\n")
-        
+        genList = generateCode(code, target)
+        print(genList + "\n")
+
         genresult = f"{genList}"
         # Return the processed result to the frontend
         return jsonify({"result": genresult})
     except Exception as e:
         return jsonify({"error": str(e)})
 
+
 @app.route("/retrieve_comment", methods=["POST"])
 def retreive_code():
     try:
         data = request.get_json()
-        #data = data.replace("\'", "\"")
+        # data = data.replace("\'", "\"")
 
         f = open('comment.txt', "a")
         comments = f"{data}"
@@ -166,7 +177,6 @@ def retreive_code():
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
-
 
 
 if __name__ == "__main__":
