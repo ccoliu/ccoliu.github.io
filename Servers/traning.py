@@ -1,5 +1,6 @@
 from openai import OpenAI
 
+
 # Read API keys from key file and use only one for all fine tuning jobs.
 with open("key.txt", "r") as file:
     keys = file.readlines()
@@ -38,15 +39,57 @@ def getFileID():
 
 # input file ID and will start traning and retrun fine tune ID and will print out current status
 def fineTune(fileID):
+    # Create a fine tuninig job
     response = client.fine_tuning.jobs.create(training_file=fileID, model="gpt-3.5-turbo")
+    # Get fine tuing job ID
     fineTuneID = response.id
-    status = client.fine_tuning.jobs.retrieve(fineTuneID)
-    print(status)
+    # Get current job info
+    jobInfo = client.fine_tuning.jobs.retrieve(fineTuneID)
+    # Get current job status
+    jobStatus = jobInfo.status
+
+    # Write in status into file
+    with open("moldesNames.txt", "w") as file:
+        file.write(jobStatus)
+
     client.fine_tuning.jobs.cancel(fineTuneID)
+
     return fineTuneID
 
 
-fileID = upLoadFile("usefulData.jsonl")
+# This function will delete all the files at the cloud in OpenAI since we will change files periodically.
+def deleteAllFiles():
+    response = client.files.list()
+    for response in response.data:
+        client.files.delete(response.id)
+
+
+# This function will print out all fine tune jobs' id and model name
+def getFineTuneList():
+    fine_tunes = client.fine_tuning.jobs.list()
+    for fine_tune in fine_tunes.data:
+        print(f"Fine-tune ID: {fine_tune.id}, Model: {fine_tune.fine_tuned_model}")
+
+
+def getLatestFineTuneModel():
+    fine_tunes = client.fine_tuning.jobs.list()
+    for fine_tune in fine_tunes.data:
+        print(f"Model: {fine_tune.fine_tuned_model}")
+        break
+
+
+def getLatestJobId():
+    fine_tunes = client.fine_tuning.jobs.list()
+    for fine_tune in fine_tunes.data:
+        print(f"Fine-tune ID: {fine_tune.id}")
+        return fine_tune.id
+
+
+response = client.fine_tuning.jobs.retrieve(getLatestJobId())
+
+print(response.status)
+""" fileID = upLoadFile("usefulData.jsonl")
 fileTuneID = fineTune(fileID)
 
 print(fileTuneID)
+"""

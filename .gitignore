@@ -3,3 +3,4 @@ private_key.key
 csr.pem
 certificate.crt
 key.txt
+/Servers/__pycache__
