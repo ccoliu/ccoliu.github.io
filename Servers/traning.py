@@ -66,21 +66,21 @@ def deleteAllFiles():
 
 # This function will print out all fine tune jobs' id and model name
 def getFineTuneList():
-    fine_tunes = client.fine_tuning.jobs.list()
-    for fine_tune in fine_tunes.data:
+    response = client.fine_tuning.jobs.list()
+    for fine_tune in response.data:
         print(f"Fine-tune ID: {fine_tune.id}, Model: {fine_tune.fine_tuned_model}")
 
 
 def getLatestFineTuneModel():
-    fine_tunes = client.fine_tuning.jobs.list()
-    for fine_tune in fine_tunes.data:
+    response = client.fine_tuning.jobs.list()
+    for fine_tune in response.data:
         print(f"Model: {fine_tune.fine_tuned_model}")
         break
 
 
 def getLatestJobId():
-    fine_tunes = client.fine_tuning.jobs.list()
-    for fine_tune in fine_tunes.data:
+    response = client.fine_tuning.jobs.list()
+    for fine_tune in response.data:
         print(f"Fine-tune ID: {fine_tune.id}")
         return fine_tune.id
 
@@ -88,6 +88,7 @@ def getLatestJobId():
 response = client.fine_tuning.jobs.retrieve(getLatestJobId())
 
 print(response.status)
+
 """ fileID = upLoadFile("usefulData.jsonl")
 fileTuneID = fineTune(fileID)
 
