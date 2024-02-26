@@ -66,7 +66,7 @@ function uploadTicket() {
 
             ticketTitle.innerHTML = ticketAttr[1];
 
-            ticketTime.innerHTML = year % 2000 + '/' + month + '/' + day + ' ' + weekdayStr[weekday] + ' ' + (hour > 10 ? hour : '0'+ hour) + ':' + (minute > 10 ? minute : '0'+ minute);
+            ticketTime.innerHTML = year % 2000 + '/' + month + '/' + day + ' ' + weekdayStr[weekday] + ' ' + (hour >= 10 ? hour : '0' + hour) + ':' + (minute >= 10 ? minute : '0' + minute);
             
             numberseqInt--;
         }

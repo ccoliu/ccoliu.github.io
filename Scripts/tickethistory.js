@@ -86,8 +86,8 @@ window.onload = () => {
 
     let ticketTime = document.querySelector('.time');
     ticketTime.innerHTML = year + '/' + month + '/' + day + ' ' + 
-                           weekdayStr[weekday] + ' ' + (hour > 10 ? hour : '0'+ hour) + ':'
-                           + (minute > 10 ? minute : '0'+ minute) + ':' + (second > 10 ? second : '0'+ second);
+                           weekdayStr[weekday] + ' ' + (hour >= 10 ? hour : '0' + hour) + ':'
+                           + (minute >= 10 ? minute : '0' + minute) + ':' + (second >= 10 ? second : '0' + second);
 
     console.log('commentPosted' + document.querySelector('.ticketseq').innerHTML);
         if (localStorage.getItem('commentPosted' + document.querySelector('.ticketseq').innerHTML) != null){

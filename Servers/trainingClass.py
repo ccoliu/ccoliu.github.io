@@ -21,14 +21,19 @@ class TrainingTool:
         print(f"File ID: {file_id}")
 
         # Write the file ID to a text file
-        with open("fileNames.txt", "w") as file:
+        with open("Misc/fileNames.txt", "w") as file:
             file.write(file_id)
 
         return file_id
 
+<<<<<<< HEAD
     # get latest file id from file
     def getFileId(self):
         with open('fileNames.txt', 'r') as file:
+=======
+    def getFileID(self):
+        with open('Misc/fileNames.txt', 'r') as file:
+>>>>>>> 0023323d3d67bfe9593a4f2e21ae12818099b019
             keys = file.readlines()
 
         file_id = keys[0].strip()
@@ -45,8 +50,15 @@ class TrainingTool:
         jobInfo = self.client.fine_tuning.jobs.retrieve(fineTuneID)
 
         # Write in status into file
+<<<<<<< HEAD
         with open("moldesNames.txt", "w") as file:
             file.write(jobInfo.status)
+=======
+        with open("Misc/moldesNames.txt", "w") as file:
+            file.write(jobStatus)
+
+        self.client.fine_tuning.jobs.cancel(fineTuneID)
+>>>>>>> 0023323d3d67bfe9593a4f2e21ae12818099b019
 
         return fineTuneID
 
