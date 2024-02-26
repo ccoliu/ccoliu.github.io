@@ -1,6 +1,7 @@
 from openai import OpenAI
 
 
+# This class contains all functions that we need to manipulate the fine tune API
 class TrainingTool:
     # Get key during initailzation
     def __init__(self):
@@ -55,6 +56,7 @@ class TrainingTool:
         for fine_tune in response.data:
             print(f"Fine-tune ID: {fine_tune.id}, Model: {fine_tune.fine_tuned_model}")
 
+    # Get the newest model name
     def getLatestFineTuneModel(self):
         response = self.client.fine_tuning.jobs.list()
         for fine_tune in response.data:
@@ -63,6 +65,7 @@ class TrainingTool:
             print(f"Model: {fine_tune.fine_tuned_model}")
             return fine_tune.fine_tuned_model
 
+    # Get the latest job id to see state or to cancel it
     def getLatestJobId(self):
         response = self.client.fine_tuning.jobs.list()
         for fine_tune in response.data:
@@ -73,12 +76,14 @@ class TrainingTool:
         response = self.client.fine_tuning.jobs.retrieve(self.getLatestJobId())
         return response.status
 
+    # delete all models since we may have a better one
     def deleteAllModels(self):
         response = self.client.fine_tuning.jobs.list()
         for fine_tune in response.data:
             print(f"Model: {fine_tune.fine_tuned_model}")
             self.client.models.delete(fine_tune.fine_tuned_model)
 
+    # use for cleaning the old models
     def deleteAllModelsExceptLatest(self):
         response = self.client.fine_tuning.jobs.list()
         models = response.data
@@ -90,3 +95,7 @@ class TrainingTool:
             print("Finished deleting all models except the latest one.")
         else:
             print("No models to delete or only one model exists.")
+
+    # may use for testing model
+    def cancelFineTuneJob(self, jobId):
+        self.client.fine_tuning.jobs.cancel(jobId)

@@ -38,6 +38,6 @@ fileID = fineTuneTools.upLoadFile('Misc/fineTuneData.jsonl')
 
 fineTuneTools.fineTune(fileID)
 
-# 創建一個線程來週期性檢查條件
+# Build a thread periodically check if the fine tune is succeeded.
 thread = threading.Thread(target=check_status_periodically)
 thread.start()

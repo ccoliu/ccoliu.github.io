@@ -10,20 +10,11 @@ client = OpenAI(api_key=api_key_model_3)
 
 t = TrainingTool()
 
-temp = '''
-const double pi = 3.1415926535;
-enum key{
-	up,
-	down,
-	left,
-	right
-};
-enum common_color{
-    red,
-    green,
-    blue
-};'''
+# Input some question to test
+temp = '''Give me the header format'''
+
 completion = client.chat.completions.create(
+    # get the latest model we trained
     model=t.getLatestFineTuneModel(),
     messages=[
         {
