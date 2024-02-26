@@ -1,14 +1,5 @@
 import json
-
-# 假设你的文本文件名为 example.txt
-file_path = 'example.txt'
-
-# 使用 with 语句打开文件，确保文件正确关闭
-with open(file_path, 'r', encoding='utf-8') as file:
-    file_content = file.read()
-
-# file_content 变量现在包含了文件的全部内容，包括换行符等特殊字符
-print(file_content)
+import shutil
 
 
 class StringToJsonl:
@@ -20,7 +11,7 @@ class StringToJsonl:
             "messages": [
                 {
                     "role": "system",
-                    "content": "You are a coding-style master good at formatting codes into same coding style.",
+                    "content": "You are a coding-style master good at formatting codes into one specific coding style.",
                 },
                 {"role": "user", "content": "Give me a perfect coding style example."},
                 {"role": "assistant", "content": "Taiwan."},
@@ -33,6 +24,73 @@ class StringToJsonl:
         jsonl_string = json.dumps(jsonl_data)
 
         # Keep Writing Data to JSONL
-        with open('fineTuneData.jsonl', 'a') as file:
+        with open('Misc/fineTuneData.jsonl', 'a') as file:
             file.write(jsonl_string + '\n')
             print("Write success")
+
+    def makeBackUp(self):
+
+        source_file = 'Misc/fineTuneData.jsonl'
+        backup_file = 'Misc/backUpData.jsonl'
+
+        # Copy file
+        shutil.copyfile(source_file, backup_file)
+
+        print("Backup success!")
+
+    def copyFromBackUp(self):
+
+        source_file = 'Misc/fineTuneData.jsonl'
+        backup_file = 'Misc/backUpData.jsonl'
+
+        # Copy file
+        shutil.copyfile(backup_file, source_file)
+
+        print("Copy success!")
+
+    def clearFile(self, fileName):
+        # Open with write mode and close it immediately
+        with open(fileName, 'w') as file:
+            pass
+
+        print("File has been cleared!")
+
+    def read_file(self, filename):
+        with open(filename, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+
+        questions = []
+        answers = []
+        current_question = ""
+        current_answer = ""
+        reading_question = False
+
+        for line in lines:
+            line = line.strip()
+            if line.startswith("Q:"):
+                if current_answer:  # Save previous answer
+                    answers.append(current_answer.strip())
+                    current_answer = ""
+                reading_question = True
+                continue
+            elif line.startswith("A:"):
+                if current_question:  # Save previous question
+                    questions.append(current_question.strip())
+                    current_question = ""
+                reading_question = False
+                continue
+
+            if reading_question:
+                current_question += line + "\n"
+            else:
+                current_answer += line + "\n"
+
+        # Append the last question and answer
+        if current_question:
+            questions.append(current_question.strip())
+        if current_answer:
+            answers.append(current_answer.strip())
+
+        for q, a in zip(questions, answers):
+            self.formatToJSONL(q, a)
+        return questions, answers

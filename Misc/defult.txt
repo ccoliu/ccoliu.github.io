@@ -1,0 +1,386 @@
+Q:
+Give me the header format
+A:
+/***********************************************************************
+ * File: Main.cpp
+ * Author: Alex
+ * Create Date: 2023/03/17
+ * Editor: Brendon
+ * Update Date: 2023/03/17
+ * Description: This program is to compute and ouput the volume of a sphere with radius r.
+***********************************************************************/
+Q:
+// Wrong 1, No space between two logical sections.
+if(...){
+    
+}
+if(...){
+    
+}
+
+// Wrong 2, Having a space between one logical section.
+if(...){
+    
+}
+
+else if(...){
+    
+}
+
+// Wrong 3, Redundant spaces in your code.
+int main(){
+    
+    
+    
+    std::cout<<"Hello World!"<<std::endl;
+    
+    
+    
+    
+    
+}
+
+// Wrong 4, No space between loop and variable define sections.
+int main(){
+    float input;
+    while(...){
+        ///....
+    }
+}
+
+// Wrong 5, No space between loop and output sections.
+int main(){
+    while(...){
+        ///....
+    }
+    cout<<"Hello World!"<<endl;
+}
+
+// Wrong 6, Having a meaningless space between two for loops.
+for (int i = 0; i < DUNGEN_ROW; ++i)
+{
+    
+    for (int o = 0; o < DUNGEN_COL; ++o)
+    {
+        putchar(dungenMap[i][o]);
+    }
+
+    putchar('\n');
+}
+A:
+Use blank lines to separate logical sections
+#define PI 3.1415926535
+
+#include<iostream>
+#include<cmath>
+
+using namespace std;
+
+int main(){
+    // Define a variable that is used to save input value.
+    float input;
+    
+    while(1){
+        //...
+    }
+}
+Q:
+// Wrong 1
+double input=0,ouput=0;
+
+// Wrong 2
+if(input==1&&ouput==0){
+
+}
+A:
+Use spaces around '=' and around operators and after commas and semicolons.
+double input = 0, ouput = 0;
+
+if(input == 1 && ouput == 0){
+
+}
+Q:
+// Wrong 1, comment is not clear
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+int main()
+{
+    int numOfEmploy;
+
+    while (cin >> numOfEmploy)
+    {
+        string names;
+        long long salary;
+        long long award;
+        int maxLengthName, maxLengthSalary, maxLengthAward;
+        vector <string> name;
+        vector <long long> money;
+        vector <long long> reward;
+
+        for (int a = 0; a < numOfEmploy; a++)
+        {
+            cin >> names; // Alexandrescu
+            name.push_back(names);
+
+            cin >> salary; // 200000000
+            money.push_back(salary);
+
+            cin >> award; // 99999
+            reward.push_back(award);
+        }
+
+        //  int zero = 0;
+        maxLengthName = name[0].length();
+
+        for (int b = 1; b < numOfEmploy; b++)
+        {
+            if (maxLengthName < name[b].length())
+            {
+                maxLengthName = name[b].length();
+            }
+        }
+
+        maxLengthSalary = *max_element(money.begin(), money.end());
+        maxLengthSalary = to_string(maxLengthSalary).length();
+
+        maxLengthAward = *max_element(reward.begin(), reward.end());
+        maxLengthAward = to_string(maxLengthAward).length();
+
+        for (int c = 0; c < numOfEmploy; c++)
+        {
+            cout << setw(maxLengthName) << name[c];
+            cout << "|" << "  " << setw(maxLengthSalary) << money[c];
+            cout << "|" << "  " << setw(maxLengthAward) << reward[c] << endl;
+        }
+
+    }
+}
+A:
+Use comments to describe major sections of program or where something needs to be clarified.
+// Name: XXX
+// Date: March 8, 2023
+// Last Update: March 8, 2023
+// Problem statement: This C++ program read an input , and output the input // with indentation if string length of input is less than 10.
+
+#include <iostream>
+#include <iomanip>
+
+int main()
+{
+	// reusable variable ,place this variable outside of the loop
+	std::string input;
+	
+	// infinite loop until cin meets EOF
+	while (true)
+	{
+		// read input as a string
+		std::cin >> input;
+		
+		// break the loop if input stream meets EOF
+		if(std::cin.eof())
+		{
+			break;
+		}
+		
+		// output the input string ,
+		// but with the indentation if string length is less than 10
+		std::cout << std::setw(10) << input << "\n";
+	}
+}
+Q:
+// Variable name is meaningless
+int i;
+int a;
+int b;
+// Different coding styles
+int Input = 1;
+int input_number = 0;
+int InputCarNumber = 3;
+A:
+For names of objects (variables) you will use lower case letters and capitalize the first letter of the second and succeeding words.
+int input = 1;
+int inputNumber = 0;
+int inputCarNumber = 3;
+Q:
+const double pi = 3.1415926535;
+enum key{
+	up,
+	down,
+	left,
+	right
+};
+enum common_color{
+    red,
+    green,
+    blue
+};
+A:
+For constants (including enumeration values), the identifier should be all capital letters (uppercase) using underscore to separate words.
+const double PI = 3.1415926535;
+enum KEY{
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+enum COMMON_COLOR{
+    RED,
+    GREEN,
+    BLUE
+};
+Q:
+class dog
+{
+    
+};
+class national_taiwan_university
+{
+    
+};
+A:
+The names of classes should start with an upper case letter.
+class Dog
+{
+    
+};
+class NationalTaiwanUniversity
+{
+    
+};
+Q:
+// print a 99 multiplication
+int a = 9; // What is a?
+int b[9][9]; // How does b do?
+
+for (int i = 0; i < a; i++)
+{
+    for (int j = 0; j < a; j++)
+    {
+        b[i][j] = i * j;
+        cin >> i >> " X " >> j >> " = " >> b[i][j] >> endl;
+    }
+}
+A:
+Use descriptive object and class names which relate the program to the problem.
+// print a 99 multiplication
+int num = 9;
+int table[9][9];
+
+for (int i = 0; i < num; i++) // only allow use i, j, k in for loop
+{
+    for (int j = 0; j < num; j++)
+    {
+        table[i][j] = i * j;
+        cin >> i >> " X " >> j >> " = " >> table[i][j] >> endl;
+    }
+}
+Q:
+mew.h, mew.cpp
+A:
+A class should be declared in a header file and defined in a source file where the name of the files match the name of the class.
+Cat.h, Cat.cpp
+Q:
+Indent if, for and do-while format.
+A:
+if()
+{
+    if()
+    {
+        ....
+    }
+}
+
+if(){
+    if(){
+        ....
+    }
+}
+
+for()
+{
+    for()
+    {
+        ....
+    }
+}
+
+for(){
+    for(){
+        ....
+    }
+}
+
+do{
+    if(){
+        ....
+    }
+}while();
+
+do 
+{
+    if()
+    {
+        ....
+    }
+}while();
+Q:
+// Wrong 1, put function description in wrong place
+double getVolume(double radius)
+{
+        // Intent: To calculate the volume of a sphere with a given radius
+        // Pre: The variable radius must have a value and radius > 0.
+        // Post: The function returns tthe volume of a sphere.
+    
+	//declare variables which are needed
+	const double PI = 3.14159265358979323846;
+	double volume;
+
+	//derived value of sphere volume
+	//formula: 4/3 * pi * r^3
+	volume = (4.0 / 3.0) * PI * radius * radius * radius;
+
+	return volume;
+}
+A:
+All functions must have a series of comments which state the intent and the pre and post conditions. A pre-condition is a sentence or two which states what must be true before the function is called. The post-condition states what is true after the function is called.
+// Intent: To calculate the volume of a sphere with a given radius
+// Pre: The variable radius must have a value and radius > 0.
+// Post: The function returns tthe volume of a sphere.
+double getVolume(double radius)
+{
+	//declare variables which are needed
+	const double PI = 3.14159265358979323846;
+	double volume;
+
+	//derived value of sphere volume
+	//formula: 4/3 * pi * r^3
+	volume = (4.0 / 3.0) * PI * radius * radius * radius;
+
+	return volume;
+}
+Q:
+class Cat
+{
+    
+};
+A:
+Header files must contain an include guard
+1.
+#ifndef _CAT_H_
+#define _CAT_H_
+class Cat
+{
+    
+};
+#endif // _CAT_H_
+2.
+#pragma once
+class Cat
+{
+    
+};

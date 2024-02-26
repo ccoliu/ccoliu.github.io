@@ -40,13 +40,6 @@ class TrainingTool:
         response = self.client.fine_tuning.jobs.create(training_file=fileID, model="gpt-3.5-turbo")
         # Get fine tuing job ID
         fineTuneID = response.id
-        # Get current job info
-
-        # Write in status into file
-        with open("Misc/moldesNames.txt", "w") as file:
-            file.write(self.client.fine_tuning.jobs.retrieve(fineTuneID))
-
-        self.client.fine_tuning.jobs.cancel(fineTuneID)
 
         return fineTuneID
 
@@ -65,7 +58,7 @@ class TrainingTool:
     def getLatestFineTuneModel(self):
         response = self.client.fine_tuning.jobs.list()
         for fine_tune in response.data:
-            with open("moldesNames.txt", "w") as file:
+            with open("Misc/moldesNames.txt", "w") as file:
                 file.write(fine_tune.fine_tuned_model)
             print(f"Model: {fine_tune.fine_tuned_model}")
             return fine_tune.fine_tuned_model
