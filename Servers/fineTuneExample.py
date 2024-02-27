@@ -2,7 +2,7 @@ from openai import OpenAI
 from trainingClass import TrainingTool
 import time
 import threading
-from formattingToJsonl import StringToJsonl
+from Servers.fileFormat import StringToJsonl
 
 fineTuneTools = TrainingTool()
 jsonTool = StringToJsonl()

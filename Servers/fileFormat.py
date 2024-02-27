@@ -55,6 +55,7 @@ class StringToJsonl:
 
         print("File has been cleared!")
 
+    # Read txt file into jsonl format Q: A: must be a pair
     def read_file(self, filename):
         with open(filename, 'r', encoding='utf-8') as file:
             lines = file.readlines()
@@ -68,13 +69,15 @@ class StringToJsonl:
         for line in lines:
             line = line.strip()
             if line.startswith("Q:"):
-                if current_answer:  # Save previous answer
+                # Save previous answer
+                if current_answer:
                     answers.append(current_answer.strip())
                     current_answer = ""
                 reading_question = True
                 continue
             elif line.startswith("A:"):
-                if current_question:  # Save previous question
+                # Save previous question
+                if current_question:
                     questions.append(current_question.strip())
                     current_question = ""
                 reading_question = False
@@ -91,6 +94,7 @@ class StringToJsonl:
         if current_answer:
             answers.append(current_answer.strip())
 
+        # Write into Jsonl file
         for q, a in zip(questions, answers):
             self.formatToJSONL(q, a)
         return questions, answers
