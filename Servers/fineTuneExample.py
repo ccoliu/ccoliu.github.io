@@ -2,7 +2,7 @@ from openai import OpenAI
 from trainingClass import TrainingTool
 import time
 import threading
-from Servers.fileFormat import StringToJsonl
+from fileFormatt import StringToJsonl
 
 fineTuneTools = TrainingTool()
 jsonTool = StringToJsonl()
@@ -34,10 +34,10 @@ def check_status_periodically(timeout=1800):
             time.sleep(600)  # wait for 5 minutes to check.
 
 
-fileID = fineTuneTools.upLoadFile('Misc/fineTuneData.jsonl')
+# fileID = fineTuneTools.upLoadFile('Misc/fact.jsonl')
 
-fineTuneTools.fineTune(fileID)
+# fineTuneTools.fineTune(fileID)
 
 # Build a thread periodically check if the fine tune is succeeded.
-thread = threading.Thread(target=check_status_periodically)
-thread.start()
+""" thread = threading.Thread(target=check_status_periodically)
+thread.start() """
