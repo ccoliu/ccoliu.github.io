@@ -12,13 +12,14 @@ let buttonFirstClicked = false;
 let commentPosted = false;
 
 function sendCode(dataChunk) {
+    console.log(dataChunk);
     setTimeout(() => {
         fetch('http://127.0.0.1:5000/retrieve_comment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({dataChunk}),
+        body: JSON.stringify(dataChunk),
     })
     }, 3500);
     setTimeout(() => {
@@ -155,12 +156,11 @@ sendBtn.addEventListener('click', (e) => {
     }
     else
     {
-
-        const chosedRecord = localStorage.getItem('currentRecord'); //replace all " to \"
+        const chosedDesc = document.querySelector('.ticketDesc').value; //desc
         const chosedResponse = localStorage.getItem('currentResponse'); //response
-        const YesNo = (yesBtnClicked ? "Yes" : "No");
+        const YesNo = (yesBtnClicked ? "No problem" : "Something's wrong");
         const userComment = comment.value;
-        const userInvoice = {YesNo, userComment}
+        const userInvoice = YesNo + ': ' + userComment;
 
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
@@ -170,11 +170,7 @@ sendBtn.addEventListener('click', (e) => {
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
 
-        const dataChunk = {
-            chosedRecord,
-            chosedResponse,
-            userInvoice
-        }
+        const dataChunk = "Q:\n" + chosedDesc + '\n' + chosedResponse + "\nA:\n" + userInvoice + '\n';
 
         sendCode(dataChunk);
         localStorage.setItem('commentPosted' + document.querySelector('.ticketseq').innerHTML , 'true');

@@ -171,6 +171,7 @@ def retreive_code():
         f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
         comments = f"{data}"
         comments = comments.replace("\'", "\"")
+        print(comments)
         f.write(comments + '\n')
 
         return jsonify({"result": "success"})
