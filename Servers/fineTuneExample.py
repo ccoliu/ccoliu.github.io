@@ -41,3 +41,6 @@ def check_status_periodically(timeout=1800):
 # Build a thread periodically check if the fine tune is succeeded.
 """ thread = threading.Thread(target=check_status_periodically)
 thread.start() """
+
+# read comment file into jsonl // can successfully read the file into fact.jsonl
+jsonTool.read_file("Misc/comment.txt", "factDescription")

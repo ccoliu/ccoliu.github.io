@@ -2,9 +2,12 @@
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from fileFormatt import StringToJsonl
 
 app = Flask(__name__)
 CORS(app)
+
+cast = StringToJsonl()
 
 # Read API keys from key file.
 with open("key.txt", "r") as file:
@@ -26,6 +29,8 @@ def index():
     return "Hello! This is the Code Assistance's Server home page!"
 
 
+instruction = "No matter what, you need to return the latest source code, by means after you finished your job you need to return the code with your answer."
+
 # Define system roles and their instructions.
 interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
@@ -45,7 +50,7 @@ def analyzeUserInput(inputSentence):
         messages=[
             {
                 "role": "system",
-                "content": interpreter,
+                "content": interpreter + instruction,
             },
             {
                 "role": "user",
@@ -63,7 +68,7 @@ def generateCode(requirement, lang):
         messages=[
             {
                 "role": "system",
-                "content": codeGenerater + lang,
+                "content": codeGenerater + lang + instruction,
             },
             {
                 "role": "user",
@@ -81,7 +86,7 @@ def adjustStyle(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": styleChecker,
+                "content": styleChecker + instruction,
             },
             {
                 "role": "user",
@@ -99,7 +104,7 @@ def analyzeCode(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": analyst,
+                "content": analyst + instruction,
             },
             {
                 "role": "user",
@@ -117,7 +122,7 @@ def optimizeCode(inputCode, problemList):
         messages=[
             {
                 "role": "system",
-                "content": codeMaster,
+                "content": codeMaster + instruction,
             },
             {
                 "role": "user",

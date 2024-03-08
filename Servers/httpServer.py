@@ -37,6 +37,7 @@ generator = "You are a code generator. You can generate code based on the user's
 
 
 def analyzeCode(inputCode):
+
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -171,7 +172,6 @@ def retreive_code():
         f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
         comments = f"{data}"
         comments = comments.replace("\'", "\"")
-        print(comments)
         f.write(comments + '\n')
 
         return jsonify({"result": "success"})
