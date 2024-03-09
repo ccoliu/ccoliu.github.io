@@ -167,6 +167,22 @@ def gen_code():
         return jsonify({"error": str(e)})
 
 
+@app.route("/retrieve_comment", methods=["POST"])
+def retreive_code():
+    try:
+        data = request.get_json()
+        # data = data.replace("\'", "\"")
+
+        f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
+        comments = f"{data}"
+        comments = comments.replace("\'", "\"")
+        f.write(comments + '\n')
+
+        return jsonify({"result": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 optimizedResult = optimizeCode(
     "test",
 )
