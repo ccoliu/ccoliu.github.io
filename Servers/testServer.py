@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import ssl  # for local https key
 
+
 app = Flask(__name__)
 CORS(app)
 

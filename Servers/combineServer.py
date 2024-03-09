@@ -28,7 +28,6 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 # Define system roles and their instructions.
 retrunCode = "If you think the code is perfect or there are no issues then simply return the code you get from input."
 
-
 interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
 codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
