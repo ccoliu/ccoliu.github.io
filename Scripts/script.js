@@ -136,7 +136,7 @@ function enhanceTextInput(event, element) {
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
-  fetch("https://140.118.184.235:5000/process_code", {
+  fetch("http://127.0.0.1:5000/process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -185,7 +185,7 @@ function sendDataToAnalyzeServer(code) {
 }
 
 function sendDataToGenerateServer(code, lang) {
-    fetch("https://140.118.184.235:5000/gen_code", {
+    fetch("http://127.0.0.1:5000/gen_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

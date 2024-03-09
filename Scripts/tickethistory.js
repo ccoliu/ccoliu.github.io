@@ -14,7 +14,7 @@ let commentPosted = false;
 function sendCode(dataChunk) {
     console.log(dataChunk);
     setTimeout(() => {
-        fetch('https://140.118.184.235:5000/retrieve_comment', {
+        fetch('http://127.0.0.1:5000/retrieve_comment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
