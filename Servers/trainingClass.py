@@ -1,4 +1,6 @@
 from openai import OpenAI
+import time
+import threading
 
 
 # This class contains all functions that we need to manipulate the fine tune API
@@ -99,3 +101,32 @@ class TrainingTool:
     # may use for testing model
     def cancelFineTuneJob(self, jobId):
         self.client.fine_tuning.jobs.cancel(jobId)
+
+    def check_condition(self):
+        if self.getLatestJobStatus() == "succeeded":
+            return True
+        elif self.getLatestJobStatus() == "failed":
+            return "Failed"
+        else:
+            return False
+
+    def check_status_periodically(self, timeout=1800):
+        start_time = time.time()
+        while True:
+            if self.check_condition() == True:
+                print("The model has been finished")
+
+                return self.getLatestJobStatus()
+            elif self.check_condition() == "Failed":
+                print("The model has been failed")
+                break
+            elif (time.time() - start_time) > timeout:
+                print("Over time limit training failed")
+                break
+            else:
+                time.sleep(600)  # wait for 5 minutes to check.
+
+    # Build a thread periodically check if the fine tune is succeeded.
+    def checkFineTuneStatus_thread(self):
+        thread = threading.Thread(target=self.check_status_periodically)
+        thread.start()

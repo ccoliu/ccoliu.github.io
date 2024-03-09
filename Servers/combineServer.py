@@ -3,11 +3,13 @@ from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from fileFormatt import StringToJsonl
+from trainingClass import TrainingTool
+
+cast = StringToJsonl()
+fineTuneTools = TrainingTool()
 
 app = Flask(__name__)
 CORS(app)
-
-cast = StringToJsonl()
 
 # Read API keys from key file.
 with open("key.txt", "r") as file:
@@ -23,15 +25,10 @@ client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 
-# Display the server's web page.
-@app.route("/", methods=["GET"])
-def index():
-    return "Hello! This is the Code Assistance's Server home page!"
-
-
-instruction = "No matter what, you need to return the latest source code, by means after you finished your job you need to return the code with your answer."
-
 # Define system roles and their instructions.
+retrunCode = "If you think the code is perfect or there are no issues then simply return the code you get from input."
+
+
 interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
 codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
@@ -50,7 +47,7 @@ def analyzeUserInput(inputSentence):
         messages=[
             {
                 "role": "system",
-                "content": interpreter + instruction,
+                "content": interpreter,
             },
             {
                 "role": "user",
@@ -58,6 +55,7 @@ def analyzeUserInput(inputSentence):
             },
         ],
     )
+    print(analyzeInput.choices[0].message.content)
     return analyzeInput.choices[0].message.content
 
 
@@ -68,7 +66,7 @@ def generateCode(requirement, lang):
         messages=[
             {
                 "role": "system",
-                "content": codeGenerater + lang + instruction,
+                "content": codeGenerater + lang,
             },
             {
                 "role": "user",
@@ -76,6 +74,7 @@ def generateCode(requirement, lang):
             },
         ],
     )
+    print(generateResult.choices[0].message.content)
     return generateResult.choices[0].message.content
 
 
@@ -86,7 +85,7 @@ def adjustStyle(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": styleChecker + instruction,
+                "content": styleChecker + retrunCode,
             },
             {
                 "role": "user",
@@ -94,6 +93,7 @@ def adjustStyle(inputCode):
             },
         ],
     )
+    print(adjustCodingStyle.choices[0].message.content)
     return adjustCodingStyle.choices[0].message.content
 
 
@@ -104,7 +104,7 @@ def analyzeCode(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": analyst + instruction,
+                "content": analyst,
             },
             {
                 "role": "user",
@@ -112,6 +112,7 @@ def analyzeCode(inputCode):
             },
         ],
     )
+    print(analyzeResult.choices[0].message.content)
     return analyzeResult.choices[0].message.content
 
 
@@ -122,7 +123,7 @@ def optimizeCode(inputCode, problemList):
         messages=[
             {
                 "role": "system",
-                "content": codeMaster + instruction,
+                "content": codeMaster,
             },
             {
                 "role": "user",
@@ -133,7 +134,15 @@ def optimizeCode(inputCode, problemList):
             },
         ],
     )
+    print(analyzeResult.choices[0].message.content)
     return analyzeResult.choices[0].message.content
+
+
+# Display the server's web page.
+@app.route("/", methods=["GET"])
+def index():
+    helloWorld = "Welcome! This is the Code Assistance's Server home page!\n Running on port 5000."
+    return helloWorld
 
 
 # Process the code received from the frontend.
@@ -145,7 +154,10 @@ def process_code():
 
         problems = analyzeCode(code)
 
-        firstResult = optimizeCode(code, problems)
+        if problems == "No issues":
+            firstResult = optimizeCode(code)
+        else:
+            firstResult = optimizeCode(code, problems)
 
         finalResult = adjustStyle(firstResult)
 
