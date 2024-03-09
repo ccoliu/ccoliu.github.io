@@ -2,6 +2,10 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 
+with open("dbURI.txt", "r") as file:
+    uriArray = file.readlines()
+
+uri = uriArray[0].strip()
 
 # Create a new client and connect to the server
 client = MongoClient(uri, server_api=ServerApi('1'))
