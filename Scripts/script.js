@@ -185,7 +185,7 @@ function sendDataToAnalyzeServer(code) {
 }
 
 function sendDataToGenerateServer(code, lang) {
-    fetch("http://127.0.0.1:5000/gen_code", {
+    fetch("https://140.118.184.235:5000/gen_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

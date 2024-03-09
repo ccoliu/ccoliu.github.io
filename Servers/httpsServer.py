@@ -173,10 +173,10 @@ def retreive_code():
         data = request.get_json()
         # data = data.replace("\'", "\"")
 
-        f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
-        comments = f"{data}"
-        comments = comments.replace("\'", "\"")
-        f.write(comments + '\n')
+        with open('Misc/comment.txt', "a") as f:
+            comments = f"{data}"
+            comments = comments.replace("\'", "\"")
+            f.write(comments + '\n')
 
         return jsonify({"result": "success"})
     except Exception as e:

@@ -137,3 +137,50 @@ public class TimerExample {
 ``` 
 A:
 No problem: good
+Q:
+set a 60 second countdown timer
+Here is the Java code for a 60-second countdown timer:
+
+```java
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class CountdownTimer {
+    public static void main(String[] args) {
+        int seconds = 60;
+        Timer timer = new Timer();
+        
+        timer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                System.out.println(seconds + " seconds left");
+                seconds--;
+                
+                if (seconds < 0) {
+                    timer.cancel();
+                    System.out.println("Timer expired");
+                }
+            }
+        }, 0, 1000);
+    }
+}
+```
+
+This code will create a countdown timer that prints the remaining seconds every second until it reaches 0.
+A:
+No problem: good
+Q:
+test
+Here is a simple C code snippet:
+
+```c
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\n");
+    
+    return 0;
+}
+```
+A:
+No problem: test
+
