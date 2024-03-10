@@ -1,8 +1,3 @@
-//////////////IP SETTINGS/////////////////////
-const GITWEB = "https://140.118.184.235:5000/"
-const LOCALWEB = "http://127.0.0.1:5000/"
-const CURRENTWEB = LOCALWEB
-/////////////////////////////////////////////
 
 const yesBtn = document.querySelector('.yesbtn');
 let yesBtnClicked = false;
@@ -33,6 +28,9 @@ function sendCode(dataChunk) {
 }
 
 window.onload = () => {
+    serverText = document.querySelector('.server');
+    serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+
     localStorage.removeItem('current');
     yesBtnClicked = false;
     noBtnClicked = false;
