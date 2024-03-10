@@ -129,7 +129,7 @@ p.InnerShort {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     margin: 0;
     padding: 0;
-    margin-top: 13px;
+    margin-top: 20px;
     margin-left: 20px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-right: 20px;
@@ -173,7 +173,7 @@ div.buttonContainer {
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    margin-left: 50px;
+    margin-left: auto;
 }
 
 a.buttonClear {
@@ -316,15 +316,15 @@ textarea.textOutput:focus {
     outline: none;
 }
 
-textarea.textOutput::-webkit-scrollbar {
+textarea.textOutput::-webkit-scrollbar, textarea.textEnter::-webkit-scrollbar {
     width: 8px;
 }
 
-textarea.textOutput::-webkit-scrollbar-track {
+textarea.textOutput::-webkit-scrollbar-track, textarea.textEnter::-webkit-scrollbar-track {
     background: transparent;
 }
 
-textarea.textOutput::-webkit-scrollbar-thumb {
+textarea.textOutput::-webkit-scrollbar-thumb, textarea.textEnter::-webkit-scrollbar-thumb {
     background: #c7c7c7;
     border-radius: 10px;
 }
@@ -383,6 +383,7 @@ h2.AImsg {
     font: "Lexend Deca", sans-serif;
     margin-left: auto;
     margin-right: auto;
+    margin-left: -55px;
 }
 
 .inputfile {
@@ -431,12 +432,11 @@ a.buttonUpload:hover {
 }
 
 .selectDesc {
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    font: 400 18px/1.5 "Lexend Deca", sans-serif;
     margin: 0;
     padding: 0;
     margin-right: 0;
     margin-left: auto;
-    padding-right: 50px;
     padding-left: 20px;
 }
 
@@ -486,9 +486,17 @@ a.buttonUpload:hover {
     }
 }
 
-/* @media screen and (max-width: 600px) {
-    .uploadsys {
-        margin-left: 0;
-    }
-} */
 
+@media screen and (max-width: 600px) {
+    h1.InnerText {
+        font: 400 28px/1.5 "Noto Sans", sans-serif;
+        margin-left: 0px;
+        margin-top: 10px;
+    }
+    .uploadsys {
+        margin-left: -40px;
+    }
+    .buttonContainer {
+        margin-left: -50px;
+    }
+}
