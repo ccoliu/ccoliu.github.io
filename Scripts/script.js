@@ -1,8 +1,13 @@
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
 const LOCALWEB = "http://127.0.0.1:5000/"
-const CURRENTWEB = LOCALWEB
+let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
+
+window.onload = function() {
+  serverText = document.querySelector('.server');
+  serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+}
 
 // Helper function to toggle the visibility of elements
 function toggleVisibility(elementId, display) {
@@ -357,3 +362,17 @@ if (uploadButton) {
   });
 }
 
+
+let serverText = document.querySelector('.server');
+
+serverText.addEventListener('click', () => {
+  if (CURRENTWEB == LOCALWEB) {
+    CURRENTWEB = GITWEB;
+    serverText.innerHTML = "Server: Camp";
+  } else {
+    CURRENTWEB = LOCALWEB;
+    serverText.innerHTML = "Server: Local";
+  }
+  localStorage.setItem("server", CURRENTWEB);
+  window.location.reload();
+});
