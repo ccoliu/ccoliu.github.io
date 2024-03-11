@@ -64,6 +64,7 @@ sidebar.addEventListener('mouseleave', () => {
     content.classList.remove('content-darkened');
     document.body.style.overflowY = originBodyOverflowY; // 解鎖網頁滾動
     if (textOutput && originBodyOverflowY) textOutput.style.overflowY = "auto";
+    sidebar.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 if (textOutput){
@@ -368,10 +369,8 @@ let serverText = document.querySelector('.server');
 serverText.addEventListener('click', () => {
   if (CURRENTWEB == LOCALWEB) {
     CURRENTWEB = GITWEB;
-    serverText.innerHTML = "Server: Camp";
   } else {
     CURRENTWEB = LOCALWEB;
-    serverText.innerHTML = "Server: Local";
   }
   localStorage.setItem("server", CURRENTWEB);
   window.location.reload();

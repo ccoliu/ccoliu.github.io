@@ -1,6 +1,6 @@
 .sidebar {
     width: 0.4em; /* 收合時的寬度 */ 
-    height: 100vh; /* 收合時的高度 */ 
+    height: 99vh; /* 收合時的高度 */ 
     position: fixed; /* 固定定位，使其不隨捲動而移動 */
     z-index: 1; /* 設定堆疊順序，確保在內容之上 */
     top: 0; /* 距離頁面頂部的距離 */

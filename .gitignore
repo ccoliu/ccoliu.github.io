@@ -5,3 +5,4 @@ certificate.crt
 key.txt
 /Servers/__pycache__
 dbURI.txt
+/.vscode
