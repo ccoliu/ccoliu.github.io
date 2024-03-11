@@ -52,12 +52,7 @@ thread.start() """
 
 # nested query format example {'messages.role': "system1" , 'messages.content': "Give me a perfect coding style example."}
 
-id = '65eeb16f00505966ccc6b503'
+id = '65eef96e51a7cbf03ce15308'
 idFilter = {'_id': ObjectId(id)}
 
-dbT.updateDocument(
-    "fineTune",
-    "fineTuneCollection",
-    idFilter,
-    {"$set": {"comment": "double tested comment"}},
-)
+dbT.createCollection("fineTune", "generalFactCollection")

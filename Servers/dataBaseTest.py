@@ -2,6 +2,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from pprint import pprint
 import json
+from bson import ObjectId
 
 
 class dataBaseTools:
@@ -59,7 +60,7 @@ class dataBaseTools:
         collection = db[collectionName]
         collection.insert_one(
             {
-                'dbIndex': 'This collection is for storing ' + dbName,
+                'dbIndex': 'This collection is for storing ' + collectionName,
             }
         )
         print(f"Collection '{collectionName}' created.")
@@ -133,15 +134,17 @@ class dataBaseTools:
         print(f"Document inserted.")
 
     # Update a document in a collection
-    def updateDocument(self, dbName, collectionName, query, newValues):
+    # Parametres: dbName, collectionName, id(filter), field, newValue
+    def updateDocument(self, dbName, collectionName, id, field, newValue):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        collection.update_one(query, newValues)
+        collection.update_one(id, {"$set": {field: newValue}})
 
         print(f"Document updated.")
 
     # parametres: dbName, collectionName, inputCode, outputCode, rate, comment
+    # Insert a document into a collection and retrun the id of the document
     def insertModifyDocument(
         self, dbName, collectionName, inputCode, outputCode, rate="No rate", comment="No comment"
     ):
@@ -156,8 +159,66 @@ class dataBaseTools:
         }
 
         collection.insert_one(data)
+        id = data.get("_id")
 
         print(f"Document inserted.")
+
+        return id
+
+    # parametres: dbName, collectionName, requirement, gptList, generatedCode, rate, comment
+    # Insert a document into a collection and retrun the id of the document
+    def insertGenerateDocument(
+        self,
+        dbName,
+        collectionName,
+        requirement,
+        gptList,
+        generatedCode,
+        rate="No rate",
+        comment="No comment",
+    ):
+        db = self.client[dbName]
+        collection = db[collectionName]
+        data = {
+            "type": "generate code",
+            "requirement": requirement,
+            "gptList": gptList,
+            "generatedCode": generatedCode,
+            "rate": rate,
+            "comment": comment,
+        }
+
+        collection.insert_one(data)
+        id = data.get("_id")
+
+        print(f"Document inserted.")
+
+        return id
+
+    # parametres: dbName, collectionName, input, output
+    def insertGeneralCaseDocument(self, dbName, collectionName, input, output):
+        db = self.client[dbName]
+        collection = db[collectionName]
+        data = {
+            "type": "general case",
+            "input": input,
+            "output": output,
+        }
+
+        collection.insert_one(data)
+
+        print(f"Document inserted.")
+
+    def searchDocument(self, dbName, collectionName, index, query):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {index: {'$regex': query}}
+
+        result = collection.find(filter)
+
+        for item in result:
+            pprint(item)
 
 
 # Document example:

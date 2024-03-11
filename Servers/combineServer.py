@@ -4,9 +4,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from fileFormatt import StringToJsonl
 from trainingClass import TrainingTool
+from dataBaseTest import dataBaseTools
+from bson import ObjectId
 
 cast = StringToJsonl()
 fineTuneTools = TrainingTool()
+dbT = dataBaseTools()
 
 app = Flask(__name__)
 CORS(app)
@@ -26,13 +29,12 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 
 # Define system roles and their instructions.
-retrunCode = "If you think the code is perfect or there are no issues then simply return the code you get from input."
 
 interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
 codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
 
-styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please return the source code as is (including comments in the code). There's no need to separately list the reasons for changes or additional comments. If there is no need to improve, simply return the content that user enters."
+styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please print out the input code if there is no need to improve. If you modify the code, please print out the modified code."
 
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
 
@@ -84,7 +86,7 @@ def adjustStyle(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": styleChecker + retrunCode,
+                "content": styleChecker,
             },
             {
                 "role": "user",
@@ -154,15 +156,17 @@ def process_code():
         problems = analyzeCode(code)
 
         if problems == "No issues":
-            firstResult = optimizeCode(code)
+            firstResult = code
         else:
             firstResult = optimizeCode(code, problems)
 
-        finalResult = adjustStyle(firstResult)
+        # finalResult = adjustStyle(firstResult)
 
-        print(finalResult + "\n")
+        dataId = dbT.insertModifyDocument("fineTune", "modifiedCollection", code, firstResult)
 
-        output = f"{finalResult}"
+        print(firstResult + "\n")
+
+        output = f"{firstResult}"
         # Return the processed result to the frontend
         return jsonify({"result": output})
     except Exception as e:
@@ -185,6 +189,10 @@ def gen_code():
         genResult = generateCode(requirmentList, targetLanguage)
         # Adjust coding style
         finalResult = adjustStyle(genResult)
+
+        dataId = dbT.insertGenerateDocument(
+            "fineTune", "generateCollection", userInput, requirmentList, finalResult
+        )
 
         print(finalResult + "\n")
 
