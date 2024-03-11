@@ -3,9 +3,12 @@ from trainingClass import TrainingTool
 import time
 import threading
 from fileFormatt import StringToJsonl
+from dataBaseTest import dataBaseTools
 
 fineTuneTools = TrainingTool()
 jsonTool = StringToJsonl()
+
+dbT = dataBaseTools()
 
 
 def check_condition():
@@ -43,4 +46,10 @@ def check_status_periodically(timeout=1800):
 thread.start() """
 
 # read comment file into jsonl // can successfully read the file into fact.jsonl
-jsonTool.read_file("Misc/comment.txt", "factDescription")
+# jsonTool.read_file("Misc/comment.txt", "factDescription")
+
+
+# nested query format example {'messages.role': "system1" , 'messages.content': "Give me a perfect coding style example."}
+dbT.getRandomeDocumentWithCondition(
+    "fineTune", "fineTuneCollection", {'messages.role': "system1"}, 3
+)
