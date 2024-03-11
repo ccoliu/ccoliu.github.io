@@ -4,6 +4,7 @@ import time
 import threading
 from fileFormatt import StringToJsonl
 from dataBaseTest import dataBaseTools
+from bson import ObjectId
 
 fineTuneTools = TrainingTool()
 jsonTool = StringToJsonl()
@@ -50,6 +51,13 @@ thread.start() """
 
 
 # nested query format example {'messages.role': "system1" , 'messages.content': "Give me a perfect coding style example."}
-dbT.getRandomeDocumentWithCondition(
-    "fineTune", "fineTuneCollection", {'messages.role': "system1"}, 3
+
+id = '65eeb16f00505966ccc6b503'
+idFilter = {'_id': ObjectId(id)}
+
+dbT.updateDocument(
+    "fineTune",
+    "fineTuneCollection",
+    idFilter,
+    {"$set": {"comment": "double tested comment"}},
 )

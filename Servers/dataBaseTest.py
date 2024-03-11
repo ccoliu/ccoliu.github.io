@@ -70,8 +70,6 @@ class dataBaseTools:
         db.drop_collection(collectionName)
         print(f"Collection '{collectionName}' deleted.")
 
-    ######################################################################################################above is tested and working successfully######################################################################################################
-
     # Insert a file into a specific collection in a specific database
     def insertFile(self, dbName, collectionName, filePath):
         db = self.client[dbName]
@@ -96,13 +94,15 @@ class dataBaseTools:
             pprint(item)
             print(test)
 
+    ######################################################################################################above is tested and working successfully######################################################################################################
+
     def deleteDocument(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        collection.delete_one(
-            query
-        )  # delete only one even their is multiple documents meet the query
+        # delete only one even their is multiple documents meet the query
+        collection.delete_one(query)
+
         print(f"Document deleted.")
 
     def getRandomDocument(self, dbName, collectionName, sampleSize=1):
@@ -122,3 +122,65 @@ class dataBaseTools:
 
         for item in result:
             pprint(item)
+
+    # Insert a document into a collection
+    def insertDocument(self, dbName, collectionName, document):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        collection.insert_one(document)
+
+        print(f"Document inserted.")
+
+    # Update a document in a collection
+    def updateDocument(self, dbName, collectionName, query, newValues):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        collection.update_one(query, newValues)
+
+        print(f"Document updated.")
+
+    # parametres: dbName, collectionName, inputCode, outputCode, rate, comment
+    def insertModifyDocument(
+        self, dbName, collectionName, inputCode, outputCode, rate="No rate", comment="No comment"
+    ):
+        db = self.client[dbName]
+        collection = db[collectionName]
+        data = {
+            "type": "modify code",
+            "sourceCode": inputCode,
+            "modifiedCode": outputCode,
+            "rate": rate,
+            "comment": comment,
+        }
+
+        collection.insert_one(data)
+
+        print(f"Document inserted.")
+
+
+# Document example:
+""" 
+_id (atuo)
+
+Modify:
+1. Type : modify code 
+2. source code
+3. modified code 
+4. good or bad
+5. comment
+
+Generate:
+1. Type : generate code 
+2. requirement
+3. gpt given list
+4. generated code 
+5. good or bad
+6. comment
+
+common case like coding style
+1. Type : general case
+2. input
+3. output 
+"""
