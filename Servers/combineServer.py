@@ -34,11 +34,11 @@ interpreter = 'You are a master of sentence comprehension. When you receive lang
 
 codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
 
-styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please print out the input code if there is no need to improve. If you modify the code, please print out the modified code."
+styleChecker = "You are a coding style optimizer. You optimize the source code based on readability, reliability, and architectural aspects, without altering its functionality or output results. Please print out the input code if there is no need to improve. If you modified the code, please print out the source code you modified."
 
 analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
 
-codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. You will return the source code that you generate."
+codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. You will return the source code that you generate or if there are no issues, you will return the original source code, no need to explain what you have done, just return the code."
 
 
 # This function will transfer user's request into bulleted list
@@ -155,18 +155,15 @@ def process_code():
 
         problems = analyzeCode(code)
 
-        if problems == "No issues":
-            firstResult = code
-        else:
-            firstResult = optimizeCode(code, problems)
+        optimizedCode = optimizeCode(code, problems)
 
-        # finalResult = adjustStyle(firstResult)
+        # styledCode = adjustStyle(optimizedCode)
 
-        dataId = dbT.insertModifyDocument("fineTune", "modifiedCollection", code, firstResult)
+        dataId = dbT.insertModifyDocument("fineTune", "modifiedCollection", code, optimizedCode)
 
-        print(firstResult + "\n")
+        print(optimizedCode + "\n")
 
-        output = f"{firstResult}"
+        output = f"{optimizedCode}"
         # Return the processed result to the frontend
         return jsonify({"result": output})
     except Exception as e:
@@ -188,15 +185,15 @@ def gen_code():
         # Generate code in specific language
         genResult = generateCode(requirmentList, targetLanguage)
         # Adjust coding style
-        finalResult = adjustStyle(genResult)
+        # finalResult = adjustStyle(genResult)
 
         dataId = dbT.insertGenerateDocument(
-            "fineTune", "generateCollection", userInput, requirmentList, finalResult
+            "fineTune", "generateCollection", userInput, requirmentList, genResult
         )
 
-        print(finalResult + "\n")
+        print(genResult + "\n")
 
-        output = f"{finalResult}"
+        output = f"{genResult}"
         # Return the processed result to the frontend
         return jsonify({"result": output})
     except Exception as e:

@@ -18,38 +18,37 @@ class dataBaseTools:
         # Send a ping to confirm a successful connection
         try:
             self.client.admin.command('ping')
-            print("Pinged your deployment. You successfully connected to MongoDB!")
+            print("Successfully connected to MongoDB!")
         except Exception as e:
             print(e)
 
-    # List all the databases
+    # Print all the databases in the server
     def printDatabase(self):
         for db_info in self.client.list_database_names():
             print(db_info)
 
-    # List all the collections in a database
+    # List all the collections in a specific database
     def printCollection(self, dbName):
         db = self.client[dbName]
+
         for collection_info in db.list_collection_names():
             print(collection_info)
 
-    # Create a database given a database name and the first collection name
+    # Create a database and the first collection
     def createDatabase(self, dbName, collectionName):
-
-        db = self.client[dbName]
-
         # Create a collection and insert a document to actually create the database
-        # New collection will need to insert a title for the data base
+        db = self.client[dbName]
         collection = db[collectionName]
+
         collection.insert_one(
             {
                 'dbIndex': 'This collection is for storing ' + collectionName,
             }
         )
 
-        print("Database and collection created.")
+        print("Database " + dbName + " & collection " + collectionName + " created.")
 
-    # Delete a database given a database name
+    # Delete a database
     def delteDatabase(self, dbName):
         self.client.drop_database(dbName)
         print(f"Database '{dbName}' deleted.")
@@ -61,17 +60,29 @@ class dataBaseTools:
         collection.insert_one(
             {
                 'dbIndex': 'This collection is for storing ' + collectionName,
+                'pin': 'collectionIndex',
             }
         )
         print(f"Collection '{collectionName}' created.")
+
+    # Format a collection
+    def cleanCollection(self, dbName, collectionName):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        collection.delete_many({})
+
+        print(f"Collection '{collectionName}' cleaned.")
 
     # Delete a collection given a database name and a collection name
     def deleteCollection(self, dbName, collectionName):
         db = self.client[dbName]
         db.drop_collection(collectionName)
+
         print(f"Collection '{collectionName}' deleted.")
 
     # Insert a file into a specific collection in a specific database
+    # Use for stroing jsonl file
     def insertFile(self, dbName, collectionName, filePath):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -83,8 +94,8 @@ class dataBaseTools:
 
         print(f"File '{filePath}' inserted into '{collectionName}'.")
 
-    # find a specific document in a collection
-    def findDocument(self, dbName, collectionName, query):
+    # Find a specific document in a collection and return the document id
+    def findSpecificDocument(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -93,11 +104,11 @@ class dataBaseTools:
         for item in result:
             test = item.pop('_id')
             pprint(item)
-            print(test)
 
-    ######################################################################################################above is tested and working successfully######################################################################################################
+        return test
 
-    def deleteDocument(self, dbName, collectionName, query):
+    # Delete one document in a collection that meet the query
+    def deleteOneDocument(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -106,6 +117,19 @@ class dataBaseTools:
 
         print(f"Document deleted.")
 
+    # Delete all the documents in a collection that meet the query
+    def deleteManyDocument(self, dbName, collectionName, query):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        # delete all documents meet the query
+        collection.delete_many(query)
+
+        print(f"Documents deleted.")
+
+    ######################################################################################################above is tested and working successfully######################################################################################################
+
+    # Get random  number of document from a collection
     def getRandomDocument(self, dbName, collectionName, sampleSize=1):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -115,6 +139,7 @@ class dataBaseTools:
         for item in result:
             pprint(item)
 
+    # Get random  number of document from a collection with condition
     def getRandomeDocumentWithCondition(self, dbName, collectionName, condition, sampleSize=1):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -122,6 +147,7 @@ class dataBaseTools:
         result = collection.aggregate([{"$match": condition}, {"$sample": {"size": sampleSize}}])
 
         for item in result:
+            # item.pop('_id')
             pprint(item)
 
     # Insert a document into a collection
@@ -151,6 +177,7 @@ class dataBaseTools:
         db = self.client[dbName]
         collection = db[collectionName]
         data = {
+            "pin": "data",
             "type": "modify code",
             "sourceCode": inputCode,
             "modifiedCode": outputCode,
@@ -180,6 +207,7 @@ class dataBaseTools:
         db = self.client[dbName]
         collection = db[collectionName]
         data = {
+            "pin": "data",
             "type": "generate code",
             "requirement": requirement,
             "gptList": gptList,
@@ -200,6 +228,7 @@ class dataBaseTools:
         db = self.client[dbName]
         collection = db[collectionName]
         data = {
+            "pin": "data",
             "type": "general case",
             "input": input,
             "output": output,
@@ -209,7 +238,8 @@ class dataBaseTools:
 
         print(f"Document inserted.")
 
-    def searchDocument(self, dbName, collectionName, index, query):
+    # Find similar documents in a collection
+    def searchSimilarDocument(self, dbName, collectionName, index, query):
         db = self.client[dbName]
         collection = db[collectionName]
 

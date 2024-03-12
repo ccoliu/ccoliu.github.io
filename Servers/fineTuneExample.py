@@ -55,4 +55,7 @@ thread.start() """
 id = '65eef96e51a7cbf03ce15308'
 idFilter = {'_id': ObjectId(id)}
 
-dbT.createCollection("fineTune", "generalFactCollection")
+dbT.cleanCollection("fineTune", "fineTuneCollection")
+dbT.cleanCollection("fineTune", "generalFactCollection")
+dbT.cleanCollection("fineTune", "modifiedCollection")
+dbT.cleanCollection("fineTune", "generateCollection")
