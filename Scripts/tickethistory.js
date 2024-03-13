@@ -13,13 +13,16 @@ let commentPosted = false;
 
 function sendCode(dataChunk) {
     console.log(dataChunk);
+    let rate = dataChunk.rate;
+    let comment = dataChunk.comment;
+    let id = dataChunk.id;
     setTimeout(() => {
         fetch(CURRENTWEB + 'retrieve_comment', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({dataChunk}),
+        body: JSON.stringify({rate, comment, id}),
     })
     }, 3500);
     setTimeout(() => {
@@ -179,9 +182,9 @@ sendBtn.addEventListener('click', (e) => {
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
 
         const dataChunk = {
-            "Rate": YesNo,
-            "Comment": userComment,
-            "ID": chosedID
+            "rate": YesNo,
+            "comment": userComment,
+            "id": chosedID
         }
 
         sendCode(dataChunk);
