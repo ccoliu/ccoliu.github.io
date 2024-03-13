@@ -181,11 +181,11 @@ div .search-container {
     }
 }
 
-@media screen and (max-width: 428px) {
+@media screen and (max-width: 450px) {
      .content {
-        margin-left: 10px;
+        margin-left: 15px;
     }
     .submitbtn {
-        padding-bottom: 1.5em;
+        padding-bottom: 1.6em;
     }
 }
