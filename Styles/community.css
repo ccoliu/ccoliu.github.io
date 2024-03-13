@@ -180,3 +180,14 @@ div .search-container {
         font-size: 17px;
     }
 }
+
+@media screen and (max-width: 428px) {
+     .content {
+        margin-left: 10px;
+    }
+    .submitbtn {
+        font-size: 13px;
+        padding-left: 0.4em;
+        padding-bottom: 1.5em;
+    }
+}
