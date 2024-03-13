@@ -19,7 +19,7 @@ function sendCode(dataChunk) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(dataChunk),
+        body: JSON.stringify({dataChunk}),
     })
     }, 3500);
     setTimeout(() => {
@@ -38,6 +38,7 @@ window.onload = () => {
     const chosedTicket = localStorage.getItem('currentTicket'); //numberseq, codeType, processTime
     const chosedRecord = localStorage.getItem('currentRecord'); //desc
     const chosedResponse = localStorage.getItem('currentResponse'); //response
+    const chosedID = localStorage.getItem('currentID'); //id
 
     if (chosedTicket == null || chosedRecord == null || chosedResponse == null) {
         window.location.href = 'tickets.html';
@@ -92,6 +93,9 @@ window.onload = () => {
     ticketTime.innerHTML = year + '/' + month + '/' + day + ' ' + 
                            weekdayStr[weekday] + ' ' + (hour >= 10 ? hour : '0' + hour) + ':'
                            + (minute >= 10 ? minute : '0' + minute) + ':' + (second >= 10 ? second : '0' + second);
+
+    let ticketID = document.querySelector('.ticketID');
+    ticketID.innerHTML = chosedID;
 
     console.log('commentPosted' + document.querySelector('.ticketseq').innerHTML);
         if (localStorage.getItem('commentPosted' + document.querySelector('.ticketseq').innerHTML) != null){
@@ -158,9 +162,10 @@ sendBtn.addEventListener('click', (e) => {
         return;
     }
     else
-    {
+    { //rate comment id
         const chosedDesc = document.querySelector('.ticketDesc').value; //desc
         const chosedResponse = localStorage.getItem('currentResponse'); //response
+        const chosedID = document.querySelector('.ticketID').innerHTML; //id
         const YesNo = (yesBtnClicked ? "No problem" : "Something's wrong");
         const userComment = comment.value;
         const userInvoice = YesNo + ': ' + userComment;
@@ -173,7 +178,11 @@ sendBtn.addEventListener('click', (e) => {
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
 
-        const dataChunk = "Q:\n" + chosedDesc + '\n' + chosedResponse + "\nA:\n" + userInvoice + '\n';
+        const dataChunk = {
+            "Rate": YesNo,
+            "Comment": userComment,
+            "ID": chosedID
+        }
 
         sendCode(dataChunk);
         localStorage.setItem('commentPosted' + document.querySelector('.ticketseq').innerHTML , 'true');

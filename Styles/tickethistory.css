@@ -132,21 +132,20 @@ h2.beginText, h2.TicketInfo {
 }
 
 
-h3.codeType, h3.ticketTitle, h3.ticketDescription, h3.AIresponse, h3.Youropinion, h3.codeLang {
+h3.codeType, h3.ticketTitle, h3.ticketDescription, h3.AIresponse, h3.Youropinion, h3.codeLang, h3.codeID {
     color: #cccccc;
     font: 200 20px/1.2 "Lexend Deca", sans-serif;
-    margin-top: 10px;
     white-space: nowrap;
+    margin-top: 10px;
     margin-bottom: 10px;
     margin-left: 40px;
 }
 
-p.ticketseq, p.tickettype, p.ticketLang {
+p.ticketseq, p.tickettype, p.ticketLang, p.ticketID {
     color: #cccccc;
     font: 200 18px/1.2 "Lexend Deca", sans-serif;
     font-weight: lighter;
     margin-left: 10px;
-    margin-bottom: 2.5px;
 }
 
 .ticketTitle, .ticketseq {
@@ -154,11 +153,21 @@ p.ticketseq, p.tickettype, p.ticketLang {
 }
 
 .codeType, .ticketLang {
-    display : inline-block;
+    display: inline-block;
 }
 
 .codeType, .tickettype, .codeLang {
     display: inline-block;
+}
+
+.ticketDescription {
+    margin-bottom: 10px;
+}
+
+.codeID, .ticketID {
+    display: inline-block;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
 .ticketDesc {

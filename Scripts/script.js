@@ -169,7 +169,7 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.marginBottom = "100px";
         textOutput.style.height = "30%";
         document.getElementById("AImsg").style.display = "block";
-        createTicket(data.result);
+        createTicket(data.result, data.id);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
         document.querySelector('.footerdesc').innerHTML = "Analyze Successful.";
@@ -218,7 +218,7 @@ function sendDataToGenerateServer(code, lang) {
             textOutput.style.marginBottom = "100px";
             textOutput.style.height = "50%";
             document.getElementById("AImsg").style.display = "block";
-            createTicket(data.result, lang);
+            createTicket(data.result, data.id, lang);
             document.querySelector('.footerdesc').style.display = "flex";
             document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
             document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
@@ -247,7 +247,7 @@ function sendDataToGenerateServer(code, lang) {
 
 // Function to create a ticket
 
-function createTicket(data, lang) {
+function createTicket(data, id, lang) {
   let numberseq = localStorage.getItem("numberseq");
   if (numberseq == null) {
     numberseq = 1;
@@ -257,6 +257,7 @@ function createTicket(data, lang) {
   localStorage.setItem('ticket' + numberseq, ticket);
   localStorage.setItem('record' + numberseq, recordText);
   localStorage.setItem('response' + numberseq, data);
+  localStorage.setItem('id' + numberseq, id);
   console.log('ticket' + numberseq);
   numberseq++;
   localStorage.setItem("numberseq", numberseq);
