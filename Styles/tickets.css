@@ -276,6 +276,7 @@ p.footerText {
         font: 400 28px/1.5 "Noto Sans", sans-serif;
         margin-left: 20px;
         margin-top: -20px;
+        white-space: nowrap;
     }
     .content {
         margin-left: 20px;
