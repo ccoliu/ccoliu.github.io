@@ -59,4 +59,11 @@ idFilter = {'_id': ObjectId(id)}
 keyWord = "maze"
 
 
-dbT.updateDocument("fineTune", "generateCollection", idFilter, "rate", "this rate is test")
+condition = {"rate": "No rate"}
+
+dbT.getRandomeDocumentWithCondition(
+    "fineTune",
+    "generateCollection",
+    condition,
+    2,
+)
