@@ -60,8 +60,8 @@ h1.InnerText {
     font-weight: bold;
     margin: 0;
     padding-left: 25px;
+    margin-top: -5px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
-    padding-top: 5px;
     line-height: 48px;
 }
 
@@ -88,7 +88,7 @@ h2.beginText, h2.TicketInfo {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     padding: 0;
     margin-top: 10px;
-    margin-left: 40px;
+    margin-left: 55px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-right: 20px;
     margin-bottom: 10px;
@@ -174,7 +174,7 @@ p.ticketDescription {
     font-weight: lighter;
     margin-top: 0.15em;
     margin-bottom: 0.3em;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 p.ticketCreateTime {
@@ -268,5 +268,16 @@ p.footerText {
     }
     .footerText {
         margin-left: 50px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    h1 a {
+        font: 400 28px/1.5 "Noto Sans", sans-serif;
+        margin-left: 20px;
+        margin-top: -20px;
+    }
+    .content {
+        margin-left: 20px;
     }
 }
