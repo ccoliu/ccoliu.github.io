@@ -248,6 +248,18 @@ class dataBaseTools:
         result = collection.find(filter)
 
         for item in result:
+            print(item.get("requirement"))
+            print(item.get("generatedCode"))
+            # pprint(item)
+
+    def searchDocumentUsingId(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
             pprint(item)
 
 

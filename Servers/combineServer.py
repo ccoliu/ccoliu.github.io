@@ -165,7 +165,7 @@ def process_code():
 
         output = f"{optimizedCode}"
         # Return the processed result to the frontend
-        return jsonify({"result": output})
+        return jsonify({"result": output, "id": str(dataId)})
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -195,7 +195,7 @@ def gen_code():
 
         output = f"{genResult}"
         # Return the processed result to the frontend
-        return jsonify({"result": output})
+        return jsonify({"result": output, "id": str(dataId)})
     except Exception as e:
         return jsonify({"error": str(e)})
 
