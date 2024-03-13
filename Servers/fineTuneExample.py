@@ -52,13 +52,11 @@ thread.start() """
 
 # nested query format example {'messages.role': "system1" , 'messages.content': "Give me a perfect coding style example."}
 
-id = '65efc2be5148916c8e1c7af8'
+id = '65f1511e03445957da525af8'
 idFilter = {'_id': ObjectId(id)}
 
-dbT.searchDocumentUsingId("fineTune", "modifiedCollection", id)
 
 keyWord = "maze"
 
 
-dbT.searchInAllCollections("fineTune", "sourceCode", keyWord)
-dbT.searchInAllCollections("fineTune", "gptList", keyWord)
+dbT.updateDocument("fineTune", "generateCollection", idFilter, "rate", "this rate is test")

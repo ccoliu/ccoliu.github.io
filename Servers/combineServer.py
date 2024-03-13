@@ -215,8 +215,9 @@ def retreive_code():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        dbT.updateDocument("fineTune", "generateCollection", id, "rate", rate)
-        dbT.updateDocument("fineTune", "generateCollection", id, "comment", comment)
+        idFilter = {'_id': ObjectId(id)}
+        dbT.updateDocument("fineTune", "generateCollection", idFilter, "rate", rate)
+        dbT.updateDocument("fineTune", "generateCollection", idFilter, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
