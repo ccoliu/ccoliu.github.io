@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Code Assistant</title>
+    <title>Tickets - Code Assistant</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../Styles/homestyle.css" />
+    <link rel="stylesheet" type="text/css" href="../Styles/community.css" />
     <link rel="stylesheet" type="text/css" href="../Styles/sidebar.css" />
     <link href='https://fonts.googleapis.com/css?family=Lexend Deca' rel='stylesheet'>
 </head>
@@ -15,7 +15,7 @@
         <h2>Menu</h2>
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="modify.html" >Modify</a></li>
+            <li><a href="modify.html">Modify</a></li>
             <li><a href="generate.html">Generate</a></li>
             <li><a href="tickets.html">Tickets</a></li>
             <li><a href="community.html">Community</a></li>
@@ -32,22 +32,18 @@
         </ul>
     </div>
     <div class="content">
-        <h1 class="InnerText"><a href="index.html">Code Assistants</a></h1>
-        <div class="InnerPage">
-            <p class="frontInfo">Modify and Correct your code by using the New-Generation AI.</p>
-        </div>
-        <div class="buttonContainer">
-            <a class="GotoGenerate" href="generate.html">Generate<span><img class="GenerateIcon" src="../icons/add.png"/></span></a>
-            <a class="GotoModify" href="modify.html">Modify<span><img class="ModifyIcon" src="../icons/pencil.png"/></span></a>
-        </div>
-        <div class="buttonContainer2">
-            <a class="GotoTicket" href="tickets.html">Tickets<span><img class="TicketIcon" src="../icons/tickets.png"/></span></a>
-            <a class="GotoCommunity" href="community.html">Community<span><img class="CommunityIcon" src="../icons/planet-earth.png"/></span></a>
+        <nav class="navbar">
+            <h1 class="InnerText"><a href="index.html">Code Assistants</a></h1><span><p class="InnerShort">Community</p></span>
+        </nav>
+        <h2 class="beginText">You can search for other users invoices here.</h2>
+        <div class="search-container">
+            <form action="" method="get">
+                <input class="inputsearch" type="text" placeholder="Search for description, response, id, etc..." name="search">
+                <button class="submitbtn" type="submit">Submit</button>
+            </form>
         </div>
     </div>
-    <video autoplay muted loop id="myVideo">
-        <source src="../icons/Coding_video.mp4" type="video/mp4">
-    </video>
     <script src="../Scripts/script.js"></script>
+    <script src="../Scripts/tickets.js"></script>
 </body>
 </html>

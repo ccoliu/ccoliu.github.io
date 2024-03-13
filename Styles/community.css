@@ -104,178 +104,65 @@ h2.beginText, h2.TicketInfo {
     margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
 }
 
-@media screen and (max-height: 550px) {
-    body {
-        overflow-y: auto;
-    }
-}
-
-div.templateTicketContainer {
+div .search-container {
+    margin-top: 100px;
     display: flex;
-    flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
-    margin-top: 2em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    width: 100vw;
-    height: auto;
 }
 
-.ticket1, .ticket2, .ticket3, .ticket4, .ticket5, .ticket6, .ticket7, .ticket8, .ticket9, .ticket10 {
-    display: block;
-    justify-content: center;
-    align-items: center;
-    margin-top: 0.5em;
-    margin-bottom: 1em;
-    padding-left: 0.5em;
-    padding-right: 0.5em;
-    background-color: #111111;
-    border: 1.5px solid #cccccc;
-    border-radius: 10px;
-    width: auto;
-    min-width: 200px;
-    max-width: 80vw;
-    min-height: 10px;
-    height: auto;
-    font: 200 16px/1.5 "Lexend Deca", sans-serif;
-    color: #cccccc;
-}
-
-h3.ticketTitle {
-    margin-top: 5px;
-    white-space: nowrap;
-    margin-bottom: 2.5px;
-}
-
-p.ticketseq {
-    font: 200 14px/1.2 "Lexend Deca", sans-serif;
-    font-weight: lighter;
-    margin-left: 10px;
-    margin-bottom: 2.5px;
-}
-
-
-.ticketTitle, .ticketseq {
+.inputsearch,.submitbtn {
     display: inline-block;
 }
 
-div.ticketdesc {
-    width: inherit;
-    height: auto;
-}
-
-p.ticketDescription {
-    font: 200 14px/1.2 "Lexend Deca", sans-serif;
-    padding-left: 10px;
-    padding-right: 10px;
-    color: #ababab;
+.inputsearch {
+    width: 65vw;
+    height: 20.2px;
+    background-color: #363636;
+    font: 100 15px/1.5 "Lexend Deca", sans-serif;
     font-weight: lighter;
-    margin-top: 0.15em;
-    margin-bottom: 0.3em;
-    white-space: pre-wrap;
+    color: #c7c7c7;
+    border-radius: 50px 0 0 50px;
+    border: 0px;
+    padding: 20px;
 }
 
-p.ticketCreateTime {
-    font: 100 12px/1.1 "Lexend Deca", sans-serif;
-    font-weight: lighter;
-    padding-top: 0.1em;
+.submitbtn {
+    width: 10vw;
+    height: 60px;
+    font: 100 15px/0.4 "Lexend Deca", sans-serif;
+    background-color: #363636;
+    color: #c7c7c7;
+    border: 1px solid #5e5c5c;
+    border-width: 0 0 0 5px;
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+    padding: 20px;
+    margin-left: -5px;
+    padding-left: auto;
 }
 
-p.footerText {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font: 200 12px/1.1 "Lexend Deca", sans-serif;
-    font-weight: lighter;
-    padding-top: 0.1em;
-    margin-top: 2em;
-    margin-bottom: 100px;
-    margin-left: 40px;
-    color: #ababab;
-    text-align: center;
+.inputsearch:focus {
+    outline: none;
 }
 
-.ticketref1, .ticketref2, .ticketref3, .ticketref4, .ticketref5, .ticketref6, .ticketref7, .ticketref8, .ticketref9, .ticketref10 {
-    text-decoration: none;
-    color:#ababab;
+.submitbtn:hover {
+    background-color: #555454;
 }
 
-.ticketref1:hover {
-    .ticket1 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref2:hover {
-    .ticket2 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref3:hover {
-    .ticket3 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref4:hover {
-    .ticket4 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref5:hover {
-    .ticket5 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref6:hover {
-    .ticket6 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref7:hover {
-    .ticket7 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref8:hover {
-    .ticket8 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref9:hover {
-    .ticket9 {
-        background-color: #0a0a0a;
-    }
-}
-
-.ticketref10:hover {
-    .ticket10 {
-        background-color: #0a0a0a;
-    }
-}
-
-@media screen and (max-width: 1100px) {
-    .templateTicketContainer {
-        margin-left: 50px;
-    }
-    .footerText {
-        margin-left: 50px;
-    }
-}
-
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
     h1 a {
         font: 400 28px/1.5 "Noto Sans", sans-serif;
         margin-left: 20px;
         margin-top: -20px;
+    }
+    .inputsearch {
+        width: 55vw;
+    }
+    .submitbtn {
+        width: 12vw;
+        font-size: 13px;
+        padding-left: 0.4em;
     }
     .content {
         margin-left: 20px;
