@@ -90,6 +90,7 @@ h1.InnerText {
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-top: 5px;
     line-height: 48px;
+    white-space: nowrap;
 }
 
 h1 a {
