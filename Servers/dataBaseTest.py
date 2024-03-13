@@ -252,6 +252,7 @@ class dataBaseTools:
             print(item.get("generatedCode"))
             # pprint(item)
 
+    # will print out the input and gpt output given the obeject id
     def searchDocumentUsingId(self, dbName, collectionName, id):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -260,7 +261,29 @@ class dataBaseTools:
         result = collection.find(filter)
 
         for item in result:
-            pprint(item)
+            if item.get("type") == "modify code":
+                print(item.get("sourceCode"))
+                print(item.get("modifiedCode"))
+            else:
+                print(item.get("requirement"))
+                print(item.get("generatedCode"))
+
+    def searchInAllCollections(self, dbName, index, query):
+        db = self.client[dbName]
+
+        for collectionName in db.list_collection_names():
+            collection = db[collectionName]
+
+            filter = {index: {'$regex': query}}
+
+            result = collection.find(filter)
+            for item in result:
+                if item.get("type") == "modify code":
+                    print(item.get("sourceCode"))
+                    print(item.get("modifiedCode"))
+                else:
+                    print(item.get("requirement"))
+                    print(item.get("generatedCode"))
 
 
 # Document example:
