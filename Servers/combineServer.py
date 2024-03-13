@@ -206,10 +206,16 @@ def retreive_code():
         data = request.get_json()
         # data = data.replace("\'", "\"")
 
-        f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
+        '''f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
         comments = f"{data}"
         comments = comments.replace("\'", "\"")
-        f.write(comments + '\n')
+        f.write(comments + '\n')'''
+
+        rate = data.get("rate", "")
+        comment = data.get("comment", "")
+        id = data.get("id", "")
+
+        dbT.updateDocument("fineTune", "generateCollection", id, rate, comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
