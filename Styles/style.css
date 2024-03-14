@@ -53,6 +53,21 @@ body::-webkit-scrollbar-thumb {
     }
 }
 
+@keyframes breathEffect {
+    0% {
+        background-color: #363636;
+    }
+    30% {
+        background-color: #949494;
+    }
+    60% {
+        background-color: #949494;
+    }
+    100% {
+        background-color: #363636;
+    }
+}
+
 .textEnter {
     color: white;
     caret-color: white;
@@ -366,8 +381,10 @@ h2.AImsg {
     width: 100%;
     height: 100%;
     background-image: url('../icons/OldestOct.png');
+    background-color: #363636;
     filter: brightness(0.15);
     z-index: -1;
+    animation: breathEffect 2.5s infinite;
 }
 
 /* 定義內容區域的樣式 */

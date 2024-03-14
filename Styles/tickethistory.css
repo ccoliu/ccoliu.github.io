@@ -26,8 +26,10 @@ body::-webkit-scrollbar-thumb {
     width: 100%;
     height: 100%;
     background-image: url('../icons/OldestOct.png');
+    background-color: #363636;
     filter: brightness(0.15);
     z-index: -1;
+    animation: breathEffect 2.5s infinite;
 }
 
 @font-face {
@@ -64,6 +66,21 @@ body::-webkit-scrollbar-thumb {
     }
     100% {
         height: 0px;
+    }
+}
+
+@keyframes breathEffect {
+    0% {
+        background-color: #363636;
+    }
+    30% {
+        background-color: #949494;
+    }
+    60% {
+        background-color: #949494;
+    }
+    100% {
+        background-color: #363636;
     }
 }
 
