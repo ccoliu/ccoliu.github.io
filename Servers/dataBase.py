@@ -1,3 +1,6 @@
+'''This is the database class that will be used to store the data from the frontend.'''
+
+# Import the mongodb library
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from pprint import pprint
@@ -23,12 +26,12 @@ class dataBaseTools:
             print(e)
 
     # Print all the databases in the server
-    def printDatabase(self):
+    def printDataBaseList(self):
         for db_info in self.client.list_database_names():
             print(db_info)
 
-    # List all the collections in a specific database
-    def printCollection(self, dbName):
+    # Print all the collections in a specific database
+    def printCollections(self, dbName):
         db = self.client[dbName]
 
         for collection_info in db.list_collection_names():
@@ -172,7 +175,14 @@ class dataBaseTools:
     # parametres: dbName, collectionName, inputCode, outputCode, rate, comment
     # Insert a document into a collection and retrun the id of the document
     def insertModifyDocument(
-        self, dbName, collectionName, inputCode, outputCode, rate="No rate", comment="No comment"
+        self,
+        dbName,
+        collectionName,
+        inputCode,
+        outputCode,
+        summay,
+        rate="No rate",
+        comment="No comment",
     ):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -181,6 +191,8 @@ class dataBaseTools:
             "type": "modify code",
             "sourceCode": inputCode,
             "modifiedCode": outputCode,
+            "searchIndex": outputCode,
+            "summary": summay,
             "rate": rate,
             "comment": comment,
         }
@@ -201,6 +213,7 @@ class dataBaseTools:
         requirement,
         gptList,
         generatedCode,
+        summary,
         rate="No rate",
         comment="No comment",
     ):
@@ -212,6 +225,8 @@ class dataBaseTools:
             "requirement": requirement,
             "gptList": gptList,
             "generatedCode": generatedCode,
+            "searchIndex": requirement,
+            "summary": summary,
             "rate": rate,
             "comment": comment,
         }
@@ -239,18 +254,31 @@ class dataBaseTools:
         print(f"Document inserted.")
 
     # Find similar documents in a collection
-    def searchSimilarDocument(self, dbName, collectionName, index, query):
+    def communitySearch(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        filter = {index: {'$regex': query}}
+        idArray = []
+        # Divide the query sentence into seperate words and join them with '|'.
+        regex_pattern = '|'.join(query.split())
+        # Use regex to match the index, and use 'i' to make it case insensitive.
+        filter = {"searchIndex": {'$regex': regex_pattern, '$options': 'i'}}
 
         result = collection.find(filter)
 
         for item in result:
-            print(item.get("requirement"))
-            print(item.get("generatedCode"))
-            # pprint(item)
+            # Store the related array in a list
+            idArray.append(item.get("_id"))
+
+            # Print the information of the related document
+            if item.get("type") == "modify code":
+                print(item.get("sourceCode"))
+                print(item.get("modifiedCode"))
+            elif item.get("type") == "generate code":
+                print(item.get("requirement"))
+                print(item.get("generatedCode"))
+
+        return idArray
 
     # will print out the input and gpt output given the obeject id
     def searchDocumentUsingId(self, dbName, collectionName, id):

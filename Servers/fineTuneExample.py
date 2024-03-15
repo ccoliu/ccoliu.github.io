@@ -56,14 +56,6 @@ id = '65f1511e03445957da525af8'
 idFilter = {'_id': ObjectId(id)}
 
 
-keyWord = "maze"
+keyWord = "game"
 
-
-condition = {"rate": "No rate"}
-
-dbT.getRandomeDocumentWithCondition(
-    "fineTune",
-    "generateCollection",
-    condition,
-    2,
-)
+dbT.communitySearch("fineTune", "modifiedCollection", keyWord)
