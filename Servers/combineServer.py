@@ -1,18 +1,32 @@
-# server.py
+'''This file is the server for the Code Assistance project. It is responsible for processing the code received from the frontend and returning the processed result to the frontend.'''
+
+# Import necessary libraries
 from openai import OpenAI
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from fileFormatt import StringToJsonl
-from trainingClass import TrainingTool
-from dataBaseTest import dataBaseTools
+import ssl  # Local https key
 from bson import ObjectId
 
-cast = StringToJsonl()
-fineTuneTools = TrainingTool()
-dbT = dataBaseTools()
+# Import self defined classes
+from fileFormatt import StringToJsonl
+from trainingClass import TrainingTool
+from dataBase import dataBaseTools
 
+# Set up SSL key for Flask to use https.
+cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
+key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
+
+# Set the server type to https or http
+SERVER_TYPE = "http"
+
+# Create a Flask app
 app = Flask(__name__)
 CORS(app)
+
+# Create instances of self defined classes
+castTools = StringToJsonl()
+fineTuneTools = TrainingTool()
+dbTools = dataBaseTools()
 
 # Read API keys from key file.
 with open("key.txt", "r") as file:
@@ -29,7 +43,6 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 
 # Define system roles and their instructions.
-
 interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
 codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
@@ -157,9 +170,7 @@ def process_code():
 
         optimizedCode = optimizeCode(code, problems)
 
-        # styledCode = adjustStyle(optimizedCode)
-
-        dataId = dbT.insertModifyDocument("fineTune", "modifiedCollection", code, optimizedCode)
+        dataId = dbTools.insertModifyDocument("fineTune", "modifiedCollection", code, optimizedCode)
 
         print(optimizedCode + "\n")
 
@@ -184,10 +195,8 @@ def gen_code():
         requirmentList = analyzeUserInput(userInput)
         # Generate code in specific language
         genResult = generateCode(requirmentList, targetLanguage)
-        # Adjust coding style
-        # finalResult = adjustStyle(genResult)
 
-        dataId = dbT.insertGenerateDocument(
+        dataId = dbTools.insertGenerateDocument(
             "fineTune", "generateCollection", userInput, requirmentList, genResult
         )
 
@@ -204,25 +213,45 @@ def gen_code():
 def retreive_code():
     try:
         data = request.get_json()
-        # data = data.replace("\'", "\"")
-
-        '''f = open('Misc/comment.txt', "a")  # upper directory, Misc folder
-        comments = f"{data}"
-        comments = comments.replace("\'", "\"")
-        f.write(comments + '\n')'''
 
         rate = data.get("rate", "")
         comment = data.get("comment", "")
         id = data.get("id", "")
 
         idFilter = {'_id': ObjectId(id)}
-        dbT.updateDocument("fineTune", "generateCollection", idFilter, "rate", rate)
-        dbT.updateDocument("fineTune", "generateCollection", idFilter, "comment", comment)
+        dbTools.updateDocument("fineTune", "generateCollection", idFilter, "rate", rate)
+        dbTools.updateDocument("fineTune", "generateCollection", idFilter, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+@app.route("/communitySearch", methods=["POST"])
+def search():
+    try:
+        data = request.get_json()
+        # data = data.replace("\'", "\"")
+
+        rate = data.get("rate", "")
+        comment = data.get("comment", "")
+        id = data.get("id", "")
+
+        idFilter = {'_id': ObjectId(id)}
+        dbTools.updateDocument("fineTune", "modifiedCollection", idFilter, "rate", rate)
+        dbTools.updateDocument("fineTune", "modifiedCollection", idFilter, "comment", comment)
+
+        return jsonify({"result": "success"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+# Condtion to pick which server to use.
+if SERVER_TYPE == "http":
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)
+elif SERVER_TYPE == "https":
+    if __name__ == "__main__":
+        context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        context.load_cert_chain(certfile=cert_path, keyfile=key_path)
+        app.run(host='0.0.0.0', port=5000, ssl_context=context)
