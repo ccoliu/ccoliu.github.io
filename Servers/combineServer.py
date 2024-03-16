@@ -245,7 +245,7 @@ def search():
         keyword = data.get("keyword", "")
 
         idArray = []
-        idArray = dbTools.communitySearch("fineTune", "generateCollection", keyword)
+        idArray = dbTools.communitySearch("fineTune", "codoctopus", keyword)
 
         return jsonify({"result": idArray})
     except Exception as e:

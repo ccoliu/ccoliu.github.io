@@ -58,4 +58,7 @@ idFilter = {'_id': ObjectId(id)}
 
 keyWord = "game"
 
-dbT.communitySearch("fineTune", "modifiedCollection", keyWord)
+dbT.createCollection("fineTune", "codoctopus")
+
+# The data base is named fineTune
+# This collection that record both mode and use for searching is named codoctopus

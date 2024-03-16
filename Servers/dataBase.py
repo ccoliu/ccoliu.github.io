@@ -262,7 +262,7 @@ class dataBaseTools:
         # Divide the query sentence into seperate words and join them with '|'.
         regex_pattern = '|'.join(query.split())
         # Use regex to match the index, and use 'i' to make it case insensitive.
-        filter = {"searchIndex": {'$regex': regex_pattern, '$options': 'i'}}
+        filter = {"summary": {'$regex': regex_pattern, '$options': 'i'}}
 
         result = collection.find(filter)
 
