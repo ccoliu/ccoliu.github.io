@@ -312,29 +312,3 @@ class dataBaseTools:
                 else:
                     print(item.get("requirement"))
                     print(item.get("generatedCode"))
-
-
-# Document example:
-""" 
-_id (atuo)
-
-Modify:
-1. Type : modify code 
-2. source code
-3. modified code 
-4. good or bad
-5. comment
-
-Generate:
-1. Type : generate code 
-2. requirement
-3. gpt given list
-4. generated code 
-5. good or bad
-6. comment
-
-common case like coding style
-1. Type : general case
-2. input
-3. output 
-"""

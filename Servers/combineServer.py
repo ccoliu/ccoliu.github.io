@@ -1,11 +1,11 @@
 '''This file is the server for the Code Assistance project. It is responsible for processing the code received from the frontend and returning the processed result to the frontend.'''
 
 # Import necessary libraries
-from openai import OpenAI
-from flask import Flask, request, jsonify
+from openai import OpenAI  # OpenAI API
+from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
 import ssl  # Local https key
-from bson import ObjectId
+from bson import ObjectId  # For MongoDB may use the id filter
 
 # Import self defined classes
 from fileFormatt import StringToJsonl
@@ -53,9 +53,13 @@ codeMaster = "You are a coding master, skilled at helping others modify their so
 
 reversedDiscriber = "You are a reverse engineer, capable of understanding the source code and diescribing its functionality or what this code is doing in sentences."
 
+blueSkyThinker = "You are a person full of imagination, you will read the input from user and extend the feature, to make more function or the function better, and you will output in desciption. For example, if a user says 'Give me a maze game' you might respond with, 'A maze game where the user can walk through the maze, possibly encounter monsters, and the player can find treasures...'."
 
-# This function will transfer user's request into bulleted list
-def analyzeUserInput(inputSentence):
+functionAdder = "You are a function adder, capable of filling up the missing parts of the code. If you receive a code snippet with missing parts, you will fill in the missing parts and return the complete code. If you receive a complete code snippet, you will return the original code without any changes."
+
+
+# This function will transfer user's request into bulleted list.
+def analyzeInputSentence(inputSentence):
     analyzeInput = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -69,7 +73,10 @@ def analyzeUserInput(inputSentence):
             },
         ],
     )
+    # Print the bulleted list of the user's request use for debugging.
+    print("This is the bulleted list of the user's request: \n")
     print(analyzeInput.choices[0].message.content)
+
     return analyzeInput.choices[0].message.content
 
 
@@ -88,11 +95,14 @@ def generateCode(requirement, lang):
             },
         ],
     )
+    # Print the code gpt generated, use for debugging.
+    print("This is the generated code: \n")
     print(generateResult.choices[0].message.content)
+
     return generateResult.choices[0].message.content
 
 
-# This function may return a issues list or no issues.
+# This function will read the source code and return a list of potential problems.
 def analyzeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -107,10 +117,14 @@ def analyzeCode(inputCode):
             },
         ],
     )
+    # Print the problem list, use for debugging.
+    print("This is the problem list: \n")
     print(analyzeResult.choices[0].message.content)
+
     return analyzeResult.choices[0].message.content
 
 
+# This function wiil optimize the code using the source code and the problem list.
 def optimizeCode(inputCode, problemList):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -132,6 +146,26 @@ def optimizeCode(inputCode, problemList):
     return analyzeResult.choices[0].message.content
 
 
+# This function will add extra features to the original input sentence.
+def addFeature(inputSentence):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": blueSkyThinker,
+            },
+            {
+                "role": "user",
+                "content": inputSentence,
+            },
+        ],
+    )
+    print(analyzeResult.choices[0].message.content)
+    return analyzeResult.choices[0].message.content
+
+
+# This function will read the code and decribe it in human language.
 def describeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -139,6 +173,24 @@ def describeCode(inputCode):
             {
                 "role": "system",
                 "content": reversedDiscriber,
+            },
+            {
+                "role": "user",
+                "content": inputCode,
+            },
+        ],
+    )
+    print(analyzeResult.choices[0].message.content)
+    return analyzeResult.choices[0].message.content
+
+
+def fillFunction(inputCode):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": functionAdder,
             },
             {
                 "role": "user",
@@ -172,7 +224,7 @@ def process_code():
         summary = describeCode(optimizedCode)
 
         dataId = dbTools.insertModifyDocument(
-            "fineTune", "modifiedCollection", code, optimizedCode, summary
+            "fineTune", "codoctopus", code, optimizedCode, summary
         )
 
         print(optimizedCode + "\n")
@@ -196,19 +248,24 @@ def gen_code():
         targetLanguage = f"{lang}"
 
         # Turn user input into list
-        requirmentList = analyzeUserInput(userInput)
+
+        moreFeature = addFeature(userInput)
+
+        requirmentList = analyzeInputSentence(moreFeature)
         # Generate code in specific language
         genResult = generateCode(requirmentList, targetLanguage)
 
-        summary = describeCode(genResult)
+        final = fillFunction(genResult)
+
+        summary = describeCode(final)
 
         dataId = dbTools.insertGenerateDocument(
-            "fineTune", "generateCollection", userInput, requirmentList, genResult, summary
+            "fineTune", "codoctopus", userInput, requirmentList, final, summary
         )
 
-        print(genResult + "\n")
+        print(final + "\n")
 
-        output = f"{genResult}"
+        output = f"{final}"
         # Return the processed result to the frontend
         return jsonify({"result": output, "id": str(dataId)})
     except Exception as e:
@@ -227,8 +284,8 @@ def retreive_code():
         id = data.get("id", "")
 
         idFilter = {'_id': ObjectId(id)}
-        dbTools.updateDocument("fineTune", "generateCollection", idFilter, "rate", rate)
-        dbTools.updateDocument("fineTune", "generateCollection", idFilter, "comment", comment)
+        dbTools.updateDocument("fineTune", "codoctopus", idFilter, "rate", rate)
+        dbTools.updateDocument("fineTune", "codoctopus", idFilter, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
