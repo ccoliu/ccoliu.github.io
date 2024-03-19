@@ -43,19 +43,27 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 
 # Define system roles and their instructions.
-interpreter = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
+INTERPRETER = 'You are a master of sentence comprehension. When you receive language in various forms, you organize its requests into a bulleted list. For example: "I want a program that can perform addition and subtraction and output the result to the screen." Response: 1. Addition and subtraction functionality 2. Output the result to the screen.'
 
-codeGenerater = "You are a program generator that produces programs based on bulleted lists of requirements. If the list of requirements is incomplete, you will automatically fill in the essential functions and annotate them with comments. Use the language:"
+CODE_GENERATER = "You are a program generator that produces programs based on bulleted lists of requirements.Use the language:"
 
-analyst = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'. If there exist issues, respond with a bullet-point list."
+ANALYST = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'."
 
-codeMaster = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code. You will return the source code that you generate or if there are no issues, you will return the original source code, no need to explain what you have done, just return the code."
+CODE_MASTER = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code."
 
-reversedDiscriber = "You are a reverse engineer, capable of understanding the source code and diescribing its functionality or what this code is doing in sentences."
+REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
 
-blueSkyThinker = "You are a person full of imagination, you will read the input from user and extend the feature, to make more function or the function better, and you will output in desciption. For example, if a user says 'Give me a maze game' you might respond with, 'A maze game where the user can walk through the maze, possibly encounter monsters, and the player can find treasures...'."
+BLUESKY_THINKER = "You are full of imagination, you will read the input from user and extend the feature, to make more functionality or better function, and you will output it in desciption. For example, if a user says 'Give me a maze game' you might respond with, 'A maze game where the user can walk around the maze, possibly encounter monsters, and the player can find treasures......'."
 
-functionAdder = "You are a function adder, capable of filling up the missing parts of the code. If you receive a code snippet with missing parts, you will fill in the missing parts and return the complete code. If you receive a complete code snippet, you will return the original code without any changes."
+COMPELETION_CHECKER = "When you receive a source code, you read the comment in the code and if the comment part doesn't implement, you will fill the function and return the compelete source code."
+
+# Deine some phrases for the server to use.
+
+ASK_FOR_CODE = "Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code."
+
+ASK_FOR_LIST = "Please give me in a bulleted list."
+
+ASK_FOR_COMPELETION = "Please give me the compelete source code."
 
 
 # This function will transfer user's request into bulleted list.
@@ -65,7 +73,7 @@ def analyzeInputSentence(inputSentence):
         messages=[
             {
                 "role": "system",
-                "content": interpreter,
+                "content": INTERPRETER,
             },
             {
                 "role": "user",
@@ -87,11 +95,11 @@ def generateCode(requirement, lang):
         messages=[
             {
                 "role": "system",
-                "content": codeGenerater + lang,
+                "content": CODE_GENERATER + lang,
             },
             {
                 "role": "user",
-                "content": requirement,
+                "content": requirement + "\n" + ASK_FOR_CODE,
             },
         ],
     )
@@ -109,7 +117,7 @@ def analyzeCode(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": analyst,
+                "content": ANALYST,
             },
             {
                 "role": "user",
@@ -131,14 +139,17 @@ def optimizeCode(inputCode, problemList):
         messages=[
             {
                 "role": "system",
-                "content": codeMaster,
+                "content": CODE_MASTER,
             },
             {
                 "role": "user",
                 "content": "Here is the source code\n"
                 + inputCode
+                + "\n"
                 + "Here are the problems that may occur\n"
-                + problemList,
+                + problemList
+                + "\n"
+                + ASK_FOR_CODE,
             },
         ],
     )
@@ -153,7 +164,7 @@ def addFeature(inputSentence):
         messages=[
             {
                 "role": "system",
-                "content": blueSkyThinker,
+                "content": BLUESKY_THINKER,
             },
             {
                 "role": "user",
@@ -172,7 +183,7 @@ def describeCode(inputCode):
         messages=[
             {
                 "role": "system",
-                "content": reversedDiscriber,
+                "content": REVERSE_DISCRIBER,
             },
             {
                 "role": "user",
@@ -185,16 +196,16 @@ def describeCode(inputCode):
 
 
 def fillFunction(inputCode):
-    analyzeResult = client_model_1.chat.completions.create(
+    analyzeResult = client_model_2.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": functionAdder,
+                "content": COMPELETION_CHECKER,
             },
             {
                 "role": "user",
-                "content": inputCode,
+                "content": inputCode + "\n" + ASK_FOR_COMPELETION,
             },
         ],
     )
@@ -248,7 +259,6 @@ def gen_code():
         targetLanguage = f"{lang}"
 
         # Turn user input into list
-
         moreFeature = addFeature(userInput)
 
         requirmentList = analyzeInputSentence(moreFeature)
