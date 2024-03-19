@@ -4,8 +4,8 @@ import shutil
 
 class StringToJsonl:
     def __init__(self):
-        print("You may format now")
-        print("Current file is lead to fineTuneData.jsonl or fact.jsonl")
+        print("You may use format tools now!")
+        print("Current file is write into fineTuneData.jsonl & fact.jsonl")
 
     # If type is Q&A then question is the question (input) and content is the expecting answer
     # If type is factDescription then question is the original code and content is the comment
@@ -58,7 +58,7 @@ class StringToJsonl:
             print("Invalid type please enter Q&A or factDescription.")
             return
 
-    def makeBackUp(self):
+    def createBackUp(self):
 
         source_file = 'Misc/fineTuneData.jsonl'
         backup_file = 'Misc/backUpData.jsonl'
@@ -66,15 +66,15 @@ class StringToJsonl:
         # Copy file
         shutil.copyfile(source_file, backup_file)
 
-        print("Backup success!")
+        print("Create backup success!")
 
-    def copyFromBackUp(self):
+    def cpyFromBackUp(self, current_file):
 
-        source_file = 'Misc/fineTuneData.jsonl'
+        # source_file = 'Misc/fineTuneData.jsonl'
         backup_file = 'Misc/backUpData.jsonl'
 
-        # Copy file
-        shutil.copyfile(backup_file, source_file)
+        # Copy file from backup to current file
+        shutil.copyfile(backup_file, current_file)
 
         print("Copy success!")
 
@@ -129,3 +129,81 @@ class StringToJsonl:
             self.formatToJSONL(enterMode, Q, A)
 
         return questions, answers
+
+    # Write DB data to JSONL file use for fine-tuning.
+    # In type factDesctiption systemOutput put the request and userComment put the answer.
+    def write_to_file(self, dataType, systemOutput, userRate, userComment, filePath):
+        # If the data gets from DB is modify.
+        if dataType == "modify code":
+            jsonl_data = {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a coding master good at writing perfect code care about readibility, maintainability and reliability.",
+                    },
+                    {"role": "user", "content": systemOutput},
+                    {
+                        "role": "assistant",
+                        "content": "This code is"
+                        + userRate
+                        + "\n"
+                        + "I think the code "
+                        + userComment,
+                    },
+                ]
+            }
+
+            jsonl_string = json.dumps(jsonl_data)
+
+            # Keep Writing Data to JSONL
+            with open(filePath, 'a') as file:
+                file.write(jsonl_string + '\n')
+                print("Write success")
+
+        elif dataType == "generate code":
+            jsonl_data = {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a coding master good at writing perfect code care about readibility, maintainability and reliability.",
+                    },
+                    {"role": "user", "content": systemOutput},
+                    {
+                        "role": "assistant",
+                        "content": "This code is"
+                        + userRate
+                        + "\n"
+                        + "I think the code "
+                        + userComment,
+                    },
+                ]
+            }
+
+            jsonl_string = json.dumps(jsonl_data)
+
+            # Keep Writing Data to JSONL
+            with open(filePath, 'a') as file:
+                file.write(jsonl_string + '\n')
+                print("Write success")
+
+        elif dataType == "factDescription":
+            jsonl_data = {
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "You are a coding master good at writing perfect code care about readibility, maintainability and reliability.",
+                    },
+                    {"role": "user", "content": systemOutput},
+                    {"role": "assistant", "content": userComment},
+                ]
+            }
+
+            jsonl_string = json.dumps(jsonl_data)
+
+            # Keep Writing Data to JSONL
+            with open(filePath, 'a') as file:
+                file.write(jsonl_string + '\n')
+                print("Write success")
+        else:
+            print("Error type! Please enter modify code or generate code or factDescription.")
+            return

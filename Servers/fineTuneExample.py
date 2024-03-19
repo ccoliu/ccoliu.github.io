@@ -58,7 +58,8 @@ idFilter = {'_id': ObjectId(id)}
 
 keyWord = "game"
 
-dbT.createCollection("fineTune", "codoctopus")
 
 # The data base is named fineTune
 # This collection that record both mode and use for searching is named codoctopus
+
+dbT.readDBToFile("fineTune", "codoctopus", "Misc/fineTuneDataTest.jsonl")

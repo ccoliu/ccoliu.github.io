@@ -6,6 +6,7 @@ from pymongo.server_api import ServerApi
 from pprint import pprint
 import json
 from bson import ObjectId
+from fileFormatt import StringToJsonl
 
 
 class dataBaseTools:
@@ -17,6 +18,8 @@ class dataBaseTools:
 
         # Create a new client and connect to the server
         self.client = MongoClient(uri, server_api=ServerApi('1'))
+
+        self.fileFormat = StringToJsonl()
 
         # Send a ping to confirm a successful connection
         try:
@@ -312,3 +315,26 @@ class dataBaseTools:
                 else:
                     print(item.get("requirement"))
                     print(item.get("generatedCode"))
+
+    # write all data in collection to a file
+    def readDBToFile(self, dbName, collectionName, filePath):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        for item in collection.find():
+            if item.get("type") == "modify code":
+                self.fileFormat.write_to_file(
+                    "modify code",
+                    item.get("modifiedCode"),
+                    item.get("rate"),
+                    item.get("comment"),
+                    filePath,
+                )
+            elif item.get("type") == "generate code":
+                self.fileFormat.write_to_file(
+                    "generate code",
+                    item.get("generatedCode"),
+                    item.get("rate"),
+                    item.get("comment"),
+                    filePath,
+                )
