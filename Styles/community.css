@@ -57,6 +57,24 @@ body::-webkit-scrollbar-thumb {
     }
 }
 
+@keyframes heightaddon {
+    0% {
+        height: 0px;
+    }
+    100% {
+        height: 50px;
+    }
+}
+
+@keyframes heightoff {
+    0% {
+        height: 50px;
+    }
+    100% {
+        height: 0px;
+    }
+}
+
 nav.navbar {
     color: #cccccc;
     left: 0;
@@ -174,6 +192,21 @@ div .search-container {
 
 .submitbtn:hover {
     background-color: #555454;
+}
+
+.footerdesc {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #000000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0px;
+    padding-left: 2em;
+    background-color: #35f52e;
+    width: 100%;
+    height: 0px;
+    animation: heightaddon 0.75s forwards;
 }
 
 @media screen and (max-width: 800px) {
