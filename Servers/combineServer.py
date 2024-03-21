@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
 import ssl  # Local https key
 from bson import ObjectId  # For MongoDB may use the id filter
+from bson import json_util  # For MongoDB may use the json_util
 
 # Import self defined classes
 from fileFormatt import StringToJsonl
@@ -309,12 +310,12 @@ def search():
     try:
         data = request.get_json()
         # Get the keyword from the frontend
-        keyword = data.get("keyword", "")
 
         idArray = []
-        idArray = dbTools.communitySearch("fineTune", "codoctopus", keyword)
+        idArray = dbTools.communitySearch("fineTune", "codoctopus", data)
 
-        return jsonify({"result": idArray})
+        # return list of searched arrays
+        return json_util.dumps(idArray)
     except Exception as e:
         return jsonify({"error": str(e)})
 
