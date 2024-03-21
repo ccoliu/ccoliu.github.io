@@ -7,6 +7,20 @@ window.onload = function() {
 const submitbtn = document.querySelector('.submitbtn');
 const search = document.querySelector('.inputsearch');
 
+function loadingToggle(str){
+    if (str === "on"){
+        document.querySelector('.loadinggif').style.display = "flex";
+        submitbtn.style.cursor = "not-allowed";
+        submitbtn.style.filter = "brightness(70%)";
+    }
+    else if (str === "off") {
+        document.querySelector('.loadinggif').style.display = "none";
+        submitbtn.style.cursor = "pointer";
+        submitbtn.style.filter = "brightness(100%)";
+    }
+    return;
+}
+
 function createErrorMsg(str){
     document.querySelector('.footerdesc').style.display = "flex";
     document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
@@ -23,7 +37,10 @@ function processSearch() {
 
     if (searchValue === ""){
         createErrorMsg("Please enter a valid search query.");
+        return;
     }
+
+    loadingToggle("on");
 
     //searching for database
     fetch(CURRENTWEB + "communitySearch", {
@@ -53,7 +70,13 @@ function processSearch() {
             `;
             document.querySelector('.searchresults').appendChild(newDiv);
         });
+        loadingToggle("off");
     })
+    .catch((error) => {
+        console.error("Error:", error);
+        createErrorMsg(error);
+        loadingToggle("off");
+    });
 
     return;
 }

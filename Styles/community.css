@@ -209,6 +209,20 @@ div .search-container {
     animation: heightaddon 0.75s forwards;
 }
 
+div.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.loadinggif {
+    display: none;
+    width: 54px;
+    height: 54px;
+    background-color: transparent;
+}
+
 @media screen and (max-width: 800px) {
     h1 a {
         font: 400 28px/1.5 "Noto Sans", sans-serif;
