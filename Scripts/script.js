@@ -9,6 +9,14 @@ window.onload = function() {
   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 }
 
+let img = new Image();
+img.src = "../icons/OldestOct.png";
+img.onload = function() {
+  if (window.location.href.includes("index") == false) {
+    document.querySelector('.background').style.backgroundImage = img;
+  }
+}
+
 // Helper function to toggle the visibility of elements
 function toggleVisibility(elementId, display) {
   const element = document.getElementById(elementId);
