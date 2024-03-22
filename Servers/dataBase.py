@@ -7,6 +7,7 @@ from pprint import pprint
 import json
 from bson import ObjectId
 from fileFormatt import StringToJsonl
+import numpy as np
 
 
 class dataBaseTools:
@@ -261,7 +262,9 @@ class dataBaseTools:
         db = self.client[dbName]
         collection = db[collectionName]
 
-        idArray = []
+        resultArray = [[]]
+        singleIdSummaryPair = []
+
         # Divide the query sentence into seperate words and join them with '|'.
         regex_pattern = '|'.join(query.split())
         # Use regex to match the index, and use 'i' to make it case insensitive.
@@ -271,17 +274,17 @@ class dataBaseTools:
 
         for item in result:
             # Store the related array in a list
-            idArray.append(item.get("_id"))
+            singleIdSummaryPair.append(item.get("_id"))
+            singleIdSummaryPair.append(item.get("summary"))
 
-            # Print the information of the related document
-            if item.get("type") == "modify code":
-                print(item.get("sourceCode"))
-                print(item.get("modifiedCode"))
-            elif item.get("type") == "generate code":
-                print(item.get("requirement"))
-                print(item.get("generatedCode"))
+            resultArray.append(singleIdSummaryPair)
 
-        return idArray
+        # Print the information of the related document
+        """ for i in range(len(resultArray)):
+            for j in range(len(resultArray[i])):
+                print(resultArray[i][j]) """
+
+        return resultArray
 
     # will print out the input and gpt output given the obeject id
     def searchDocumentUsingId(self, dbName, collectionName, id):
@@ -338,3 +341,13 @@ class dataBaseTools:
                     item.get("comment"),
                     filePath,
                 )
+
+    def getSummary(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            return item.get("summary")

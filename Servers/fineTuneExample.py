@@ -56,10 +56,12 @@ id = '65f1511e03445957da525af8'
 idFilter = {'_id': ObjectId(id)}
 
 
-keyWord = "game"
+keyWord = "fib"
 
 
 # The data base is named fineTune
 # This collection that record both mode and use for searching is named codoctopus
 
-dbT.readDBToFile("fineTune", "codoctopus", "Misc/fineTuneDataTest.jsonl")
+# dbT.readDBToFile("fineTune", "codoctopus", "Misc/fineTuneDataTest.jsonl")
+
+dbT.communitySearch("fineTune", "codoctopus", keyWord)

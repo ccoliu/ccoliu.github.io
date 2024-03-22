@@ -311,11 +311,13 @@ def search():
         data = request.get_json()
         # Get the keyword from the frontend
 
-        idArray = []
-        idArray = dbTools.communitySearch("fineTune", "codoctopus", data)
+        searchResult = [[]]
+        searchResult = dbTools.communitySearch("fineTune", "codoctopus", data)
 
         # return list of searched arrays
-        return json_util.dumps(idArray)
+
+        # Retuen two dimesional array to the frontend
+        return json_util.dumps(searchResult)
     except Exception as e:
         return jsonify({"error": str(e)})
 
