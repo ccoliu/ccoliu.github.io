@@ -6,6 +6,8 @@ from pymongo.server_api import ServerApi
 from pprint import pprint
 import json
 from bson import ObjectId
+from fileFormatt import StringToJsonl
+import numpy as np
 
 
 class dataBaseTools:
@@ -17,6 +19,8 @@ class dataBaseTools:
 
         # Create a new client and connect to the server
         self.client = MongoClient(uri, server_api=ServerApi('1'))
+
+        self.fileFormat = StringToJsonl()
 
         # Send a ping to confirm a successful connection
         try:
@@ -258,7 +262,9 @@ class dataBaseTools:
         db = self.client[dbName]
         collection = db[collectionName]
 
-        idArray = []
+        resultArray = [[]]
+        singleIdSummaryPair = []
+
         # Divide the query sentence into seperate words and join them with '|'.
         regex_pattern = '|'.join(query.split())
         # Use regex to match the index, and use 'i' to make it case insensitive.
@@ -268,17 +274,17 @@ class dataBaseTools:
 
         for item in result:
             # Store the related array in a list
-            idArray.append(item.get("_id"))
+            singleIdSummaryPair.append(item.get("_id"))
+            singleIdSummaryPair.append(item.get("summary"))
 
-            # Print the information of the related document
-            if item.get("type") == "modify code":
-                print(item.get("sourceCode"))
-                print(item.get("modifiedCode"))
-            elif item.get("type") == "generate code":
-                print(item.get("requirement"))
-                print(item.get("generatedCode"))
+            resultArray.append(singleIdSummaryPair)
 
-        return idArray
+        # Print the information of the related document
+        """ for i in range(len(resultArray)):
+            for j in range(len(resultArray[i])):
+                print(resultArray[i][j]) """
+
+        return resultArray
 
     # will print out the input and gpt output given the obeject id
     def searchDocumentUsingId(self, dbName, collectionName, id):
@@ -312,3 +318,62 @@ class dataBaseTools:
                 else:
                     print(item.get("requirement"))
                     print(item.get("generatedCode"))
+
+    # write all data in collection to a file
+    def readDBToFile(self, dbName, collectionName, filePath):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        for item in collection.find():
+            if item.get("type") == "modify code":
+                self.fileFormat.write_to_file(
+                    "modify code",
+                    item.get("modifiedCode"),
+                    item.get("rate"),
+                    item.get("comment"),
+                    filePath,
+                )
+            elif item.get("type") == "generate code":
+                self.fileFormat.write_to_file(
+                    "generate code",
+                    item.get("generatedCode"),
+                    item.get("rate"),
+                    item.get("comment"),
+                    filePath,
+                )
+
+    def getSummary(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            return item.get("summary")
+
+    def getOriginalCode(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            if item.get("type") == "generate code":
+                return item.get("requirement")
+            else:
+                return item.get("sourceCode")
+
+    def getOutputCode(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            if item.get("type") == "generate code":
+                return item.get("generatedCode")
+            else:
+                return item.get("modifiedCode")
