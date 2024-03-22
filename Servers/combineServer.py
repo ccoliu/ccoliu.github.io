@@ -322,6 +322,22 @@ def search():
         return jsonify({"error": str(e)})
 
 
+@app.route("/viewData", methods=["POST"])
+def view():
+    try:
+        id = request.get_json()
+
+        # Get the keyword from the frontend
+        origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
+        output = dbTools.getOutputCode("fineTune", "codoctopus", id)
+        summary = dbTools.getSummary("fineTune", "codoctopus", id)
+
+        return jsonify({"id": str(id), "original": origin, "output": output, "summary": summary})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 # Condtion to pick which server to use.
 if SERVER_TYPE == "http":
     if __name__ == "__main__":

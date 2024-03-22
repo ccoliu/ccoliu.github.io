@@ -351,3 +351,29 @@ class dataBaseTools:
 
         for item in result:
             return item.get("summary")
+
+    def getOriginalCode(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            if item.get("type") == "generate code":
+                return item.get("requirement")
+            else:
+                return item.get("sourceCode")
+
+    def getOutputCode(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            if item.get("type") == "generate code":
+                return item.get("generatedCode")
+            else:
+                return item.get("modifiedCode")
