@@ -12,6 +12,8 @@ const ticketID = document.querySelector('.ticketID');
 const ticketDesc = document.querySelector('.ticketDesc');
 const AIresp = document.querySelector('.AIresp');
 
+
+
 function createErrorMsg(str){
     document.querySelector('.footerdesc').style.display = "flex";
     document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
@@ -43,6 +45,9 @@ function sendCode(dataChunk) {
 }
 
 window.onload = () => {
+    serverText = document.querySelector('.server');
+    serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+
     let location = window.location.href;
     locationsplit = location.split('?=')[1];
     if (locationsplit == undefined) {
