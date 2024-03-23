@@ -6,6 +6,8 @@ window.onload = function() {
 
 const submitbtn = document.querySelector('.submitbtn');
 const search = document.querySelector('.inputsearch');
+const searchresult = document.querySelector('.resultfound');
+let searchresulthref = null;
 
 function loadingToggle(str){
     if (str === "on"){
@@ -52,24 +54,30 @@ function processSearch() {
     })
     .then((response) => response.json())
     .then((data) => { //data is an array of objects
+        let searchnum = 0;
         console.log(data)
         console.log(data.length);
-        if (data.length === 0){
+        if (data.length === 0 || data === undefined){
             createErrorMsg("No results found.");
             return;
         }
-        document.querySelector('.searchresults').style.display = "flex";
-        document.querySelector('.searchresults').innerHTML = "";
         data.forEach(element => {
-            let newDiv = document.createElement('div');
-            newDiv.classList.add('searchresult');
-            newDiv.innerHTML = `
-                <p class="resulttitle">${element.title}</p>
-                <p class="resultdesc">${element.description}</p>
-                <p class="resultlink"><a href="${element.link}" target="_blank">View</a></p>
-            `;
-            document.querySelector('.searchresults').appendChild(newDiv);
+            if (element.length !== 0){
+                console.log(searchnum+1);
+                let newDiv = document.createElement('div');
+                newDiv.classList.add('searchresult');
+                newDiv.innerHTML = `
+                    <a class="searchresulthref" href="communityview.html?=${element[searchnum]["$oid"]}">
+                    <p class="searchresultdesc">${element[searchnum+1]}</p>
+                    <p class="searchresultid">${element[searchnum]["$oid"]}</p>
+                `;
+                document.querySelector('.searchresults').appendChild(newDiv);
+                searchnum += 2;
+            }
         });
+        searchresult.style.display = "flex";
+        searchresult.innerHTML = "Found " + searchnum/2 + " results.";
+        searchresulthref = document.querySelector('.searchresulthref');
         loadingToggle("off");
     })
     .catch((error) => {
@@ -90,3 +98,13 @@ search.addEventListener("keydown" , e => {
 submitbtn.addEventListener("click", () => {
     processSearch();
 })
+
+if (searchresulthref)
+{
+        searchresulthref.addEventListener("click", (event) => {
+        let target = event.target;
+        let id = target.closest(searchresulthref).querySelector('.searchresultid').innerHTML;
+        console.log(id);
+        localStorage.setItem("communityid", id);
+    })
+}

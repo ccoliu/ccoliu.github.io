@@ -386,13 +386,13 @@ div.sendbtncontent {
     }
 }
 
-@media screen and (max-width: 1050px) {
+@media screen and (max-width: 1225px) {
     .ticketDesc, .AIresp, .comment {
         margin-left: 75px;
     }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 720px) {
     h1 a {
         font: 400 28px/1.5 "Noto Sans", sans-serif;
         margin-left: 20px;

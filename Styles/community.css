@@ -6,15 +6,15 @@ body {
     overflow-y: auto;
 }
 
-body::-webkit-scrollbar {
+body::-webkit-scrollbar, .searchresults div::-webkit-scrollbar {
     width: 8px;
 }
 
-body::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track, .searchresults div::-webkit-scrollbar-track {
     background: transparent;
 }
 
-body::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb, .searchresults div::-webkit-scrollbar-thumb {
     background: #c7c7c7;
     border-radius: 10px;
 }
@@ -138,11 +138,11 @@ h2.beginText, h2.TicketInfo {
 
 /* 定義內容區域的樣式 */
 .content {
-    margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
+    margin-left: 60px; /* 內容區域距離側邊欄的左邊距 */
 }
 
 div .search-container {
-    margin-top: 100px;
+    margin-top: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,6 +223,53 @@ div.loading {
     background-color: transparent;
 }
 
+.searchresults {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.resultfound {
+    display: none;
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #c7c7c7;
+    margin-top: 10px;
+}
+
+.searchresults div {
+    margin-left: 1em;
+    height: auto;
+    width: auto;
+    max-width: 450px;
+    max-height: 450px;
+    min-height: 150px;
+    min-width: 300px;
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    background-color: #363636;
+    color: #c7c7c7;
+    padding: 0px 20px 0px 20px;
+    border-radius: 10px;
+    border: 2px solid #8d8d8d;
+    text-decoration: none;
+    margin-top: 10px;
+    overflow-y: auto;
+    cursor: pointer;
+}
+
+.searchresults div a {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #c7c7c7;
+    text-decoration: none;
+    margin-top: 0;
+}
+
+.searchresultid {
+    font-size: 12px;
+    margin-top: 10px;
+}
+
 @media screen and (max-width: 800px) {
     h1 a {
         font: 400 28px/1.5 "Noto Sans", sans-serif;
@@ -254,3 +301,4 @@ div.loading {
         padding-bottom: 1.24em;
     }
 }
+
