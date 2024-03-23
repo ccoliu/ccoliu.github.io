@@ -56,13 +56,17 @@ function processSearch() {
     .then((response) => response.json())
     .then((data) => { //data is an array of objects
         let searchnum = 0;
+        searchresults.innerHTML = "";
         console.log(data)
         console.log(data.length);
-        if (data.length === 0 || data === undefined){
+        if (data.length < 2 || data.length === undefined){
             createErrorMsg("No results found.");
+            loadingToggle("off");
+            searchresult.style.display = "flex";
+            searchresult.innerHTML = "Found " + searchnum/2 + " results.";
+            searchresulthref = document.querySelector('.searchresulthref');
             return;
         }
-        searchresults.innerHTML = "";
         data.forEach(element => {
             if (element.length !== 0){
                 console.log(searchnum+1);
