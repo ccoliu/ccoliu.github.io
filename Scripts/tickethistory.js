@@ -100,8 +100,8 @@ window.onload = () => {
     let ticketID = document.querySelector('.ticketID');
     ticketID.innerHTML = chosedID;
 
-    console.log('commentPosted' + document.querySelector('.ticketseq').innerHTML);
-        if (localStorage.getItem('commentPosted' + document.querySelector('.ticketseq').innerHTML) != null){
+    console.log('commentPosted' + document.querySelector('.ticketID').innerHTML);
+        if (localStorage.getItem('commentPosted' + document.querySelector('.ticketID').innerHTML) != null){
             document.querySelector('.Youropinion').innerHTML = "Thank you for your feedback!";
             document.querySelector('.Youropinion').style.display = "flex";
             document.querySelector('.Youropinion').style.justifyContent = "center";
@@ -188,7 +188,7 @@ sendBtn.addEventListener('click', (e) => {
         }
 
         sendCode(dataChunk);
-        localStorage.setItem('commentPosted' + document.querySelector('.ticketseq').innerHTML , 'true');
+        localStorage.setItem('commentPosted' + document.querySelector('.ticketID').innerHTML , 'true');
     }
 
     return;

@@ -8,6 +8,7 @@ const submitbtn = document.querySelector('.submitbtn');
 const search = document.querySelector('.inputsearch');
 const searchresult = document.querySelector('.resultfound');
 let searchresulthref = null;
+const searchresults = document.querySelector('.searchresults');
 
 function loadingToggle(str){
     if (str === "on"){
@@ -61,6 +62,7 @@ function processSearch() {
             createErrorMsg("No results found.");
             return;
         }
+        searchresults.innerHTML = "";
         data.forEach(element => {
             if (element.length !== 0){
                 console.log(searchnum+1);

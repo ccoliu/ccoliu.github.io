@@ -233,6 +233,8 @@ div.loading {
 
 .resultfound {
     display: none;
+    justify-content: center;
+    align-items: center;
     font: 200 14px/1.5 "Lexend Deca", sans-serif;
     color: #c7c7c7;
     margin-top: 10px;
@@ -256,6 +258,10 @@ div.loading {
     margin-top: 10px;
     overflow-y: auto;
     cursor: pointer;
+}
+
+.searchresults div:hover {
+    background-color: #0a0a0a;
 }
 
 .searchresults div a {
