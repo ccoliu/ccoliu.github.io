@@ -11,7 +11,8 @@ let buttonFirstClicked = false;
 const ticketID = document.querySelector('.ticketID');
 const ticketDesc = document.querySelector('.ticketDesc');
 const AIresp = document.querySelector('.AIresp');
-
+const tickettype = document.querySelector('.tickettype');
+const ticketlang = document.querySelector('.ticketLang');
 
 
 function createErrorMsg(str){
@@ -66,9 +67,18 @@ window.onload = () => {
     .then((response) => response.json())
     .then((data) => {
         console.log(data);
+        console.log(data['lang']);
         ticketID.innerHTML = data['id'];
         ticketDesc.innerHTML = data['original'];
         AIresp.innerHTML = data['output'] + '\n\n' + data['summary'];
+        tickettype.innerHTML = data['mode'].charAt(0).toUpperCase() + data['mode'].slice(1);
+        if (data['lang'] !== "undefined") {
+            ticketlang.innerHTML = data['lang'];
+        }
+        else {
+            ticketlang.style.display = "none";
+            document.querySelector('.codeLang').style.display = "none";
+        }
     })
     .catch((error) => {
         createErrorMsg(error);

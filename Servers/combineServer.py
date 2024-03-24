@@ -327,18 +327,22 @@ def search():
 def view():
     try:
         id = request.get_json()
+        lang = None
 
         # Get the keyword from the frontend
         mode = dbTools.getMode("fineTune", "codoctopus", id)
-        if mode == "modify":
+        if mode == "modify code":
             origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
             output = dbTools.getOutputCode("fineTune", "codoctopus", id)
             summary = dbTools.getSummary("fineTune", "codoctopus", id)
-        elif mode == "generate":
+        elif mode == "generate code":
             lang = dbTools.getLang("fineTune", "codoctopus", id)
             origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
             output = dbTools.getOutputCode("fineTune", "codoctopus", id)
             summary = dbTools.getSummary("fineTune", "codoctopus", id)
+
+        if lang == None:
+            lang = "undefined"
 
         return jsonify(
             {

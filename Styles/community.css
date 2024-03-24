@@ -246,7 +246,7 @@ div.loading {
     width: auto;
     max-width: 450px;
     max-height: 450px;
-    min-height: 150px;
+    min-height: 100px;
     min-width: 300px;
     font: 200 14px/1.5 "Lexend Deca", sans-serif;
     background-color: #363636;
@@ -272,8 +272,10 @@ div.loading {
 }
 
 .searchresultid {
+    position: relative;
     font-size: 12px;
-    margin-top: 10px;
+    top: 0px;
+    padding-top: 1.5em;
 }
 
 @media screen and (max-width: 800px) {
