@@ -55,34 +55,30 @@ function processSearch() {
     })
     .then((response) => response.json())
     .then((data) => { //data is an array of objects
-        let searchnum = 0;
         searchresults.innerHTML = "";
         console.log(data)
         console.log(data.length);
-        if (data.length < 2 || data.length === undefined){
+        if (data.length == 0 || data.length === undefined){
             createErrorMsg("No results found.");
             loadingToggle("off");
             searchresult.style.display = "flex";
-            searchresult.innerHTML = "Found " + searchnum/2 + " results.";
+            searchresult.innerHTML = "Found " + 0 + " results.";
             searchresulthref = document.querySelector('.searchresulthref');
             return;
         }
-        data.forEach(element => {
-            if (element.length !== 0){
-                console.log(searchnum+1);
+        for (let i = 0; i < data.length; i++){
+            console.log(data[i]);
                 let newDiv = document.createElement('div');
                 newDiv.classList.add('searchresult');
                 newDiv.innerHTML = `
-                    <a class="searchresulthref" href="communityview.html?=${element[searchnum]["$oid"]}">
-                    <p class="searchresultdesc">${element[searchnum+1]}</p>
-                    <p class="searchresultid">${element[searchnum]["$oid"]}</p>
+                    <a class="searchresulthref" href="communityview.html?=${Object.keys(data[i])}">
+                    <p class="searchresultdesc">${Object.values(data[i])}</p>
+                    <p class="searchresultid">${Object.keys(data[i])}</p>
                 `;
                 document.querySelector('.searchresults').appendChild(newDiv);
-                searchnum += 2;
-            }
-        });
+        }
         searchresult.style.display = "flex";
-        searchresult.innerHTML = "Found " + searchnum/2 + " results.";
+        searchresult.innerHTML = "Found " + data.length + " results.";
         searchresulthref = document.querySelector('.searchresulthref');
         loadingToggle("off");
     })

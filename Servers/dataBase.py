@@ -274,13 +274,34 @@ class dataBaseTools:
 
         result = collection.find(filter)
 
+        resultArray = []
         for item in result:
             # Store the related array in a list
-            singleIdSummaryPair.append(item.get("_id"))
-            singleIdSummaryPair.append(item.get("summary"))
-
+            singleIdSummaryPair = {str(item.get("_id")): item.get("summary")}
             resultArray.append(singleIdSummaryPair)
-        return resultArray
+
+        identifier = query.split()
+        match_max = len(query.split())
+        if (match_max == 1):
+            return resultArray
+        
+        complete_match = []
+        match = [[] for i in range(match_max + 1)]
+        output = []
+        for dicts in resultArray:
+            match_num = 0
+            first_value = next(iter(dicts.values()))  # Get the first value of the dict
+            if query in first_value:
+                complete_match.append(dicts)
+                continue
+            for word in identifier:
+                if word in first_value:
+                    match_num += 1
+            match[match_num] += [dicts]
+        output += complete_match
+        for i in range(match_max, 0, -1):
+            output += match[i]
+        return output
 
     # This function will copy a certain data to community collection and update the rate and comment from the viewer.
     def copyToCommunity(self, id, rate, comment):
