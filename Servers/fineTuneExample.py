@@ -52,7 +52,7 @@ thread.start() """
 
 # nested query format example {'messages.role': "system1" , 'messages.content': "Give me a perfect coding style example."}
 
-id = '65f1511e03445957da525af8'
+id = '65feda0d1127e8ff3e0c8d7b'
 idFilter = {'_id': ObjectId(id)}
 
 
@@ -64,4 +64,6 @@ keyWord = "fib"
 
 # dbT.readDBToFile("fineTune", "codoctopus", "Misc/fineTuneDataTest.jsonl")
 
-dbT.communitySearch("fineTune", "codoctopus", keyWord)
+# dbT.communitySearch("fineTune", "codoctopus", keyWord)
+
+dbT.copyToCommunity(id, "test2", "test3")

@@ -188,9 +188,10 @@ def describeCode(inputCode):
             },
             {
                 "role": "user",
-                "content": inputCode,
+                "content": inputCode + "\n" + "Please summarize in 1 sentences with in 100 tokens.",
             },
         ],
+        max_tokens=100,
     )
     print(analyzeResult.choices[0].message.content)
     return analyzeResult.choices[0].message.content
@@ -271,7 +272,7 @@ def gen_code():
         summary = describeCode(final)
 
         dataId = dbTools.insertGenerateDocument(
-            "fineTune", "codoctopus", userInput, requirmentList, final, summary
+            "fineTune", "codoctopus", userInput, lang, requirmentList, final, summary
         )
 
         print(final + "\n")
@@ -328,12 +329,44 @@ def view():
         id = request.get_json()
 
         # Get the keyword from the frontend
-        origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
-        output = dbTools.getOutputCode("fineTune", "codoctopus", id)
-        summary = dbTools.getSummary("fineTune", "codoctopus", id)
+        mode = dbTools.getMode("fineTune", "codoctopus", id)
+        if mode == "modify":
+            origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
+            output = dbTools.getOutputCode("fineTune", "codoctopus", id)
+            summary = dbTools.getSummary("fineTune", "codoctopus", id)
+        elif mode == "generate":
+            lang = dbTools.getLang("fineTune", "codoctopus", id)
+            origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
+            output = dbTools.getOutputCode("fineTune", "codoctopus", id)
+            summary = dbTools.getSummary("fineTune", "codoctopus", id)
 
-        return jsonify({"id": str(id), "original": origin, "output": output, "summary": summary})
+        return jsonify(
+            {
+                "id": str(id),
+                "mode": mode,
+                "lang": lang,
+                "original": origin,
+                "output": output,
+                "summary": summary,
+            }
+        )
 
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+@app.route("/viewerRate", methods=["GET"])
+def viewerRate():
+    try:
+        data = request.get_json()
+
+        rate = data.get("rate", "")
+        comment = data.get("comment", "")
+        id = data.get("id", "")
+
+        dbTools.copyToCommunity(id, rate, comment)
+
+        return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
 

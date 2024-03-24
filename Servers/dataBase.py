@@ -215,6 +215,7 @@ class dataBaseTools:
         dbName,
         collectionName,
         requirement,
+        lang,
         gptList,
         generatedCode,
         summary,
@@ -226,6 +227,7 @@ class dataBaseTools:
         data = {
             "pin": "data",
             "type": "generate code",
+            "language": lang,
             "requirement": requirement,
             "gptList": gptList,
             "generatedCode": generatedCode,
@@ -278,13 +280,31 @@ class dataBaseTools:
             singleIdSummaryPair.append(item.get("summary"))
 
             resultArray.append(singleIdSummaryPair)
-
-        # Print the information of the related document
-        """ for i in range(len(resultArray)):
-            for j in range(len(resultArray[i])):
-                print(resultArray[i][j]) """
-
         return resultArray
+
+    # This function will copy a certain data to community collection and update the rate and comment from the viewer.
+    def copyToCommunity(self, id, rate, comment):
+        db = self.client["fineTune"]
+        collection = db["codoctopus"]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find_one(filter)
+
+        cpyData = result
+        # 刪除原來的 _id 字段
+        if '_id' in cpyData:
+            del cpyData['_id']
+
+        collection = db["communityRate"]
+
+        communityData = collection.insert_one(cpyData)
+
+        filter = {'_id': ObjectId(communityData.inserted_id)}
+
+        self.updateDocument("fineTune", "communityRate", filter, "rate", rate)
+        self.updateDocument("fineTune", "communityRate", filter, "comment", comment)
+
+        print(f"Document inserted.")
 
     # will print out the input and gpt output given the obeject id
     def searchDocumentUsingId(self, dbName, collectionName, id):
@@ -377,3 +397,23 @@ class dataBaseTools:
                 return item.get("generatedCode")
             else:
                 return item.get("modifiedCode")
+
+    def getMode(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            return item.get("type")
+
+    def getLang(self, dbName, collectionName, id):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        filter = {'_id': ObjectId(id)}
+        result = collection.find(filter)
+
+        for item in result:
+            return item.get("language")
