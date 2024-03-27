@@ -1,13 +1,12 @@
-'''This is the database class that will be used to store the data from the frontend.'''
+'''This is the database class has tools to manupulate the database.'''
 
 # Import the mongodb library
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from pprint import pprint
+from pprint import pprint  # To print out all the item in single data.
 import json
-from bson import ObjectId
-from fileFormatt import StringToJsonl
-import numpy as np
+from bson import ObjectId  # To convert the id to a string.
+from fileFormatt import StringToJsonl  # Self defined class to write the data to a jsonl file.
 
 
 class dataBaseTools:
@@ -19,29 +18,31 @@ class dataBaseTools:
 
         # Create a new client and connect to the server
         self.client = MongoClient(uri, server_api=ServerApi('1'))
-
+        # Create a new fileFormat object
         self.fileFormat = StringToJsonl()
 
-        # Send a ping to confirm a successful connection
         try:
+            # Send a ping to confirm a successful connection
             self.client.admin.command('ping')
             print("Successfully connected to MongoDB!")
         except Exception as e:
             print(e)
 
-    # Print all the databases in the server
+    '''Note: The following functions are used by backend to manupulate the database.'''
+
+    # List all the data bases in the server.
     def printDataBaseList(self):
         for db_info in self.client.list_database_names():
             print(db_info)
 
-    # Print all the collections in a specific database
+    # List all the collections in a specific database
     def printCollections(self, dbName):
         db = self.client[dbName]
 
         for collection_info in db.list_collection_names():
             print(collection_info)
 
-    # Create a database and the first collection
+    # Create a database and the first collection.
     def createDatabase(self, dbName, collectionName):
         # Create a collection and insert a document to actually create the database
         db = self.client[dbName]
@@ -49,30 +50,34 @@ class dataBaseTools:
 
         collection.insert_one(
             {
+                'pin': 'collectionIndex',
                 'dbIndex': 'This collection is for storing ' + collectionName,
             }
         )
 
-        print("Database " + dbName + " & collection " + collectionName + " created.")
+        print(f"Database '{dbName}' & collection '{collectionName}' created.")
 
     # Delete a database
     def delteDatabase(self, dbName):
         self.client.drop_database(dbName)
+
         print(f"Database '{dbName}' deleted.")
 
     # Create a collection given a database name and a collection name
     def createCollection(self, dbName, collectionName):
         db = self.client[dbName]
         collection = db[collectionName]
+
         collection.insert_one(
             {
-                'dbIndex': 'This collection is for storing ' + collectionName,
                 'pin': 'collectionIndex',
+                'dbIndex': 'This collection is for storing ' + collectionName,
             }
         )
+
         print(f"Collection '{collectionName}' created.")
 
-    # Format a collection
+    # Wipe out all the data in a collection.
     def cleanCollection(self, dbName, collectionName):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -81,51 +86,51 @@ class dataBaseTools:
 
         print(f"Collection '{collectionName}' cleaned.")
 
-    # Delete a collection given a database name and a collection name
+    # Delete a collection in a database.
     def deleteCollection(self, dbName, collectionName):
         db = self.client[dbName]
         db.drop_collection(collectionName)
 
         print(f"Collection '{collectionName}' deleted.")
 
-    # Insert a file into a specific collection in a specific database
-    # Use for stroing jsonl file
+    # Insert a JOSNL file into a collection ex
     def insertFile(self, dbName, collectionName, filePath):
         db = self.client[dbName]
         collection = db[collectionName]
 
         with open(filePath, "r") as file:
             data = file.readlines()
+
             for line in data:
                 collection.insert_one(json.loads(line))
 
         print(f"File '{filePath}' inserted into '{collectionName}'.")
 
-    # Find a specific document in a collection and return the document id
+    # Find a document in a collection that meet the query, and the query need to match perfectly.
     def findSpecificDocument(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        result = collection.find(query)
+        found = collection.find(query)
 
-        for item in result:
-            test = item.pop('_id')
+        for item in found:
+            objId = item.pop('_id')
             pprint(item)
 
-        return test
+        return objId
 
-    # Delete one document in a collection that meet the query
+    # Delete one document in a collection that meet the query.
     def deleteOneDocument(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        # delete only one even their is multiple documents meet the query
+        # delete only one even if their are multiple documents meet the query.
         collection.delete_one(query)
 
         print(f"Document deleted.")
 
     # Delete all the documents in a collection that meet the query
-    def deleteManyDocument(self, dbName, collectionName, query):
+    def deleteAllDocumentMeetQuery(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -134,27 +139,26 @@ class dataBaseTools:
 
         print(f"Documents deleted.")
 
-    ######################################################################################################above is tested and working successfully######################################################################################################
+    '''Note: The following functions may used by frontend to manupulate the database.'''
 
-    # Get random  number of document from a collection
+    # Get random  number of document from a collection.
     def getRandomDocument(self, dbName, collectionName, sampleSize=1):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        result = collection.aggregate([{"$sample": {"size": sampleSize}}])
+        found = collection.aggregate([{"$sample": {"size": sampleSize}}])
 
-        for item in result:
+        for item in found:
             pprint(item)
 
-    # Get random  number of document from a collection with condition
+    # Get random  number of document with condition.
     def getRandomeDocumentWithCondition(self, dbName, collectionName, condition, sampleSize=1):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        result = collection.aggregate([{"$match": condition}, {"$sample": {"size": sampleSize}}])
+        found = collection.aggregate([{"$match": condition}, {"$sample": {"size": sampleSize}}])
 
-        for item in result:
-            # item.pop('_id')
+        for item in found:
             pprint(item)
 
     # Insert a document into a collection
@@ -167,17 +171,18 @@ class dataBaseTools:
         print(f"Document inserted.")
 
     # Update a document in a collection
-    # Parametres: dbName, collectionName, id(filter), field, newValue
+    # Parametres: dbName, collectionName, id, field, newValue
     def updateDocument(self, dbName, collectionName, id, field, newValue):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        collection.update_one(id, {"$set": {field: newValue}})
+        filter = {'_id': ObjectId(id)}
+        collection.update_one(filter, {"$set": {field: newValue}})
 
         print(f"Document updated.")
 
-    # parametres: dbName, collectionName, inputCode, outputCode, rate, comment
     # Insert a document into a collection and retrun the id of the document
+    # Parametres: dbName, collectionName, inputCode, outputCode, summary
     def insertModifyDocument(
         self,
         dbName,
@@ -190,6 +195,7 @@ class dataBaseTools:
     ):
         db = self.client[dbName]
         collection = db[collectionName]
+
         data = {
             "pin": "data",
             "type": "modify code",
@@ -202,14 +208,14 @@ class dataBaseTools:
         }
 
         collection.insert_one(data)
-        id = data.get("_id")
+        objId = data.get("_id")
 
-        print(f"Document inserted.")
+        print(f"Modify document inserted.")
 
-        return id
+        return objId
 
-    # parametres: dbName, collectionName, requirement, gptList, generatedCode, rate, comment
     # Insert a document into a collection and retrun the id of the document
+    # parametres: dbName, collectionName, requirement, language, gptList, generatedCode, summary, rate, comment
     def insertGenerateDocument(
         self,
         dbName,
@@ -224,6 +230,7 @@ class dataBaseTools:
     ):
         db = self.client[dbName]
         collection = db[collectionName]
+
         data = {
             "pin": "data",
             "type": "generate code",
@@ -238,16 +245,19 @@ class dataBaseTools:
         }
 
         collection.insert_one(data)
-        id = data.get("_id")
+        objId = data.get("_id")
 
-        print(f"Document inserted.")
+        print(f"Generate document inserted.")
 
-        return id
+        return objId
 
+    # Insert a document into a collection and retrun the id of the document
+    # Use to store the general case and futher use to fine tune the model
     # parametres: dbName, collectionName, input, output
     def insertGeneralCaseDocument(self, dbName, collectionName, input, output):
         db = self.client[dbName]
         collection = db[collectionName]
+
         data = {
             "pin": "data",
             "type": "general case",
@@ -256,38 +266,42 @@ class dataBaseTools:
         }
 
         collection.insert_one(data)
+        objId = data.get("_id")
 
         print(f"Document inserted.")
 
-    # Find similar documents in a collection
+        return objId
+
+    # Find a document in a collection that meet the query, and the sort the result by how similar the query is.
     def communitySearch(self, dbName, collectionName, query):
         db = self.client[dbName]
         collection = db[collectionName]
 
-        resultArray = [[]]
-        singleIdSummaryPair = []
+        idSummayPair = []
+        resultArray = []
 
         # Divide the query sentence into seperate words and join them with '|'.
         regex_pattern = '|'.join(query.split())
         # Use regex to match the index, and use 'i' to make it case insensitive.
         filter = {"summary": {'$regex': regex_pattern, '$options': 'i'}}
 
-        result = collection.find(filter)
-
-        resultArray = []
-        for item in result:
+        found = collection.find(filter)
+        for item in found:
             # Store the related array in a list
-            singleIdSummaryPair = {str(item.get("_id")): item.get("summary")}
-            resultArray.append(singleIdSummaryPair)
+            idSummayPair = {str(item.get("_id")): item.get("summary")}
+            resultArray.append(idSummayPair)
 
         identifier = query.split()
         match_max = len(query.split())
-        if (match_max == 1):
+
+        # If the qurey is a single word than no need to sort.
+        if match_max == 1:
             return resultArray
-        
+
         complete_match = []
         match = [[] for i in range(match_max + 1)]
-        output = []
+        sortedOutput = []
+
         for dicts in resultArray:
             match_num = 0
             first_value = next(iter(dicts.values()))  # Get the first value of the dict
@@ -298,26 +312,28 @@ class dataBaseTools:
                 if word in first_value:
                     match_num += 1
             match[match_num] += [dicts]
-        output += complete_match
+
+        sortedOutput += complete_match
+
         for i in range(match_max, 0, -1):
-            output += match[i]
-        return output
+            sortedOutput += match[i]
+
+        return sortedOutput
 
     # This function will copy a certain data to community collection and update the rate and comment from the viewer.
-    def copyToCommunity(self, id, rate, comment):
+    def updateCommentToCommnity(self, id, rate, comment):
         db = self.client["fineTune"]
         collection = db["codoctopus"]
 
         filter = {'_id': ObjectId(id)}
-        result = collection.find_one(filter)
+        cpyData = collection.find_one(filter)
 
-        cpyData = result
-        # 刪除原來的 _id 字段
+        # Delte the _id field to make sure the data is not duplicated.
         if '_id' in cpyData:
             del cpyData['_id']
 
+        # Switch to the communityRate collection.
         collection = db["communityRate"]
-
         communityData = collection.insert_one(cpyData)
 
         filter = {'_id': ObjectId(communityData.inserted_id)}
@@ -327,8 +343,8 @@ class dataBaseTools:
 
         print(f"Document inserted.")
 
-    # will print out the input and gpt output given the obeject id
-    def searchDocumentUsingId(self, dbName, collectionName, id):
+    # Will print out the input and gpt output given the obeject id
+    def searchById(self, dbName, collectionName, id):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -343,16 +359,16 @@ class dataBaseTools:
                 print(item.get("requirement"))
                 print(item.get("generatedCode"))
 
-    def searchInAllCollections(self, dbName, index, query):
+    def searchThroughCollections(self, dbName, index, query):
         db = self.client[dbName]
 
         for collectionName in db.list_collection_names():
             collection = db[collectionName]
 
             filter = {index: {'$regex': query}}
+            found = collection.find(filter)
 
-            result = collection.find(filter)
-            for item in result:
+            for item in found:
                 if item.get("type") == "modify code":
                     print(item.get("sourceCode"))
                     print(item.get("modifiedCode"))
@@ -360,8 +376,8 @@ class dataBaseTools:
                     print(item.get("requirement"))
                     print(item.get("generatedCode"))
 
-    # write all data in collection to a file
-    def readDBToFile(self, dbName, collectionName, filePath):
+    # Write all data in collection to a file
+    def writeDatabaseToFile(self, dbName, collectionName, filePath):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -383,6 +399,9 @@ class dataBaseTools:
                     filePath,
                 )
 
+    '''Note: The following functions are used by the frontend to get the data from the database.'''
+
+    # All things are get through id #
     def getSummary(self, dbName, collectionName, id):
         db = self.client[dbName]
         collection = db[collectionName]
@@ -393,7 +412,7 @@ class dataBaseTools:
         for item in result:
             return item.get("summary")
 
-    def getOriginalCode(self, dbName, collectionName, id):
+    def getOriginMessage(self, dbName, collectionName, id):
         db = self.client[dbName]
         collection = db[collectionName]
 
@@ -406,7 +425,7 @@ class dataBaseTools:
             else:
                 return item.get("sourceCode")
 
-    def getOutputCode(self, dbName, collectionName, id):
+    def getGptOutput(self, dbName, collectionName, id):
         db = self.client[dbName]
         collection = db[collectionName]
 

@@ -66,4 +66,4 @@ keyWord = "fib"
 
 # dbT.communitySearch("fineTune", "codoctopus", keyWord)
 
-dbT.copyToCommunity(id, "test2", "test3")
+dbT.updateCommentToCommnity(id, "test2", "test3")

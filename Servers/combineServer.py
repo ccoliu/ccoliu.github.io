@@ -5,7 +5,6 @@ from openai import OpenAI  # OpenAI API
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
 import ssl  # Local https key
-from bson import ObjectId  # For MongoDB may use the id filter
 from bson import json_util  # For MongoDB may use the json_util
 
 # Import self defined classes
@@ -295,9 +294,8 @@ def retreive_code():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        idFilter = {'_id': ObjectId(id)}
-        dbTools.updateDocument("fineTune", "codoctopus", idFilter, "rate", rate)
-        dbTools.updateDocument("fineTune", "codoctopus", idFilter, "comment", comment)
+        dbTools.updateDocument("fineTune", "codoctopus", id, "rate", rate)
+        dbTools.updateDocument("fineTune", "codoctopus", id, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
@@ -332,13 +330,13 @@ def view():
         # Get the keyword from the frontend
         mode = dbTools.getMode("fineTune", "codoctopus", id)
         if mode == "modify code":
-            origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
-            output = dbTools.getOutputCode("fineTune", "codoctopus", id)
+            origin = dbTools.getOriginMessage("fineTune", "codoctopus", id)
+            output = dbTools.getGptOutput("fineTune", "codoctopus", id)
             summary = dbTools.getSummary("fineTune", "codoctopus", id)
         elif mode == "generate code":
             lang = dbTools.getLang("fineTune", "codoctopus", id)
-            origin = dbTools.getOriginalCode("fineTune", "codoctopus", id)
-            output = dbTools.getOutputCode("fineTune", "codoctopus", id)
+            origin = dbTools.getOriginMessage("fineTune", "codoctopus", id)
+            output = dbTools.getGptOutput("fineTune", "codoctopus", id)
             summary = dbTools.getSummary("fineTune", "codoctopus", id)
 
         if lang == None:
@@ -368,7 +366,7 @@ def viewerRate():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        dbTools.copyToCommunity(id, rate, comment)
+        dbTools.updateCommentToCommnity(id, rate, comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
