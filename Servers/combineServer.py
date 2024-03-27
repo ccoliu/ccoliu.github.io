@@ -357,8 +357,8 @@ def view():
         return jsonify({"error": str(e)})
 
 
-@app.route("/viewerRate", methods=["GET"])
-def viewerRate():
+@app.route("/viewer_comment", methods=["POST"])
+def viewer_comment():
     try:
         data = request.get_json()
 
