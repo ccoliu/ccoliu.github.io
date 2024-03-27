@@ -174,9 +174,10 @@ textarea.textEnter {
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    margin-top: 20px;
+    margin-top: 0px;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 10px;
 }
 
 textarea.textEnter:focus {
@@ -497,6 +498,64 @@ a.buttonUpload:hover {
     height: 0px;
     animation: heightaddon 0.75s forwards;
 }
+
+.Inputarea {
+    margin-bottom: 10px;
+}
+
+.Inputarea div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #474747;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    width: 88.5%;
+    border-radius: 5px 5px 0px 0px;
+    height: 40px;
+}
+
+
+.tabSeq {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    padding-top: 0px;
+    padding: 10px;
+}
+
+.Addnewtab {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #474747;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    width: 88.5%;
+    border-radius: 5px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.material-symbols-outlined {
+    margin-left: 15px;
+}
+
+.addnewtab {
+    line-height: 0px;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    cursor: pointer;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.Addnewtab:hover {
+    background-color: #252525;
+}
+
 
 @media screen and (max-height: 550px) {
     body {

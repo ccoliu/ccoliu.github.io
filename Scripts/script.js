@@ -3,6 +3,7 @@ const GITWEB = "https://140.118.184.235:5000/"
 const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
+let originalTab = 1;
 
 window.onload = function() {
   serverText = document.querySelector('.server');
@@ -26,13 +27,20 @@ function clearFields() {
 
   if (codeInput) {
     codeInput.value = "";
+    if (originalTab > 1)
+    {
+      textareaArray = document.querySelectorAll('.textEnter');
+        textareaArray.forEach(element => {
+          element.value = ""
+        });
+    }
     fileInput.value = "";
   } else {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
   }
 }
 
-
+const newtab = document.querySelector('.Addnewtab');
 const sidebar = document.querySelector('.sidebar');
 const content = document.querySelector('.content');
 const supporters = document.querySelector('.supporters');
@@ -148,6 +156,15 @@ function enhanceTextInput(event, element) {
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
+  let longcode = ""
+  if (originalTab > 1) {
+    textareaArray = document.querySelectorAll('.textEnter');
+    textareaArray.forEach(element => {
+      longcode += "\n" + element.value;
+    });
+    code = longcode;
+  }
+  console.log(code);
   fetch(CURRENTWEB + "process_code", {
     method: "POST",
     headers: {
@@ -376,3 +393,19 @@ serverText.addEventListener('click', () => {
   localStorage.setItem("server", CURRENTWEB);
   window.location.reload();
 });
+
+if (newtab) {
+  newtab.addEventListener('click', () => {
+    originalTab++;
+    newtext = document.createElement('textarea');
+    newdiv = document.createElement('div');
+    newdiv.className = 'tabWindow' + originalTab.toString();
+    newdiv.innerHTML = `
+      <p class="tabSeq">Tab${originalTab}</p>`;
+    newtext.className = 'textEnter';
+    newtext.id = 'codeInput';
+    newtext.placeholder = 'add your subprogram here...'
+    document.querySelector('.Inputarea').appendChild(newdiv);
+    document.querySelector('.Inputarea').appendChild(newtext);
+  });
+}
