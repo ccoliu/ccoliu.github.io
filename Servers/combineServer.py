@@ -4,6 +4,8 @@
 from openai import OpenAI  # OpenAI API
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
+from flask_socketio import SocketIO
+from flask_cors import *
 import ssl  # Local https key
 from bson import json_util  # For MongoDB may use the json_util
 
@@ -21,7 +23,7 @@ SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources=r'/*')
 
 # Create instances of self defined classes
 castTools = StringToJsonl()
