@@ -308,17 +308,36 @@ if (codeInput) {
 }
 
 if (uploadButton) {
-  uploadButton.addEventListener("click", function () {
-    const codeInput = document.getElementById("codeInput");
-    var fileInput = document.getElementById("fileInput");
-    var file = fileInput.files[0];
-    const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java"];
 
+  async function processFile(file, filenum) {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.onload = () => {
+        if (originalTab < filenum) {
+            document.querySelector('.Addnewtab').click();
+        }
+        console.log('.textEnter' + filenum.toString());
+        document.querySelector('.textEnter' + filenum.toString()).innerHTML = reader.result;
+        resolve();
+      }
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  }
+
+  uploadButton.addEventListener("click", function () {
+    filenum = 1;
+    errorpop = false;
+    var fileInput = document.querySelector(".inputfile");
+    var files = Array.from(fileInput.files);
+    const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java"];
     toggleVisibility("loader", true);
     toggleVisibility("blocker", true);
     toggleVisibility("loadmsg", true);
 
-    if (!file) {
+    for (let i = 0; i < files.length; i++) {
+
+      if (!files[i]) {
         toggleVisibility("loader", false);
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
@@ -332,52 +351,51 @@ if (uploadButton) {
         return;
     }
 
-    var fileName = file.name;
+    var fileName = files[i].name;
     var fileExtension = fileName.split(".").pop().toLowerCase();
 
     if (!availableExtensions.includes(fileExtension)) {
-        toggleVisibility("loader", false);
+        errorpop = true;
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "\"" + fileName + "\"" + " is invalid file type! Please retry.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+        continue;
+    }
+    console.log(fileName);
+    processFile(files[i], filenum).then(() => {})
+    .catch(() => {
+      toggleVisibility("loader", false);
         toggleVisibility("blocker", false);
         toggleVisibility("loadmsg", false);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
-        document.querySelector('.footerdesc').innerHTML = "Invalid file type! Please retry.";
+        document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the file.";
         setTimeout(() => {
             document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
         return;
+    });
+    filenum++;
     }
-
-    var reader = new FileReader();
-
-    reader.onload = function () {
-        codeInput.value = reader.result;
-    };
-
-    reader.onerror = function () {
-        document.querySelector('.footerdesc').style.display = "flex";
-        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
-        document.querySelector('.footerdesc').innerHTML = "Error reading file!";
-        setTimeout(() => {
-            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
-        }, 2000);
-        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    };
-
-    reader.readAsText(file);
-
-    fileInput.value = "";
+    
     toggleVisibility("loader", false);
     toggleVisibility("blocker", false);
     toggleVisibility("loadmsg", false);
-    document.querySelector('.footerdesc').style.display = "flex";
-    document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
-    document.querySelector('.footerdesc').innerHTML = "File uploaded successfully!";
-    setTimeout(() => {
-        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
-    }, 2000);
-    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    if (!errorpop) {
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+      document.querySelector('.footerdesc').innerHTML = "File uploaded successfully!";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    }
+    fileInput.value = "";
   });
 }
 
@@ -401,11 +419,31 @@ if (newtab) {
     newdiv = document.createElement('div');
     newdiv.className = 'tabWindow' + originalTab.toString();
     newdiv.innerHTML = `
-      <p class="tabSeq">Tab${originalTab}</p>`;
-    newtext.className = 'textEnter';
+      <p class="tabSeq">Tab${originalTab}</p>
+      <span class="material-symbols-outlined" id='crossbutton'>close</span>`;
+    newtext.className = 'textEnter' + originalTab.toString();
     newtext.id = 'codeInput';
     newtext.placeholder = 'add your subprogram here...'
     document.querySelector('.Inputarea').appendChild(newdiv);
     document.querySelector('.Inputarea').appendChild(newtext);
   });
 }
+
+document.querySelector('.Inputarea').addEventListener('click', function(event) {
+  if (event.target.matches('.material-symbols-outlined') && event.target.innerHTML == 'close') {
+    targetedTab = event.target.closest('.material-symbols-outlined').parentElement;
+    backnumber = targetedTab.className[targetedTab.className.length - 1];
+    targetedTab.remove();
+    console.log('.textEnter' + backnumber);
+    let textEnterElement = document.querySelector('.textEnter' + backnumber);
+    textEnterElement.remove();
+    originalTab--;
+    if (parseInt(backnumber) != originalTab + 1) {
+      for (let i = parseInt(backnumber) + 1; i <= originalTab + 1; i++) {
+        document.querySelector('.tabWindow' + i.toString()).querySelector('.tabSeq').innerHTML = 'Tab' + (i - 1).toString();
+        document.querySelector('.tabWindow' + i.toString()).className = 'tabWindow' + (i - 1).toString();
+        document.querySelector('.textEnter' + i.toString()).className = 'textEnter' + (i - 1).toString();
+      }
+    }
+  }
+});
