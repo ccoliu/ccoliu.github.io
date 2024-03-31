@@ -68,7 +68,7 @@ body::-webkit-scrollbar-thumb {
     }
 }
 
-.Inputarea textarea {
+.Inputarea textarea, .textEnter {
     color: white;
     caret-color: white;
 }
@@ -161,7 +161,7 @@ p.frontInfo {
     padding: 0;
 }
 
-.Inputarea textarea {
+.Inputarea textarea, .textEnter {
     font: 300 20px/1.5 "Consolas", sans-serif;
     font-weight: lighter;
     border: 1px solid rgb(252, 254, 255); /* 設置邊框 */
@@ -180,7 +180,7 @@ p.frontInfo {
     margin-bottom: 10px;
 }
 
-.Inputarea textarea:focus {
+.Inputarea textarea:focus, .textEnter:focus {
     outline: none;
 }
 
@@ -332,15 +332,15 @@ textarea.textOutput:focus {
     outline: none;
 }
 
-textarea.textOutput::-webkit-scrollbar, .Inputarea textarea::-webkit-scrollbar {
+textarea.textOutput::-webkit-scrollbar, .Inputarea textarea::-webkit-scrollbar, .textEnter::-webkit-scrollbar {
     width: 8px;
 }
 
-textarea.textOutput::-webkit-scrollbar-track, .Inputarea textarea::-webkit-scrollbar-track {
+textarea.textOutput::-webkit-scrollbar-track, .Inputarea textarea::-webkit-scrollbar-track, .textEnter::-webkit-scrollbar-track {
     background: transparent;
 }
 
-textarea.textOutput::-webkit-scrollbar-thumb, .Inputarea textarea::-webkit-scrollbar-thumb {
+textarea.textOutput::-webkit-scrollbar-thumb, .Inputarea textarea::-webkit-scrollbar-thumb, .textEnter::-webkit-scrollbar-thumb {
     background: #c7c7c7;
     border-radius: 10px;
 }

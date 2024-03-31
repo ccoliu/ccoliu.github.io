@@ -20,7 +20,7 @@ function toggleVisibility(elementId, display) {
   }
 }
 
-// Function to clear the input and result fields
+//Function to clear the input and result fields
 function clearFields() {
   const codeInput = document.getElementById("codeInput");
   const fileInput = document.getElementById("fileInput");
@@ -29,7 +29,7 @@ function clearFields() {
     codeInput.value = "";
     if (originalTab > 1)
     {
-      textareaArray = document.querySelectorAll('.textEnter');
+      textareaArray = document.querySelectorAll('.Inputarea textarea');
         textareaArray.forEach(element => {
           element.value = ""
         });
@@ -105,7 +105,6 @@ function processCodeInput() {
       }, 2000);
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     } else {
-      recordText = codeInput.value;
       processTime = new Date().getTime();
       toggleVisibility("loader", true);
       toggleVisibility("blocker", true);
@@ -156,14 +155,17 @@ function enhanceTextInput(event, element) {
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
-  let longcode = ""
+  let longcode = "";
   if (originalTab > 1) {
-    textareaArray = document.querySelectorAll('.textEnter');
+    textareaArray = document.querySelectorAll('.Inputarea textarea');
     textareaArray.forEach(element => {
-      longcode += "\n" + element.value;
+      if (element.value != ""){
+        longcode += element.value + "\n\n";
+      }
     });
-    code = longcode;
+    code = longcode + '\b';
   }
+  recordText = code;
   console.log(code);
   fetch(CURRENTWEB + "process_code", {
     method: "POST",
@@ -214,6 +216,7 @@ function sendDataToAnalyzeServer(code) {
 }
 
 function sendDataToGenerateServer(code, lang) {
+    recordText = code;
     fetch(CURRENTWEB + "gen_code", {
         method: "POST",
         headers: {
@@ -284,7 +287,7 @@ function createTicket(data, id, lang) {
 // Event listeners
 const clearButton = document.getElementById("clearButton");
 const runButton = document.getElementById("runButton");
-const codeInput = document.getElementById("codeInput");
+const codeInput = document.querySelector(".Inputarea");
 const uploadButton = document.getElementById("uploadButton");
 
 if (clearButton) {
@@ -300,8 +303,10 @@ if (runButton) {
 }
 
 if (codeInput) {
-  codeInput.addEventListener("keydown", function (e) {
-    enhanceTextInput(e, this);
+  codeInput.addEventListener("keydown", function (event) {
+    if (event.target.matches("textarea")) {
+      enhanceTextInput(event, event.target);
+    }
   });
 } else {
   console.error("Element with ID 'codeInput' not found.");
@@ -317,7 +322,8 @@ if (uploadButton) {
             document.querySelector('.Addnewtab').click();
         }
         console.log('.textEnter' + filenum.toString());
-        document.querySelector('.textEnter' + filenum.toString()).innerHTML = reader.result;
+        document.querySelector('.textEnter' + filenum.toString()).value = reader.result;
+        console.log(document.querySelector('.textEnter' + filenum.toString()).value);
         resolve();
       }
       reader.onerror = reject;
@@ -330,10 +336,24 @@ if (uploadButton) {
     errorpop = false;
     var fileInput = document.querySelector(".inputfile");
     var files = Array.from(fileInput.files);
-    const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java"];
+    const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java","h"];
     toggleVisibility("loader", true);
     toggleVisibility("blocker", true);
     toggleVisibility("loadmsg", true);
+
+    if (files.length == 0) {
+      toggleVisibility("loader", false);
+      toggleVisibility("blocker", false);
+      toggleVisibility("loadmsg", false);
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "No file selected! Please retry.";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+      return;
+    }
 
     for (let i = 0; i < files.length; i++) {
 
@@ -429,21 +449,23 @@ if (newtab) {
   });
 }
 
-document.querySelector('.Inputarea').addEventListener('click', function(event) {
-  if (event.target.matches('.material-symbols-outlined') && event.target.innerHTML == 'close') {
-    targetedTab = event.target.closest('.material-symbols-outlined').parentElement;
-    backnumber = targetedTab.className[targetedTab.className.length - 1];
-    targetedTab.remove();
-    console.log('.textEnter' + backnumber);
-    let textEnterElement = document.querySelector('.textEnter' + backnumber);
-    textEnterElement.remove();
-    originalTab--;
-    if (parseInt(backnumber) != originalTab + 1) {
-      for (let i = parseInt(backnumber) + 1; i <= originalTab + 1; i++) {
-        document.querySelector('.tabWindow' + i.toString()).querySelector('.tabSeq').innerHTML = 'Tab' + (i - 1).toString();
-        document.querySelector('.tabWindow' + i.toString()).className = 'tabWindow' + (i - 1).toString();
-        document.querySelector('.textEnter' + i.toString()).className = 'textEnter' + (i - 1).toString();
+if (document.querySelector('.Inputarea')) {
+  document.querySelector('.Inputarea').addEventListener('click', function(event) {
+    if (event.target.matches('.material-symbols-outlined') && event.target.innerHTML == 'close') {
+      targetedTab = event.target.closest('.material-symbols-outlined').parentElement;
+      backnumber = targetedTab.className[targetedTab.className.length - 1];
+      targetedTab.remove();
+      console.log('.textEnter' + backnumber);
+      let textEnterElement = document.querySelector('.textEnter' + backnumber);
+      textEnterElement.remove();
+      originalTab--;
+      if (parseInt(backnumber) != originalTab + 1) {
+        for (let i = parseInt(backnumber) + 1; i <= originalTab + 1; i++) {
+          document.querySelector('.tabWindow' + i.toString()).querySelector('.tabSeq').innerHTML = 'Tab' + (i - 1).toString();
+          document.querySelector('.tabWindow' + i.toString()).className = 'tabWindow' + (i - 1).toString();
+          document.querySelector('.textEnter' + i.toString()).className = 'textEnter' + (i - 1).toString();
+        }
       }
     }
-  }
-});
+  });
+}
