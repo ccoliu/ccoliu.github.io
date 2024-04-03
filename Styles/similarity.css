@@ -353,21 +353,20 @@ h2.AImsg {
 }
 
 textarea.textOutput {
-    z-index: 2;
     margin-top: 20px;
     padding: 20px;
     display: none;
-    border: none;
+    border: 1px solid #c7c7c7;
     font: 200 20px/1.5 "Lexend Deca", sans-serif;
     font-weight: 200;
     color: #cccccc;
-    background-color: transparent;
+    background-color: #191919;
     overflow-y: hidden;
     padding: 10px;
-    height: 300px;
+    height: 450px;
+    margin-bottom: 40px;
     width: 90%;
     resize: none;
-    display: block;
     margin-left: auto;
     margin-right: auto;
     box-sizing: border-box;
@@ -376,9 +375,7 @@ textarea.textOutput {
 }
 
 textarea.textOutput:hover {
-    display: none;
     overflow-y: auto;
-    animation: borderLighten 3.5s linear infinite;
 }
 
 textarea.textOutput:focus {
