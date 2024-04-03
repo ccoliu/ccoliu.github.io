@@ -1,0 +1,413 @@
+body {
+    position: static;
+    height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+body::-webkit-scrollbar, textarea::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track, textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+body::-webkit-scrollbar-thumb, textarea::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
+}
+
+.background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../icons/search.png');
+    background-color: #363636;
+    filter: brightness(0.15);
+    z-index: -1;
+    animation: breathEffect 2.5s infinite;
+}
+
+@font-face {
+    font-family: "Consolas";
+    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot");
+    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot?#iefix")format("embedded-opentype"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff2")format("woff2"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff")format("woff"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
+    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
+}
+
+@keyframes addIn {
+    0% {
+        height: 0px;
+    }
+    100% {
+        height: 400px;
+    }
+}
+
+@keyframes heightaddon {
+    0% {
+        height: 0px;
+    }
+    100% {
+        height: 50px;
+    }
+}
+
+@keyframes heightoff {
+    0% {
+        height: 50px;
+    }
+    100% {
+        height: 0px;
+    }
+}
+
+@keyframes breathEffect {
+    0% {
+        background-color: #363636;
+    }
+    30% {
+        background-color: #949494;
+    }
+    60% {
+        background-color: #949494;
+    }
+    100% {
+        background-color: #363636;
+    }
+}
+
+nav.navbar {
+    color: #cccccc;
+    left: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    width: 100%;
+    display: flex; /* This will lay out the children in a row */
+    align-items: center; /* This will vertically center the children in the navbar */
+    justify-content: flex-start; /* This will align children to the start of the navbar */
+    background: transparent;
+}
+
+h1.InnerText {
+    font: 400 40px/1.5 "Noto Sans", sans-serif;
+    font-weight: bold;
+    margin: 0;
+    padding-left: 25px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-top: 5px;
+    line-height: 48px;
+    white-space: nowrap;
+}
+
+h1 a {
+    text-decoration: none;
+    color: #cccccc;
+}
+
+h1 a:hover {
+    text-decoration: none;
+}
+
+p.InnerShort {
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    margin: 0;
+    padding: 0;
+    margin-top: 13px;
+    margin-left: 20px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
+}
+
+h2.beginText, h2.TicketInfo {
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    padding: 0;
+    margin-top: 10px;
+    margin-left: 40px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
+    margin-bottom: 10px;
+    color: #cccccc;
+}
+
+.container {
+    margin-bottom: 10px;
+}
+
+/* 定義內容區域的樣式 */
+.content {
+    margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
+}
+
+p.frontInfo {
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
+}
+
+div .textarea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 3em;
+}
+
+.textarea div textarea {
+    font: 400 20px/1.5 "consolas", sans-serif;
+    color: #cccccc;
+    background-color: transparent;
+    resize: none;
+    width: 42vw;
+    height: 600px;
+    min-width: 200px;
+    border-radius: 5px;
+    border-color: #c7c7c7;
+}
+
+.textarea div textarea:focus {
+    outline: none;
+}
+
+.uploadsys {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font: "Lexend Deca", sans-serif;
+    margin-left: auto;
+    margin-right: auto;
+    margin-left: -55px;
+}
+
+.inputfile {
+    color: #cccccc;
+    margin-left: 60px;
+}
+
+a.buttonUpload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    padding-top: 10px;
+    text-decoration: none;
+    font: 400 18px/1.5 "Lexend Deca", sans-serif;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 120px;
+    min-width: 90px;
+    height: 30px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-right: 10px;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+a.buttonUpload:hover {
+    background-color: #363636;
+}
+
+a span img.uploadIcon {
+    text-align: center;
+    line-height: 50px;
+    width: 25px;
+    height: 25px;
+    color: white;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+div.buttonContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    margin-left: auto;
+}
+
+a.buttonClear {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    padding-top: 10px;
+    text-decoration: none;
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 150px;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-right: 10px;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+a.buttonClear:hover {
+    background-color: #363636;
+}
+
+a.buttonAnalyse {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    padding-top: 10px;
+    text-decoration: none;
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 150px;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-right: 10px;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+a span img.clearIcon {
+    text-align: center;
+    line-height: 50px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    margin-top: 8px;
+    margin-left: 8px;
+}
+
+a span img.executeIcon {
+    text-align: center;
+    line-height: 50px;
+    width: 30px;
+    height: 30px;
+    color: white;
+    margin-top: 8px;
+    margin-left: 6px;
+}
+
+a.buttonAnalyse:hover {
+    background-color: #363636;
+}
+
+.footerdesc {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #000000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0px;
+    padding-left: 2em;
+    background-color: #35f52e;
+    width: 100%;
+    height: 0px;
+    animation: heightaddon 0.75s forwards;
+}
+
+h2.AImsg {
+    color: #c7c7c7;
+    display: none;
+    font: 300 20px/1.5 "Lexend Deca", sans-serif;
+    margin: 0;
+    padding: 0;
+    margin-left: 6%;
+    margin-top: 20px;
+    cursor: default;
+}
+
+textarea.textOutput {
+    z-index: 2;
+    margin-top: 20px;
+    padding: 20px;
+    display: none;
+    border: none;
+    font: 200 20px/1.5 "Lexend Deca", sans-serif;
+    font-weight: 200;
+    color: #cccccc;
+    background-color: transparent;
+    overflow-y: hidden;
+    padding: 10px;
+    height: 300px;
+    width: 90%;
+    resize: none;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+    cursor: default;
+    border-radius: 10px;
+}
+
+textarea.textOutput:hover {
+    display: none;
+    overflow-y: auto;
+    animation: borderLighten 3.5s linear infinite;
+}
+
+textarea.textOutput:focus {
+    outline: none;
+}
+
+textarea.textOutput::-webkit-scrollbar, .Inputarea textarea::-webkit-scrollbar, .textEnter::-webkit-scrollbar {
+    width: 8px;
+}
+
+textarea.textOutput::-webkit-scrollbar-track, .Inputarea textarea::-webkit-scrollbar-track, .textEnter::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+textarea.textOutput::-webkit-scrollbar-thumb, .Inputarea textarea::-webkit-scrollbar-thumb, .textEnter::-webkit-scrollbar-thumb {
+    background: #c7c7c7;
+    border-radius: 10px;
+}
+
+div.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.loadinggif {
+    display: none;
+    width: 54px;
+    height: 54px;
+    background-color: transparent;
+}

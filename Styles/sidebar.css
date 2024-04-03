@@ -45,6 +45,10 @@
     transform: translateX(-100%); /* 初始時向左隱藏 */
 }
 
+.sidebar ul li .longword {
+    font-size: 16px;
+}
+
 /* 自訂樣式 */
 .sidebar ul li a {
     color: #ddd; 

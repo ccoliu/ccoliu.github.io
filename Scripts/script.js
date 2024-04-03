@@ -1,6 +1,6 @@
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
-const LOCALWEB = "http://192.168.0.242:5000/"
+const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 let originalTab = 1;
@@ -308,8 +308,6 @@ if (codeInput) {
       enhanceTextInput(event, event.target);
     }
   });
-} else {
-  console.error("Element with ID 'codeInput' not found.");
 }
 
 if (uploadButton) {

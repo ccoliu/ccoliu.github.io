@@ -59,6 +59,8 @@ BLUESKY_THINKER = "You are full of imagination, you will read the input from use
 
 COMPELETION_CHECKER = "When you receive a source code, you read the comment in the code and if the comment part doesn't implement, you will fill the function and return the compelete source code."
 
+SIMILARITY_CHECKER = "You are a similarity checker, you will compare the original code and the modified code(if exists), and return the similarity between them, If only one code is provided, you need to check whether the code is made by AI or human."
+
 # Deine some phrases for the server to use.
 
 ASK_FOR_CODE = "Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code."
@@ -215,6 +217,23 @@ def fillFunction(inputCode):
     print(analyzeResult.choices[0].message.content)
     return analyzeResult.choices[0].message.content
 
+def getSimilarity(inputCode):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5.turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": SIMILARITY_CHECKER,
+            },
+            {
+                "role": "user",
+                "content": inputCode,
+            },
+        ],
+    )
+    print(analyzeResult.choices[0].message.content)
+    return analyzeResult.choices[0].message.content
+
 
 # Display the server's web page use for debugging.
 @app.route("/", methods=["GET"])
@@ -281,6 +300,19 @@ def gen_code():
         output = f"{final}"
         # Return the processed result to the frontend
         return jsonify({"result": output, "id": str(dataId)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+    
+@app.route("/similarity", methods=["POST"])
+def similarity():
+    try:
+        data = request.get_json()
+
+        code = data.get("code", "")
+
+        similarity = getSimilarity(code)
+
+        return jsonify({"result": similarity})
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -373,6 +405,7 @@ def viewer_comment():
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 
 # Condtion to pick which server to use.
