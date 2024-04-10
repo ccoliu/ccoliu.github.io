@@ -23,7 +23,7 @@ SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)
-CORS(app, resources=r'/*')
+CORS(app)
 
 # Create instances of self defined classes
 castTools = StringToJsonl()
@@ -217,6 +217,7 @@ def fillFunction(inputCode):
     print(analyzeResult.choices[0].message.content)
     return analyzeResult.choices[0].message.content
 
+
 def getSimilarity(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5.turbo",
@@ -302,7 +303,8 @@ def gen_code():
         return jsonify({"result": output, "id": str(dataId)})
     except Exception as e:
         return jsonify({"error": str(e)})
-    
+
+
 @app.route("/similarity", methods=["POST"])
 def similarity():
     try:
@@ -405,7 +407,6 @@ def viewer_comment():
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
-
 
 
 # Condtion to pick which server to use.
