@@ -69,6 +69,10 @@ ASK_FOR_LIST = "Please give me in a bulleted list."
 
 ASK_FOR_COMPELETION = "Please give me the compelete source code."
 
+SIMILARITY_FORMAT = "If there exists two codes, please analyze the percentage of similarity between them. The legal output format should be: \"The similarity between the two codes is: (Percentage Input) \", with analysis in the following newlines. For the last paragraph, judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis."
+
+
+    
 
 # This function will transfer user's request into bulleted list.
 def analyzeInputSentence(inputSentence):
@@ -228,7 +232,7 @@ def getSimilarity(inputCode):
             },
             {
                 "role": "user",
-                "content": inputCode,
+                "content": inputCode + SIMILARITY_FORMAT
             },
         ],
     )

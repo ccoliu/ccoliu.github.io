@@ -130,7 +130,7 @@ submitbtn.addEventListener("click", () => {
         createSuccessMsg("Similarity analysis has been completed.");
         document.querySelector('.AImsg').style.display = "block";
         document.querySelector('.textOutput').style.display = "block";
-        document.querySelector('.textOutput').value = data;
+        document.querySelector('.textOutput').value = data['result'];
     })
     .catch((error) => {
         console.error("Error:", error);

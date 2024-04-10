@@ -4,6 +4,7 @@ body {
     width: 100vw;
     overflow-x: hidden;
     overflow-y: auto;
+    min-width: 600px;
 }
 
 body::-webkit-scrollbar, textarea::-webkit-scrollbar {
@@ -164,7 +165,7 @@ div .textarea {
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    gap: 3em;
+    gap: 2em;
 }
 
 .textarea div textarea {
@@ -363,7 +364,7 @@ textarea.textOutput {
     background-color: #191919;
     overflow-y: hidden;
     padding: 10px;
-    height: 450px;
+    height: 550px;
     margin-bottom: 40px;
     width: 90%;
     resize: none;
@@ -407,4 +408,79 @@ div.loading {
     width: 54px;
     height: 54px;
     background-color: transparent;
+}
+
+.disclaimer {
+    display: flex;
+    justify-content: center;
+    align-items: top;
+    min-width: 100px;
+    width: 30vw;
+    min-height: 120px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    background: #363636;
+    border-radius: 3px;
+    border: 1px solid #c7c7c7;
+    flex-direction: column;
+}
+
+.disclaimerTitle , .disclaimertext {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #c7c7c7;
+    margin: 0;
+    padding: 0;
+    margin-top: 0px;
+    margin-left: 20px;
+    margin-right: 10px; /* Add a margin to the right of the text for spacing */
+    padding-right: 20px;
+}
+
+.disclaimerTitle{
+    font-size: 20px;
+    margin-left: 15px;
+    padding-top: 10px;
+}
+
+.disclaimertext {
+    font-size: 16px;
+    margin-left: 10px;
+    padding-bottom: 10px;
+    padding-left: 5px;
+}
+
+.warningIcon {
+    margin-top: 7px;
+    height: 6vh;
+    width: 6vw;
+    margin-left: 15px;
+}
+
+.warningIcon, .disclaimertext {
+    display: inline-block;
+}
+
+.disclaimert {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+}
+
+@media screen and (max-width: 900px) {
+    form {
+        width: 200px;
+    }
+    a.buttonUpload {
+        width: 80px;
+        margin-left: 30px;
+        font-size: 16px;
+    }
+    .inputfile {
+        margin-left: 50px;
+    }
+    div .textarea {
+        gap: 0px;
+        margin-left: 12px;
+    }
 }
