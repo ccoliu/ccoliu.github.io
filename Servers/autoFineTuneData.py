@@ -11,6 +11,7 @@ from dataBase import dataBaseTools
 import threading
 import time
 import random
+import datetime
 
 # Create instances of self defined classes
 castTools = StringToJsonl()
@@ -111,11 +112,14 @@ def generate_random_language():
     return selected_language
 
 
-# Generate a random problem
-problem = generateProblem()
-# Generate a random language
-selected_language = generate_random_language()
-# Generate code to solve the problem using the selected language
-code = generateCode(problem, selected_language)
+end_time = datetime.datetime.now() + datetime.timedelta(minutes=0.5)
 
-dbTools.insertGptCode("fineTune", "gptGenerateCode", problem, code, selected_language)
+while datetime.datetime.now() < end_time:
+    # Generate a random problem
+    problem = generateProblem()
+    # Generate a random language
+    selected_language = generate_random_language()
+    # Generate code to solve the problem using the selected language
+    code = generateCode(problem, selected_language)
+
+    dbTools.insertGptCode("fineTune", "gptGenerateCode", problem, code, selected_language)
