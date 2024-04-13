@@ -268,7 +268,64 @@ class dataBaseTools:
         collection.insert_one(data)
         objId = data.get("_id")
 
-        print(f"Document inserted.")
+        print(f"General case document inserted.")
+
+        return objId
+
+    def insertsimilarityCheck(self, dbName, collectionName, LHS, RHS, gptOutput):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        data = {
+            "pin": "data",
+            "type": "similarity check",
+            "LHS": LHS,
+            "RHS": RHS,
+            "gptOutput": gptOutput,
+            "comment": "No comment yet",
+        }
+
+        collection.insert_one(data)
+        objId = data.get("_id")
+
+        print(f"Similarity check event inserted.")
+
+        return objId
+
+    def insertAutoFineTune(self, dbName, collectionName, problem, code):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        data = {
+            "pin": "data",
+            "type": "auto fine tune",
+            "problem": problem,
+            "code": code,
+        }
+
+        collection.insert_one(data)
+        objId = data.get("_id")
+
+        print(f"Similarity check event inserted.")
+
+        return objId
+
+    def insertGptCode(self, dbName, collectionName, problem, language, code):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        data = {
+            "pin": "data",
+            "type": "gpt code",
+            "problem": problem,
+            "code": code,
+            "language": language,
+        }
+
+        collection.insert_one(data)
+        objId = data.get("_id")
+
+        print(f"Gpt code event inserted.")
 
         return objId
 
@@ -457,3 +514,10 @@ class dataBaseTools:
 
         for item in result:
             return item.get("language")
+
+
+# TODO:
+# Add the tje similarity check function to the database.
+# Add the community search function to serarch simularity from the database.
+# Change the back end structure to make it automatically.
+# Auto generate the fine tune data of simularity check.

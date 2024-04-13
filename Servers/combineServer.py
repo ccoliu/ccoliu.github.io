@@ -72,8 +72,6 @@ ASK_FOR_COMPELETION = "Please give me the compelete source code."
 SIMILARITY_FORMAT = "If there exists two codes, please analyze the percentage of similarity between them. The legal output format should be: \"The similarity between the two codes is: (Percentage Input) \", with analysis in the following newlines. For the last paragraph, judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis."
 
 
-    
-
 # This function will transfer user's request into bulleted list.
 def analyzeInputSentence(inputSentence):
     analyzeInput = client_model_1.chat.completions.create(
@@ -230,10 +228,7 @@ def getSimilarity(inputCode):
                 "role": "system",
                 "content": SIMILARITY_CHECKER,
             },
-            {
-                "role": "user",
-                "content": inputCode + SIMILARITY_FORMAT
-            },
+            {"role": "user", "content": inputCode + SIMILARITY_FORMAT},
         ],
     )
     print(analyzeResult.choices[0].message.content)
@@ -318,6 +313,7 @@ def similarity():
 
         similarity = getSimilarity(code)
 
+        dbTools.insertsimilarityCheck("fineTune", "similarityCheck", similarity)
         return jsonify({"result": similarity})
     except Exception as e:
         return jsonify({"error": str(e)})

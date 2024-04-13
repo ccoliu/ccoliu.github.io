@@ -65,5 +65,4 @@ keyWord = "fib"
 # dbT.readDBToFile("fineTune", "codoctopus", "Misc/fineTuneDataTest.jsonl")
 
 # dbT.communitySearch("fineTune", "codoctopus", keyWord)
-
-dbT.updateCommentToCommnity(id, "test2", "test3")
+dbT.createCollection("fineTune", "similarityCheck")
