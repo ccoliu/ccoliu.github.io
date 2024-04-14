@@ -18,7 +18,6 @@ castTools = StringToJsonl()
 fineTuneTools = TrainingTool()
 dbTools = dataBaseTools()
 
-
 # Read API keys from key file.
 with open("key.txt", "r") as file:
     keys = file.readlines()
@@ -32,7 +31,7 @@ client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
-
+# Define the problem generator and code generator
 PROBLEM_GENERATER = "You are a random question asker who simply ask for code to solve your problem, for example 'give me a fibnacii sequence generator', 'give me a maze game', 'give me a code that can deal with any kind of file such as txt or csv'."
 
 CODE_GENERATEER = "You are a code generator, you can generate code based on the problem description, for example 'generate a code that can deal with any kind of file such as txt or csv', 'generate a code that can deal with any kind of file such as txt or csv'."
@@ -112,8 +111,13 @@ def generate_random_language():
     return selected_language
 
 
-end_time = datetime.datetime.now() + datetime.timedelta(minutes=0.5)
+# Change this to change the time of the generation.
+GENERATE_MIN_TIME = 0.5
 
+# Set the end time of the generation
+end_time = datetime.datetime.now() + datetime.timedelta(minutes=GENERATE_MIN_TIME)
+
+# The main loop of the generation
 while datetime.datetime.now() < end_time:
     # Generate a random problem
     problem = generateProblem()
