@@ -1,9 +1,7 @@
-'''This is the new program that is a ai engineer that can automatically generate code based on the problem description.'''
+'''This is a ai engineer that can divide a job into several tasks and finshed it self.'''
 
 # Import necessary libraries
 from openai import OpenAI  # OpenAI API
-from bson import json_util  # For MongoDB may use the json_util
-
 import os
 import time
 import threading
@@ -43,6 +41,15 @@ Member role:  You are tasks combiner.\n
 Member message:  Help me combine all the finished tasked before and make sure it solved the problem, simply print out the code part no need to describe the process.\n
 etc.\n
 '''
+
+MESSAGE_FORMAT = '''
+Main problem:(Put the main problem here)\n
+Program pool:(Add your completed work to the program pool.)\n
+Current job:(Put your work goals here.)\n
+Current job output(Add your completed work here.):\n
+'''
+
+OUTPUT_DESCRIPTION = '''You should return in the following format:\n'''
 
 
 def createWorkSheet(inputPorblem, selected_language):
@@ -149,6 +156,35 @@ def aiEngineers(problem, roles, messages, previosOutput):
     return currentAns.choices[0].message.content
 
 
+def aiEngineersVer2(problem, roles, messages, previousMessage):
+    output = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": roles,
+            },
+            {
+                "role": "user",
+                "content": "Here is the main probelm\n"
+                + problem
+                + '\n'
+                + "Here is the previos message:\n"
+                + previousMessage
+                + '\n'
+                + messages
+                + '\n'
+                + OUTPUT_DESCRIPTION
+                + MESSAGE_FORMAT,
+            },
+        ],
+    )
+
+    print(output.choices[0].message.content)
+
+    return output.choices[0].message.content
+
+
 def recursiveAiEngineers(problem, roles, messages, previousOutput, index=0):
     if index < len(roles):
         newOutput = aiEngineers(problem, roles[index], messages[index], previousOutput)
@@ -160,11 +196,11 @@ def recursiveAiEngineers(problem, roles, messages, previousOutput, index=0):
 def testRecursiveAiEngineers(problem, roles, messages, index=0):
     global currentProgress, threadStopFlag, monitor_thread
     if index < len(roles):
-        currentProgress = aiEngineers(problem, roles[index], messages[index], currentProgress)
+        currentProgress = aiEngineersVer2(problem, roles[index], messages[index], currentProgress)
         return testRecursiveAiEngineers(problem, roles, messages, index + 1)
     else:
-        threadStopFlag = True
-        monitor_thread.join()
+        # threadStopFlag = True
+        # monitor_thread.join()
         return currentProgress
 
 
@@ -182,7 +218,7 @@ testA = "give me a fibnacii sequence generator"
 testB = "print out 1 to 10 in python."
 testC = "give me a maze game that can play at console."
 testD = "give me a program that can print out the prime numbers between 1 to 100."
-workSheet = createWorkSheet(testA, "Python")
+workSheet = createWorkSheet(testC, "python")
 
 roles = []
 messages = []
@@ -192,10 +228,10 @@ getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
 threadStopFlag = False
 
-monitor_thread = threading.Thread(target=inspecter)
+""" monitor_thread = threading.Thread(target=inspecter)
 monitor_thread.daemon = True
 monitor_thread.start()
-
+ """
 # finalOuput = recursiveAiEngineers(mainProblem, roles, messages, "None", 0)
 # print("Final Output:", finalOuput)
 
