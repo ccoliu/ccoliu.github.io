@@ -113,7 +113,8 @@ submitbtn.addEventListener("click", () => {
         return;
     }
 
-    const code = document.querySelector('.input1').value + "\n" + document.querySelector('.input2').value;
+    const code1 = document.querySelector('.input1').value;
+    const code2 = document.querySelector('.input2').value;
     document.querySelector('.loadinggif').style.display = "flex";
 
     console.log(code);
@@ -122,7 +123,7 @@ submitbtn.addEventListener("click", () => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({code1,code2}),
     })
     .then((response) => response.json())
     .then((data) => {
