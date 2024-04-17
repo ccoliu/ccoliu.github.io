@@ -90,12 +90,9 @@ if (textOutput){
 // Function to process code input
 function processCodeInput() {
   const codeInput = document.getElementById("codeInput");
-  const loader = document.getElementById("loader");
-  const blocker = document.getElementById("blocker");
-  const loadmsg = document.getElementById("loadmsg");
   const myselect = document.getElementById("myselect");
 
-  if (codeInput && loader && blocker && loadmsg) {
+  if (codeInput) {
     if (codeInput.value.trim() === "") {
       document.querySelector('.footerdesc').style.display = "flex";
       document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
@@ -106,9 +103,7 @@ function processCodeInput() {
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     } else {
       processTime = new Date().getTime();
-      toggleVisibility("loader", true);
-      toggleVisibility("blocker", true);
-      toggleVisibility("loadmsg", true);
+      document.querySelector('.loadinggif').style.display = "flex";
       if (window.location.href.includes("modify")){
         codeType = "Modify Code";
         console.log("modify");
@@ -153,6 +148,31 @@ function enhanceTextInput(event, element) {
   }
 }
 
+function JobAdd(data) {
+  console.log("jobadd");
+  console.log(data);
+  console.log(data.length);
+  console.log(Object.values(data));
+  for (let i=0;i<Object.values(data)[0].length;i++)
+  {
+    newdiv = document.createElement('div');
+    newdiv.className = "JobAssign";
+    newdiv.innerHTML = `
+      <div class="Jobtitle">
+                    <p class="AssignTitle">${Object.values(data)[0][i]}</p>
+                </div>
+                <div class="Jobbtn">
+                    <a class="editbtn">Edit</a>
+                    <a class="abortbtn">Abort</a>
+                </div>`;
+    document.querySelector('.JobAssignment').appendChild(newdiv);
+  }
+  // for(let i=0;i<data.length;i++)
+  // {
+    
+  // }
+}
+
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
   let longcode = "";
@@ -178,9 +198,6 @@ function sendDataToAnalyzeServer(code) {
     .then((data) => {
       const textOutput = document.getElementById("textOutput");
       if (textOutput) {
-        toggleVisibility("loader", false);
-        toggleVisibility("blocker", false);
-        toggleVisibility("loadmsg", false);
         textOutput.value = data.result;
         textOutput.style.display = "flex";
         textOutput.style.border = "1px solid #D0D0D0";
@@ -201,9 +218,6 @@ function sendDataToAnalyzeServer(code) {
       }
     })
     .catch((error) => {
-      toggleVisibility("loader", false);
-      toggleVisibility("blocker", false);
-      toggleVisibility("loadmsg", false);
       console.error("Error:", error);
       document.querySelector('.footerdesc').style.display = "flex";
       document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
@@ -212,7 +226,10 @@ function sendDataToAnalyzeServer(code) {
           document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
       }, 2000);
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    });
+    })
+    .finally(() => {
+      document.querySelector('.loadinggif').style.display = "none";
+    })
 }
 
 function sendDataToGenerateServer(code, lang) {
@@ -227,18 +244,17 @@ function sendDataToGenerateServer(code, lang) {
     .then((response) => response.json())
     .then((data) => {
         const textOutput = document.getElementById("textOutput");
+        console.log(typeof(data));
+        JobAdd(data);
         if (textOutput) {
-            toggleVisibility("loader", false);
-            toggleVisibility("blocker", false);
-            toggleVisibility("loadmsg", false);
-            textOutput.value = data.result;
-            textOutput.style.display = "flex";
-            textOutput.style.border = "1px solid #D0D0D0";
-            textOutput.style.backgroundColor = "#0f0f0f";
-            textOutput.style.marginBottom = "100px";
-            textOutput.style.height = "50%";
-            document.getElementById("AImsg").style.display = "block";
-            createTicket(data.result, data.id, lang);
+            // textOutput.value = "";
+            // textOutput.style.display = "flex";
+            // textOutput.style.border = "1px solid #D0D0D0";
+            // textOutput.style.backgroundColor = "#0f0f0f";
+            // textOutput.style.marginBottom = "100px";
+            // textOutput.style.height = "50%";
+            // document.getElementById("AImsg").style.display = "block";
+            // createTicket(data.result, data.id, lang);
             document.querySelector('.footerdesc').style.display = "flex";
             document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
             document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
@@ -246,14 +262,12 @@ function sendDataToGenerateServer(code, lang) {
                 document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
             }, 2000);
             document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+            document.querySelector('.buttonExecute').style.display = "flex";
         } else {
             console.error("Element with ID 'textOutput' not found.");
         }
     })
     .catch((error) => {
-        toggleVisibility("loader", false);
-        toggleVisibility("blocker", false);
-        toggleVisibility("loadmsg", false);
         console.error("Error:", error);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
@@ -262,7 +276,10 @@ function sendDataToGenerateServer(code, lang) {
           document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    });
+    })
+    .finally(() => {
+      document.querySelector('.loadinggif').style.display = "none";
+    })
 }
 
 // Function to create a ticket
@@ -335,14 +352,8 @@ if (uploadButton) {
     var fileInput = document.querySelector(".inputfile");
     var files = Array.from(fileInput.files);
     const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java","h"];
-    toggleVisibility("loader", true);
-    toggleVisibility("blocker", true);
-    toggleVisibility("loadmsg", true);
 
     if (files.length == 0) {
-      toggleVisibility("loader", false);
-      toggleVisibility("blocker", false);
-      toggleVisibility("loadmsg", false);
       document.querySelector('.footerdesc').style.display = "flex";
       document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
       document.querySelector('.footerdesc').innerHTML = "No file selected! Please retry.";
@@ -356,9 +367,6 @@ if (uploadButton) {
     for (let i = 0; i < files.length; i++) {
 
       if (!files[i]) {
-        toggleVisibility("loader", false);
-        toggleVisibility("blocker", false);
-        toggleVisibility("loadmsg", false);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
         document.querySelector('.footerdesc').innerHTML = "No file selected! Please retry.";
@@ -386,9 +394,6 @@ if (uploadButton) {
     console.log(fileName);
     processFile(files[i], filenum).then(() => {})
     .catch(() => {
-      toggleVisibility("loader", false);
-        toggleVisibility("blocker", false);
-        toggleVisibility("loadmsg", false);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
         document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the file.";
@@ -401,9 +406,6 @@ if (uploadButton) {
     filenum++;
     }
     
-    toggleVisibility("loader", false);
-    toggleVisibility("blocker", false);
-    toggleVisibility("loadmsg", false);
     if (!errorpop) {
       document.querySelector('.footerdesc').style.display = "flex";
       document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";

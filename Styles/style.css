@@ -221,6 +221,38 @@ a.buttonClear:hover {
     background-color: #363636;
 }
 
+.Execbtn {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+a.buttonExecute {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    line-height: 50px;
+    padding-top: 10px;
+    text-decoration: none;
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 50px 50px;
+    width: 150px;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    border: 1px solid #D0D0D0;
+    border-radius: 5px;
+    margin: 0;
+    margin-right: 10px;
+    padding: 0;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
 a.buttonAnalyse {
     display: flex;
     justify-content: center;
@@ -276,7 +308,7 @@ a span img.executeIcon {
     margin-left: 6px;
 }
 
-a.buttonAnalyse:hover {
+a.buttonAnalyse:hover, a.buttonExecute:hover {
     background-color: #363636;
 }
 
@@ -568,6 +600,80 @@ a.buttonUpload:hover {
     background-color: #252525;
 }
 
+.JobAssignment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.JobAssignment .JobAssign {
+    display: flex;
+    flex-direction: row;
+    background-color: #363636;
+    border: 1px solid #c7c7c7;
+    border-radius: 5px;
+    width: 400px;
+    margin-left: -10px;
+    height: auto;
+    max-width: 600px;
+    margin-top: 5px;
+}
+
+.Jobtitle {
+    margin-top: 2px;
+    width: 70%;
+    min-width: 190px;
+}
+
+.Jobbtn {
+    display: flex;
+    align-items: center;
+    width: 50%;
+    min-width: 120px;
+}
+
+.AssignTitle {
+    padding-left: 20px;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+}
+
+.editbtn {
+    margin-left: 5em;
+    cursor: pointer;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    background-color: #363636;
+    border-radius: 50px;
+}
+
+.abortbtn {
+    margin-right: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    color: #f35a5a;
+    background-color: #363636;
+    border-radius: 50px;
+}
+
+.editbtn:hover, .abortbtn:hover {
+    background-color: #1f1e1e;
+}
+
+div.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.loadinggif {
+    display: none;
+    width: 54px;
+    height: 54px;
+    background-color: transparent;
+}
 
 @media screen and (max-height: 550px) {
     body {
@@ -587,5 +693,9 @@ a.buttonUpload:hover {
     }
     .buttonContainer {
         margin-left: -50px;
+    }
+    .JobAssignment, .JobAssign {
+        margin-left: 80px;
+        width: 300px;
     }
 }
