@@ -1,5 +1,6 @@
 '''This is a ai engineer that can divide a job into several tasks and finshed it self.'''
 
+# For testing the server.
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
 
@@ -18,21 +19,20 @@ api_key_model_1 = keys[0].strip()
 api_key_model_2 = keys[1].strip()
 api_key_model_3 = keys[2].strip()
 
-# Assign API keys to different models.
+# Assign API keys to different models should use for the dived job.
 client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
-
-SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)
 CORS(app)
 
-BOSS = "You are a boss that is skilled at sperate the work into different parts and assign them to different people, you are good at managing the team and make sure the project is finished with high quality."
+BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
 
-INSEPECTER = "You are a project inspector, you will have the main goal and the current progress of the project, you will inspect the project and find out if there is any problem may lead to an error, if you find any, you will fix it and return the new code, if there is no problem, you will simply return the code."
+INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 
+# Define some format below #
 WORKSHEET_FORMAT = '''Worksheet\n
 Main problem: Give me a maze game that can play at console.\n
 (How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more than one depends on the complexity of the function.)\n
@@ -58,10 +58,10 @@ Current job:(Put your work goals here.)\n
 Current job output(Add your completed work here.):\n
 '''
 
-OUTPUT_DESCRIPTION = '''You should return in the following format:\n'''
+OUTPUT_TOKEN = "You should return in the following format:\n"
 
 
-def createWorkSheet(inputPorblem, selected_language):
+def createWorkSheet(request, language):
     workSheet = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -73,18 +73,19 @@ def createWorkSheet(inputPorblem, selected_language):
                 "role": "user",
                 "content": "Please use the following format to create a worksheet for the team to solve the problem.\n"
                 + WORKSHEET_FORMAT
-                + "How many members are needed to complete this task, as well as the roles and messages of each member, is up to you, but the output format must comply with the above."
+                + "How many members are needed to complete this project, as well as the roles and messages of each member, is up to you, but the output format must comply with the above."
                 + "\n"
-                + "The problem is:\n"
-                + inputPorblem
+                + "The main target (request) is:\n"
+                + request
                 + "\n"
-                + "Please make sure all the team members use the language: "
-                + selected_language
+                + "Please make sure all the team members is using the language: "
+                + language
                 + "\n",
             },
         ],
     )
 
+    # Print function for testing
     print(workSheet.choices[0].message.content)
 
     return workSheet.choices[0].message.content
@@ -183,7 +184,7 @@ def aiEngineersVer2(problem, roles, messages, previousMessage):
                 + '\n'
                 + messages
                 + '\n'
-                + OUTPUT_DESCRIPTION
+                + OUTPUT_TOKEN
                 + MESSAGE_FORMAT,
             },
         ],
@@ -274,7 +275,5 @@ def gen_code():
         return jsonify({"error": str(e)})
 
 
-# Condtion to pick which server to use.
-if SERVER_TYPE == "http":
-    if __name__ == "__main__":
-        app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)

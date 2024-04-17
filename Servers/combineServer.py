@@ -408,10 +408,16 @@ def similarity():
         # If there are two input codes, compare them
         if secondInput != "":
             analyzeResult = getSimilarity(firstInput, secondInput)
+            dbTools.insertsimilarityCheck(
+                "fineTune", "similarityCheck", firstInput, secondInput, analyzeResult
+            )
         else:
             issue = getIssue(firstInput)
             aiCode = aiWriteCode(issue)
             analyzeResult = aiCodeChecker(firstInput, aiCode)
+            dbTools.insertsimilarityCheck(
+                "fineTune", "similarityCheck", firstInput, aiCode, analyzeResult
+            )
 
         return jsonify({"result": analyzeResult})
     except Exception as e:
