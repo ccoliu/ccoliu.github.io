@@ -1,5 +1,8 @@
 '''This is a ai engineer that can divide a job into several tasks and finshed it self.'''
 
+from flask import Flask, request, jsonify  # Flask interface
+from flask_cors import CORS
+
 # Import necessary libraries
 from openai import OpenAI  # OpenAI API
 import os
@@ -19,6 +22,12 @@ api_key_model_3 = keys[2].strip()
 client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
+
+SERVER_TYPE = "http"
+
+# Create a Flask app
+app = Flask(__name__)
+CORS(app)
 
 BOSS = "You are a boss that is skilled at sperate the work into different parts and assign them to different people, you are good at managing the team and make sure the project is finished with high quality."
 
@@ -214,27 +223,58 @@ def inspecter():
             break
 
 
-testA = "give me a fibnacii sequence generator"
-testB = "print out 1 to 10 in python."
-testC = "give me a maze game that can play at console."
-testD = "give me a program that can print out the prime numbers between 1 to 100."
-workSheet = createWorkSheet(testC, "python")
+# testA = "give me a fibnacii sequence generator"
+# testB = "print out 1 to 10 in python."
+# testC = "give me a maze game that can play at console."
+# testD = "give me a program that can print out the prime numbers between 1 to 100."
+# workSheet = createWorkSheet(testC, "python")
 
-roles = []
-messages = []
-mainProblem = ""
-currentProgress = ""
-getWorkSheetContent(workSheet, roles, messages, mainProblem)
+# roles = []
+# messages = []
+# mainProblem = ""
+# currentProgress = ""
+# getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
-threadStopFlag = False
+# threadStopFlag = False
 
-""" monitor_thread = threading.Thread(target=inspecter)
-monitor_thread.daemon = True
-monitor_thread.start()
- """
-# finalOuput = recursiveAiEngineers(mainProblem, roles, messages, "None", 0)
-# print("Final Output:", finalOuput)
+# """ monitor_thread = threading.Thread(target=inspecter)
+# monitor_thread.daemon = True
+# monitor_thread.start()
+#  """
+# # finalOuput = recursiveAiEngineers(mainProblem, roles, messages, "None", 0)
+# # print("Final Output:", finalOuput)
 
-finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
+# finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
 
-print("Final Output:", finalOutput)
+# print("Final Output:", finalOutput)
+
+
+@app.route("/", methods=["GET"])
+def index():
+    helloWorld = "Welcome! This is the Code Assistance's Server home page!"
+    return helloWorld
+
+
+@app.route("/gen_code", methods=["POST"])
+def gen_code():
+    try:
+        data = request.get_json()
+        userInput = data.get("code", "")
+        lang = data.get("lang", "")
+        roles = []
+        messages = []
+        mainProblem = ""
+        workSheet = createWorkSheet(userInput, lang)
+        getWorkSheetContent(workSheet, roles, messages, mainProblem)
+
+        # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
+        # Return the processed result to the frontend
+        return jsonify({"result": messages})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+# Condtion to pick which server to use.
+if SERVER_TYPE == "http":
+    if __name__ == "__main__":
+        app.run(host="0.0.0.0", port=5000)

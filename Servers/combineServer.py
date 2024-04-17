@@ -4,8 +4,7 @@
 from openai import OpenAI  # OpenAI API
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
-from flask_socketio import SocketIO
-from flask_cors import *
+
 import ssl  # Local https key
 from bson import json_util  # For MongoDB may use the json_util
 
@@ -220,7 +219,7 @@ def fillFunction(inputCode):
     return analyzeResult.choices[0].message.content
 
 
-def getSimilarity(inputCode):
+def getSimilarity(firstInputCode, secondInputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -228,7 +227,16 @@ def getSimilarity(inputCode):
                 "role": "system",
                 "content": SIMILARITY_CHECKER,
             },
-            {"role": "user", "content": inputCode + SIMILARITY_FORMAT},
+            {
+                "role": "user",
+                "content": "Here is the LHS code\n"
+                + firstInputCode
+                + "\n"
+                + "Here is the RHS code\n"
+                + secondInputCode
+                + "\n"
+                + SIMILARITY_FORMAT,
+            },
         ],
     )
     print(analyzeResult.choices[0].message.content)
@@ -309,12 +317,13 @@ def similarity():
     try:
         data = request.get_json()
 
-        code = data.get("code", "")
+        firstInput = data.get("code1", "")
+        secondInput = data.get("code2", "")
 
-        similarity = getSimilarity(code)
+        if secondInput != "":
+            output = getSimilarity(firstInput, secondInput)
 
-        dbTools.insertsimilarityCheck("fineTune", "similarityCheck", similarity)
-        return jsonify({"result": similarity})
+        return jsonify({"result": output})
     except Exception as e:
         return jsonify({"error": str(e)})
 
