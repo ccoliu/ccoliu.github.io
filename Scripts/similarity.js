@@ -117,7 +117,7 @@ submitbtn.addEventListener("click", () => {
     const code2 = document.querySelector('.input2').value;
     document.querySelector('.loadinggif').style.display = "flex";
 
-    console.log(code);
+ 
     fetch(CURRENTWEB + "similarity", {
         method: "POST",
         headers: {

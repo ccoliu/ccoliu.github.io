@@ -8,8 +8,6 @@ from bson import json_util  # For MongoDB may use the json_util
 from fileFormatt import StringToJsonl
 from trainingClass import TrainingTool
 from dataBase import dataBaseTools
-import threading
-import time
 import random
 import datetime
 
@@ -112,7 +110,7 @@ def generate_random_language():
 
 
 # Change this to change the time of the generation.
-GENERATE_MIN_TIME = 0.5
+GENERATE_MIN_TIME = 1
 
 # Set the end time of the generation
 end_time = datetime.datetime.now() + datetime.timedelta(minutes=GENERATE_MIN_TIME)
