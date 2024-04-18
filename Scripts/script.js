@@ -1,3 +1,5 @@
+// const { text } = require("stream/consumers");
+
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
 const LOCALWEB = "http://127.0.0.1:5000/"
@@ -9,6 +11,8 @@ window.onload = function() {
   serverText = document.querySelector('.server');
   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 }
+
+
 
 // Helper function to toggle the visibility of elements
 function toggleVisibility(elementId, display) {
@@ -149,23 +153,20 @@ function enhanceTextInput(event, element) {
 }
 
 function JobAdd(data) {
-  console.log("jobadd");
-  console.log(data);
-  console.log(data.length);
-  console.log(Object.values(data));
+  document.querySelector('.JobAssignment').innerHTML = "";
   for (let i=0;i<Object.values(data)[0].length;i++)
   {
     newdiv = document.createElement('div');
     newdiv.className = "JobAssign";
     newdiv.innerHTML = `
       <div class="Jobtitle">
-                    <p class="AssignTitle">${Object.values(data)[0][i]}</p>
+                    <textarea class="AssignTitle">${Object.values(data)[0][i]}</textarea>
                 </div>
                 <div class="Jobbtn">
-                    <a class="editbtn">Edit</a>
                     <a class="abortbtn">Abort</a>
                 </div>`;
     document.querySelector('.JobAssignment').appendChild(newdiv);
+    analysisapply();
   }
   // for(let i=0;i<data.length;i++)
   // {
@@ -467,5 +468,27 @@ if (document.querySelector('.Inputarea')) {
         }
       }
     }
+  });
+}
+
+function autoResize() {
+  this.style.height = 'auto';
+  this.style.height = this.scrollHeight + 'px';
+}
+
+if (document.querySelector('.JobAssignment')) {
+  document.querySelector('.JobAssignment').addEventListener('click', function(event) {
+    if (event.target.matches('.abortbtn')) {
+      targetedTab = event.target.closest('.JobAssign');
+      targetedTab.remove();
+    }
+  });
+}
+
+function analysisapply() {
+  let textareas = document.querySelectorAll('.AssignTitle');
+  textareas.forEach(textarea => {
+    textarea.style.height = (1 + (textarea.value.length) / 32) * 14 + 'px';
+    textarea.addEventListener('input', autoResize, false);
   });
 }

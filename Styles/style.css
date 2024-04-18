@@ -616,27 +616,44 @@ a.buttonUpload:hover {
     border-radius: 5px;
     width: 400px;
     margin-left: -10px;
-    height: auto;
+    height: fit-content;
     max-width: 600px;
     margin-top: 5px;
 }
 
 .Jobtitle {
     margin-top: 2px;
-    width: 70%;
+    width: 80%;
     min-width: 190px;
 }
 
 .Jobbtn {
     display: flex;
     align-items: center;
-    width: 50%;
+    width: 30%;
     min-width: 120px;
 }
 
 .AssignTitle {
-    padding-left: 20px;
+    background: transparent;
     font: 200 14px/1 "Lexend Deca", sans-serif;
+    border: none;
+    margin-left: 20px;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    color: #cccccc;
+    word-wrap: break-word;
+    padding-top: 13px;
+    padding-bottom: 0px;
+    width: 280px;
+    height: 50px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    overflow-y: hidden;
+    resize: none;
+}
+
+.AssignTitle:focus {
+    outline: none;
 }
 
 .editbtn {
@@ -650,7 +667,7 @@ a.buttonUpload:hover {
 .abortbtn {
     margin-right: 20px;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: 4em;
     font: 200 14px/1 "Lexend Deca", sans-serif;
     color: #f35a5a;
     background-color: #363636;
@@ -673,6 +690,7 @@ div.loading {
     width: 54px;
     height: 54px;
     background-color: transparent;
+    margin-left: -13px;
 }
 
 @media screen and (max-height: 550px) {
