@@ -36,7 +36,7 @@ INSEPECTER = "You are a project inspector, you will have the main goal (or targe
 WORKSHEET_FORMAT = '''Worksheet\n
 Main problem: Give me a maze game that can play at console.\n
 (How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more than one depends on the complexity of the function.)\n
-Member role: You are a......\n
+Member role: You are a ......\n
 Member message:  Help me ......\n
 Member role: You are a......\n
 Member message:  Help me ......\n
@@ -224,6 +224,24 @@ def inspecter():
             break
 
 
+def generateOutputMessages(innermessages):
+    outputMessages = []
+    for s in innermessages:
+        # Format the message to lowercase
+        lower_case_message = s.casefold()
+        if lower_case_message.startswith("help me"):
+            # replace the "help me" with "Job:"
+            replaced_message = s.replace("Help me", "Job:", 1)
+            replaced_message = replaced_message.replace("HELP ME", "Job:", 1)
+            replaced_message = replaced_message.replace("help me", "Job:", 1)
+            outputMessages.append(replaced_message)
+        else:
+            # If the output is not start with "help me", then add "Job:" to the beginning of the message.
+            outputMessages.append("Job: " + s)
+
+    return outputMessages
+
+
 # testA = "give me a fibnacii sequence generator"
 # testB = "print out 1 to 10 in python."
 # testC = "give me a maze game that can play at console."
@@ -252,7 +270,7 @@ def inspecter():
 
 @app.route("/", methods=["GET"])
 def index():
-    helloWorld = "Welcome! This is the Code Assistance's Server home page!"
+    helloWorld = "Welcome! This is the Codoctopus ai engineer server test!"
     return helloWorld
 
 
@@ -268,6 +286,7 @@ def gen_code():
         workSheet = createWorkSheet(userInput, lang)
         getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
+        messages = generateOutputMessages(messages)
         # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
         # Return the processed result to the frontend
         return jsonify({"result": messages})
