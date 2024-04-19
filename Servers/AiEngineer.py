@@ -28,37 +28,36 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 app = Flask(__name__)
 CORS(app)
 
+# Define some fixed roles of the gpt.
 BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
 
 INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 
 # Define some format below #
 WORKSHEET_FORMAT = '''Worksheet\n
-Main problem: Give me a maze game that can play at console.\n
-(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more than one depends on the complexity of the function.)\n
-Member role: You are a ......\n
+Main problem: (understand what the user want to do and put it here)\n
+(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more than one depends on the complexity of the function.)\n]
+(1st member)
 Member message:  Help me ......\n
-Member role: You are a......\n
+(2nd member)
 Member message:  Help me ......\n
-Member role:  You are a......\n
+(3rd member)
 Member message:  Help me ......\n
+(... up to you)\n
 (The second last one member should be a tester who can find out what may be wrong with the code and fixed it.)
-Member role:  You are a program tester if you figure out some problem in the code, you fix it and simply return the new code.\n
 Member message: Test the program to see if it reach the main problem, if not, fix it and return the new code.\n
 (The last one memeber should always be the one who can finish and combine all the tasks.)
-Member role:  You are tasks combiner.\n
-Member message:  Help me combine all the finished tasked before and make sure it solved the problem, simply print out the code part no need to describe the process.\n
-etc.\n
+Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors, simply print out the code part no need to describe the process you been through.\n
 '''
 
 MESSAGE_FORMAT = '''
-Main problem:(Put the main problem here)\n
+Main problem:(Always put the main problem here)\n
 Program pool:(Add your completed work to the program pool.)\n
 Current job:(Put your work goals here.)\n
 Current job output(Add your completed work here.):\n
 '''
 
-OUTPUT_TOKEN = "You should return in the following format:\n"
+FORMAT_TOKEN = "You should return in the following format:\n"
 
 
 def createWorkSheet(request, language):
@@ -73,7 +72,7 @@ def createWorkSheet(request, language):
                 "role": "user",
                 "content": "Please use the following format to create a worksheet for the team to solve the problem.\n"
                 + WORKSHEET_FORMAT
-                + "How many members are needed to complete this project, as well as the roles and messages of each member, is up to you, but the output format must comply with the above."
+                + "How many members are needed to complete this project, as well as the messages of each member, is up to you, but the output format must comply with the above."
                 + "\n"
                 + "The main target (request) is:\n"
                 + request
@@ -124,7 +123,6 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
     lines = text.strip().split('\n')
 
     # Initialize lists to hold the roles and messages
-
     for line in lines:
         if line.startswith("Main problem:"):
             mainProblem = line.split("Main problem:")[1].strip()
@@ -134,7 +132,6 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
             messages.append(line.split("Member message:")[1].strip())
 
     print("Main Problem:", mainProblem)
-    print("Member Roles:", roles)
     print("Member Messages:", messages)
 
 
@@ -184,7 +181,7 @@ def aiEngineersVer2(problem, roles, messages, previousMessage):
                 + '\n'
                 + messages
                 + '\n'
-                + OUTPUT_TOKEN
+                + FORMAT_TOKEN
                 + MESSAGE_FORMAT,
             },
         ],
@@ -214,6 +211,7 @@ def testRecursiveAiEngineers(problem, roles, messages, index=0):
         return currentProgress
 
 
+# This function is the inspecter that will randomly check the progress of the project and fix the problem if there is any.
 def inspecter():
     global threadStopFlag, workSheet, mainProblem, currentProgress
     while not threadStopFlag:
@@ -224,7 +222,8 @@ def inspecter():
             break
 
 
-def generateOutputMessages(innermessages):
+# This function will convert the message to the format that can be displayed on the frontend 'Job: ...... '
+def convertToDisplayJob(innermessages):
     outputMessages = []
     for s in innermessages:
         # Format the message to lowercase
@@ -242,11 +241,65 @@ def generateOutputMessages(innermessages):
     return outputMessages
 
 
+# This function will convert the message back to the original format 'Help me ...... '
+def reverseToGptMessages(innermessages):
+    outputMessages = []
+
+    for s in innermessages:
+        # Format the message to lowercase
+        lower_case_message = s.casefold()
+        if lower_case_message.startswith("Job:"):
+            # replace the "help me" with "Job:"
+            replaced_message = s.replace("Job:", "Help me", 1)
+            replaced_message = replaced_message.replace("JOB:", "Help me", 1)
+            replaced_message = replaced_message.replace("job:", "Help me", 1)
+            outputMessages.append(replaced_message)
+        else:
+            # If the output is not start with "help me", then add "Job:" to the beginning of the message.
+            outputMessages.append("Help me " + s)
+
+    return outputMessages
+
+
+def assignGptRoles(finalMessages):
+    finalRoles = []
+
+    for f in finalMessages:
+        tempMessages = client_model_1.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are very good at giving a role to the team members, you can assign the roles to the team members based on the job they need to do.",
+                },
+                {
+                    "role": "user",
+                    "content": "Here is the job:\n"
+                    + f
+                    + "\n"
+                    + "Please use one sencence to describe the role for this person.\n"
+                    + "for example: You are a program tester, you will test the program and find out the problem and fix it.\n",
+                },
+            ],
+        )
+
+        tempRple = tempMessages.choices[0].message.content
+        finalRoles.append(tempRple)
+
+    return finalRoles
+
+
+def assignLayers(inputMessages):
+    characterLayers = []
+
+    return characterLayers
+
+
 # testA = "give me a fibnacii sequence generator"
 # testB = "print out 1 to 10 in python."
 # testC = "give me a maze game that can play at console."
 # testD = "give me a program that can print out the prime numbers between 1 to 100."
-# workSheet = createWorkSheet(testC, "python")
+# workSheet = createWorkSheet(testB, "python")
 
 # roles = []
 # messages = []
@@ -268,12 +321,14 @@ def generateOutputMessages(innermessages):
 # print("Final Output:", finalOutput)
 
 
+# Define the routes, this one is default route to display the server is running.
 @app.route("/", methods=["GET"])
 def index():
     helloWorld = "Welcome! This is the Codoctopus ai engineer server test!"
     return helloWorld
 
 
+# This route is for the frontend analysis the code and generate the worksheet for the team to solve the problem.
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
@@ -286,7 +341,7 @@ def gen_code():
         workSheet = createWorkSheet(userInput, lang)
         getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
-        messages = generateOutputMessages(messages)
+        messages = convertToDisplayJob(messages)
         # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
         # Return the processed result to the frontend
         return jsonify({"result": messages})
@@ -294,5 +349,20 @@ def gen_code():
         return jsonify({"error": str(e)})
 
 
+@app.route("/execute_steps", methods=["POST"])
+def execute_steps():
+    try:
+        data = request.get_json()
+        # Should deal with the arrays that send back.
+        newMessages = data.get('steps', [])
+        newMessages = reverseToGptMessages(newMessages)
+
+        finalOutputCode = ""
+        return jsonify({"result": finalOutputCode})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
+# Run the server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
