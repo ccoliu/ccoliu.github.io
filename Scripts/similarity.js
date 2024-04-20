@@ -9,6 +9,17 @@ window.onload = function() {
   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 }
 
+let serverText = document.querySelector('.server');
+serverText.addEventListener('click', () => {
+  if (CURRENTWEB == LOCALWEB) {
+    CURRENTWEB = GITWEB;
+  } else {
+    CURRENTWEB = LOCALWEB;
+  }
+  localStorage.setItem("server", CURRENTWEB);
+  window.location.reload();
+});
+
 function enhanceTextInput(event, element) {
     const keyPairs = {
       Tab: "\t",
