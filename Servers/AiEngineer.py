@@ -134,6 +134,8 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
     print("Main Problem:", mainProblem)
     print("Member Messages:", messages)
 
+    return mainProblem
+
 
 def aiEngineers(problem, roles, messages, previosOutput):
     currentAns = client_model_1.chat.completions.create(
@@ -202,6 +204,7 @@ def recursiveAiEngineers(problem, roles, messages, previousOutput, index=0):
 
 def testRecursiveAiEngineers(problem, roles, messages, index=0):
     global currentProgress, threadStopFlag, monitor_thread
+    print("Degug")
     if index < len(roles):
         currentProgress = aiEngineersVer2(problem, roles[index], messages[index], currentProgress)
         return testRecursiveAiEngineers(problem, roles, messages, index + 1)
@@ -248,11 +251,11 @@ def reverseToGptMessages(innermessages):
     for s in innermessages:
         # Format the message to lowercase
         lower_case_message = s.casefold()
-        if lower_case_message.startswith("Job:"):
+        if lower_case_message.startswith("job: "):
             # replace the "help me" with "Job:"
-            replaced_message = s.replace("Job:", "Help me", 1)
-            replaced_message = replaced_message.replace("JOB:", "Help me", 1)
-            replaced_message = replaced_message.replace("job:", "Help me", 1)
+            replaced_message = s.replace("Job: ", "Help me", 1)
+            replaced_message = replaced_message.replace("JOB: ", "Help me", 1)
+            replaced_message = replaced_message.replace("job: ", "Help me", 1)
             outputMessages.append(replaced_message)
         else:
             # If the output is not start with "help me", then add "Job:" to the beginning of the message.
@@ -304,7 +307,7 @@ def assignLayers(inputMessages):
 # roles = []
 # messages = []
 # mainProblem = ""
-# currentProgress = ""
+currentProgress = ""
 # getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
 # threadStopFlag = False
@@ -319,6 +322,8 @@ def assignLayers(inputMessages):
 # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
 
 # print("Final Output:", finalOutput)
+
+mainProblem = "test"
 
 
 # Define the routes, this one is default route to display the server is running.
@@ -337,9 +342,10 @@ def gen_code():
         lang = data.get("lang", "")
         roles = []
         messages = []
-        mainProblem = ""
         workSheet = createWorkSheet(userInput, lang)
-        getWorkSheetContent(workSheet, roles, messages, mainProblem)
+        global mainProblem
+
+        mainProblem = getWorkSheetContent(workSheet, roles, messages, mainProblem)
 
         messages = convertToDisplayJob(messages)
         # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
@@ -355,10 +361,11 @@ def execute_steps():
         data = request.get_json()
         # Should deal with the arrays that send back.
         newMessages = data.get('steps', [])
-        print(newMessages)
+        newRoles = []
         newMessages = reverseToGptMessages(newMessages)
-
-        finalOutputCode = ""
+        newRoles = assignGptRoles(newMessages)
+        global mainProblem, currentProgress
+        finalOutputCode = testRecursiveAiEngineers(mainProblem, newRoles, newMessages, 0)
         return jsonify({"result": finalOutputCode})
     except Exception as e:
         return jsonify({"error": str(e)})
