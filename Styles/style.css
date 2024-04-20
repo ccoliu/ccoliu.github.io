@@ -222,7 +222,7 @@ a.buttonClear:hover {
 }
 
 .Execbtn {
-    margin-top: 10px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -615,10 +615,10 @@ a.buttonUpload:hover {
     border: 1px solid #c7c7c7;
     border-radius: 5px;
     width: 400px;
-    margin-left: -10px;
+    margin-left: 0;
     height: fit-content;
     max-width: 600px;
-    margin-top: 5px;
+    margin-top: 10px;
 }
 
 .Jobtitle {
@@ -630,13 +630,14 @@ a.buttonUpload:hover {
 .Jobbtn {
     display: flex;
     align-items: center;
-    width: 30%;
-    min-width: 120px;
+    width: 20%;
+    min-width: 60px;
+    cursor: pointer;
+    padding-left: 0px;
 }
 
 .AssignTitle {
     background: transparent;
-    font: 200 14px/1 "Lexend Deca", sans-serif;
     border: none;
     margin-left: 20px;
     font: 200 14px/1 "Lexend Deca", sans-serif;
@@ -667,25 +668,54 @@ a.buttonUpload:hover {
 .abortbtn {
     margin-right: 20px;
     cursor: pointer;
-    margin-left: 4em;
+    margin-left: 1.5em;
     font: 200 14px/1 "Lexend Deca", sans-serif;
     color: #f35a5a;
-    background-color: #363636;
     border-radius: 50px;
 }
 
-.editbtn:hover, .abortbtn:hover {
-    background-color: #1f1e1e;
+.JobAdd {
+    display: flex;
+    flex-direction: row;
+    background-color: #363636;
+    width: 400px;
+    max-width: 600px;
+    height: 50px;
+    border: 1px solid #c7c7c7;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 0;
 }
 
-div.loading {
+.material-symbols-outlined {
+    margin-top: 12px;
+}
+
+.AddJob {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 10px;
+    font: 200 14px/1 "Lexend Deca", sans-serif;
+    color: #cccccc;
+    margin-bottom: 12px;
+    margin-left: 12px;
+}
+
+.editbtn:hover, .abortbtn:hover, .JobAdd:hover, .Jobbtn:hover {
+    background-color: #2a2a2a;
+}
+
+div.loading, div.loading2 {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-top: 20px;
 }
 
-.loadinggif {
+.loadinggif, .loadinggif2 {
     display: none;
     width: 54px;
     height: 54px;
@@ -713,7 +743,7 @@ div.loading {
         margin-left: -50px;
     }
     .JobAssignment, .JobAssign {
-        margin-left: 80px;
-        width: 300px;
+        margin-left: 85px;
+        width: 270px;
     }
 }

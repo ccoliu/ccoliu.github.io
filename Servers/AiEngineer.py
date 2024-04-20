@@ -355,6 +355,7 @@ def execute_steps():
         data = request.get_json()
         # Should deal with the arrays that send back.
         newMessages = data.get('steps', [])
+        print(newMessages)
         newMessages = reverseToGptMessages(newMessages)
 
         finalOutputCode = ""

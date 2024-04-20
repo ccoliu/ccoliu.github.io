@@ -1,5 +1,7 @@
 // const { text } = require("stream/consumers");
 
+// const { error } = require("console");
+
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
 const LOCALWEB = "http://127.0.0.1:5000/"
@@ -28,6 +30,7 @@ function toggleVisibility(elementId, display) {
 function clearFields() {
   const codeInput = document.getElementById("codeInput");
   const fileInput = document.getElementById("fileInput");
+  const JobAssignment = document.querySelector('.JobAssignment');
 
   if (codeInput) {
     codeInput.value = "";
@@ -41,6 +44,10 @@ function clearFields() {
     fileInput.value = "";
   } else {
     console.error("Elements with IDs 'codeInput' and/or 'result' not found.");
+  }
+  if (JobAssignment) {
+    JobAssignment.innerHTML = "";
+    executebtn.style.display = "none";
   }
 }
 
@@ -152,6 +159,20 @@ function enhanceTextInput(event, element) {
   }
 }
 
+
+
+function createNewJobBtn() {
+    if (document.querySelector('.JobAdd')) {
+      document.querySelector('.JobAdd').remove();
+    }
+    newdiv = document.createElement('div');
+    newdiv.className = "JobAdd";
+    newdiv.innerHTML = `
+      <span class="material-symbols-outlined">add</span>
+      <a class="AddJob">Add New Job...</a>`;
+    document.querySelector('.JobAssignment').appendChild(newdiv);
+}
+
 function JobAdd(data) {
   document.querySelector('.JobAssignment').innerHTML = "";
   for (let i=0;i<Object.values(data)[0].length;i++)
@@ -168,10 +189,7 @@ function JobAdd(data) {
     document.querySelector('.JobAssignment').appendChild(newdiv);
     analysisapply();
   }
-  // for(let i=0;i<data.length;i++)
-  // {
-    
-  // }
+  createNewJobBtn();
 }
 
 // Function to send code data to the server
@@ -478,9 +496,23 @@ function autoResize() {
 
 if (document.querySelector('.JobAssignment')) {
   document.querySelector('.JobAssignment').addEventListener('click', function(event) {
-    if (event.target.matches('.abortbtn')) {
+    if (event.target.matches('.abortbtn') || event.target.matches('.Jobbtn')) {
       targetedTab = event.target.closest('.JobAssign');
       targetedTab.remove();
+    }
+    else if (event.target.matches('.JobAdd') || event.target.matches('.JobAdd *')) {
+      newdiv = document.createElement('div');
+      newdiv.className = 'JobAssign';
+      newdiv.innerHTML = `
+        <div class="Jobtitle">
+                      <textarea class="AssignTitle" placeholder="Add new job assignment here..."></textarea>
+                  </div>
+                  <div class="Jobbtn">
+                      <a class="abortbtn">Abort</a>
+        </div>`;
+      document.querySelector('.JobAssignment').appendChild(newdiv);
+      createNewJobBtn();
+      analysisapply();
     }
   });
 }
@@ -489,6 +521,76 @@ function analysisapply() {
   let textareas = document.querySelectorAll('.AssignTitle');
   textareas.forEach(textarea => {
     textarea.style.height = (1 + (textarea.value.length) / 32) * 14 + 'px';
+    if (textarea.value == "") {
+      textarea.style.height = '54px';
+    }
     textarea.addEventListener('input', autoResize, false);
   });
 }
+
+const executebtn = document.querySelector('.buttonExecute');
+executebtn.addEventListener('click', () => {
+  let textareaIsEmpty = true;
+  let textareas = document.querySelectorAll('.AssignTitle');
+  let steps = [];
+  textareas.forEach(textarea => {
+    if (textarea.value != "") {
+      textareaIsEmpty = false;
+    }
+    steps.push(textarea.value);
+  });
+  if (textareaIsEmpty || textareas.length == 0) {
+    document.querySelector('.footerdesc').style.display = "flex";
+    document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+    document.querySelector('.footerdesc').innerHTML = "No job assignment to execute or job assignments are empty! Please retry.";
+    setTimeout(() => {
+        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+    }, 2000);
+    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    return;
+  }
+  console.log(steps);
+  document.querySelector('.loadinggif2').style.display = "flex";
+  fetch(CURRENTWEB + "execute_steps", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ steps }),
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    const textOutput = document.getElementById("textOutput");
+    if (textOutput) {
+      textOutput.value = data.result;
+      textOutput.style.display = "flex";
+      textOutput.style.border = "1px solid #D0D0D0";
+      textOutput.style.backgroundColor = "#0f0f0f";
+      textOutput.style.marginBottom = "100px";
+      textOutput.style.height = "30%";
+      document.getElementById("AImsg").style.display = "block";
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+      document.querySelector('.footerdesc').innerHTML = "Execute Successful.";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    } else {
+      console.error("Element with ID 'textOutput' not found.");
+    }
+  })
+  .catch((error) => {
+    console.error("Error:", error);
+    document.querySelector('.footerdesc').style.display = "flex";
+    document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+    document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the code.";
+    setTimeout(() => {
+        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+    }, 2000);
+    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+  })
+  .finally(() => {
+    document.querySelector('.loadinggif2').style.display = "none";
+  });
+})
