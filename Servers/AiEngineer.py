@@ -1,6 +1,6 @@
-'''This is a ai engineer that can divide a job into several tasks and finshed it self.'''
+'''This is the Ai Engineer that can divide a project into several tasks and assign to several people to finish the project. The Ai Engineer will generate the worksheet for the team to solve the problem and assign the roles to the team members. The Ai Engineer will also inspect the progress of the project and fix the problem if there is any. The Ai Engineer will also combine all the tasks and adjust the variable name to make sure the program runs correctly'''
 
-# For testing the server.
+# For Flask server
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
 
@@ -33,6 +33,7 @@ BOSS = "You are a software company boss that is skilled at divided the work into
 
 INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 
+FINAL_PICKER = "You are the last person who is responsible for picking out the program (code) part of the message and print it out in specific format."
 # Define some format below #
 WORKSHEET_FORMAT = '''Worksheet\n
 Main problem: (understand what the user want to do and put it here)\n
@@ -47,7 +48,7 @@ Member message:  Help me ......\n
 (The second last one member should be a tester who can find out what may be wrong with the code and fixed it.)
 Member message: Test the program to see if it reach the main problem, if not, fix it and return the new code.\n
 (The last one memeber should always be the one who can finish and combine all the tasks.)
-Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors, simply print out the code part no need to describe the process you been through.\n
+Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.\n
 '''
 
 MESSAGE_FORMAT = '''
@@ -55,6 +56,13 @@ Main problem:(Always put the main problem here)\n
 Program pool:(Add your completed work to the program pool.)\n
 Current job:(Put your work goals here.)\n
 Current job output(Add your completed work here.):\n
+'''
+
+FINAL_OUTPUT_FORMAT = '''
+Main target:(Always put the main problem here)\n
+Language used:(Always put the language used here)\n
+Final output:\n
+(Add the code here. Usually is the Program pool's content.)
 '''
 
 FORMAT_TOKEN = "You should return in the following format:\n"
@@ -137,34 +145,6 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
     return mainProblem
 
 
-def aiEngineers(problem, roles, messages, previosOutput):
-    currentAns = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": roles,
-            },
-            {
-                "role": "user",
-                "content": "Here is the main probelm\n"
-                + problem
-                + '\n'
-                + "Here is the previos progess:\n"
-                + previosOutput
-                + '\n'
-                + messages
-                + '\n'
-                + "Please finish the your part based on the main problem and previous output, and add it to the program then pass the whole program to the next person, do not omit any part of the program, just add your part to the end of the program.",
-            },
-        ],
-    )
-
-    print(currentAns.choices[0].message.content)
-
-    return currentAns.choices[0].message.content
-
-
 def aiEngineersVer2(problem, roles, messages, previousMessage):
     output = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -194,12 +174,29 @@ def aiEngineersVer2(problem, roles, messages, previousMessage):
     return output.choices[0].message.content
 
 
-def recursiveAiEngineers(problem, roles, messages, previousOutput, index=0):
-    if index < len(roles):
-        newOutput = aiEngineers(problem, roles[index], messages[index], previousOutput)
-        return recursiveAiEngineers(problem, roles, messages, newOutput, index + 1)
-    else:
-        return previousOutput
+def finalFormatter(messages, mainProblem):
+    finalOutput = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": FINAL_PICKER,
+            },
+            {
+                "role": "user",
+                "content": "Here is the main target\n"
+                + mainProblem
+                + '\n'
+                + "Here is the final message:\n"
+                + messages
+                + '\n'
+                + FORMAT_TOKEN
+                + FINAL_OUTPUT_FORMAT,
+            },
+        ],
+    )
+
+    return finalOutput.choices[0].message.content
 
 
 def testRecursiveAiEngineers(problem, roles, messages, index=0):
@@ -366,6 +363,8 @@ def execute_steps():
         newRoles = assignGptRoles(newMessages)
         global mainProblem, currentProgress
         finalOutputCode = testRecursiveAiEngineers(mainProblem, newRoles, newMessages, 0)
+
+        finalOutputCode = finalFormatter(finalOutputCode, mainProblem)
         return jsonify({"result": finalOutputCode})
     except Exception as e:
         return jsonify({"error": str(e)})
