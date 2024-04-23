@@ -11,6 +11,9 @@ import time
 import threading
 import random
 
+import asyncio
+import aiohttp
+
 # Read API keys from key file.
 with open("key.txt", "r") as file:
     keys = file.readlines()
@@ -65,6 +68,16 @@ Final output:\n
 (Add the code here. Usually is the Program pool's content.)
 '''
 
+TASK_LAYER_FORMAT = '''LAYERS:[firstJobLayer, secondJobLayer, thirdJobLayer, ...(use numbers)]\n'''
+
+GROUP_FORMAT = '''GROUPS_START\n
+(the content is just an example)
+Group 1: ['help me print 1 to 5', 'help me print 6 to 10', 'help me print 11 to 20', 'help me print 21 to 30', 'help me print 31 to 40']
+Group 2: ['hele me comebine the functions']
+Group 3: ['help me test the final program', 'help me test all the functions']
+(how many groups is up to you, but the output format must comply with the above.)
+GROUPS_END\n
+'''
 FORMAT_TOKEN = "You should return in the following format:\n"
 
 
@@ -145,7 +158,7 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
     return mainProblem
 
 
-def aiEngineersVer2(problem, roles, messages, previousMessage):
+def aiEngineers(problem, roles, messages, previousMessage):
     output = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -174,6 +187,113 @@ def aiEngineersVer2(problem, roles, messages, previousMessage):
     return output.choices[0].message.content
 
 
+async def asyncAiEngineers(problem, roles, messages, previousMessage):
+    output = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": roles,
+            },
+            {
+                "role": "user",
+                "content": "Here is the main probelm\n"
+                + problem
+                + '\n'
+                + "Here is the previos message:\n"
+                + previousMessage
+                + '\n'
+                + messages
+                + '\n'
+                + FORMAT_TOKEN
+                + MESSAGE_FORMAT,
+            },
+        ],
+    )
+
+    return output.choices[0].message.content
+
+
+# This function will analyze the messages and assign the layer to it.
+def getTasksLayer(messages, mainProblem):
+    jobs_str = str(messages)
+    jobs_str = f"JOBS: {jobs_str}"
+
+    print(jobs_str)
+    tempOutput = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a task classifier, and you will group tasks that can be executed simultaneously into the same category and assign an order to ensure a plan can proceed smoothly.",
+            },
+            {
+                "role": "user",
+                "content": "Here is the main target of the project\n"
+                + mainProblem
+                + '\n'
+                + "Here are the Jobs that should be assign:\n"
+                + jobs_str
+                + '\n'
+                + "Please assign the layer to the jobs in the following logic:\n"
+                + "If the input job list is JOBS: ['help me print 1 to 5', 'help me print 6 to 10', 'hele me comnebine the print functions', 'help me test the final program', 'help me print 11 to 20'] \n"
+                + "The logic should be:\n"
+                + "Tasks that can be executed simultaneously:'help me print 1 to 5''help me print 6 to 10''help me print 11 to 20' These tasks involve printing different ranges of numbers and have no dependencies on each other, so they can be executed in parallel. Tasks that need to be executed in sequence: 'help me combine the print functions' 'help me test the final program'"
+                + "The output should be:\n"
+                + "LAYERS:[1, 1, 2, 3, 1]\n"
+                + "Now please help me assign the layer to the jobs in the following format:\n"
+                + FORMAT_TOKEN
+                + TASK_LAYER_FORMAT,
+            },
+        ],
+    )
+
+    tempOutput = tempOutput.choices[0].message.content
+
+    numbers_str = tempOutput[tempOutput.index('[') + 1 : tempOutput.index(']')]
+
+    numbers_list_str = numbers_str.split(',')
+
+    numbers_list = [int(num) for num in numbers_list_str]
+
+    return numbers_list
+
+
+# This function will analyze the messages and assign the layer to it.
+def getTasksGroup(messages, mainTarget):
+    # Divide the jobs array into strings.
+    jobs_str = str(messages)
+    jobs_str = f"JOBS: {jobs_str}"
+    print(jobs_str)
+
+    tempOutput = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a Job classifier.",
+            },
+            {
+                "role": "user",
+                "content": "Here are the Jobs that need to be done:\n"
+                + jobs_str
+                + '\n'
+                + "Here is the main target of the whole project\n"
+                + mainTarget
+                + "According to the main target, please group the jobs into same group if they can be executed at the same time, the jobs that need to be executed in sequence shouldn't be in the same group and the jobs that can be executed in parallel should be in same group.\n"
+                + "Each group now becomes a larger job, and there is a definite sequence among groups. For instance, in group 1, there are some printing functions, while in group 2, the task is to combine these printing functions. In group 3, the task is to test the functions from group 2. This means that the contents of groups 1, 2, and 3 are interrelated with the contents of other groups.\n"
+                + "The group number should be the legitimate order of the execution.\n"
+                + FORMAT_TOKEN
+                + GROUP_FORMAT,
+            },
+        ],
+    )
+
+    tempOutput = tempOutput.choices[0].message.content
+
+    return tempOutput
+
+
 def finalFormatter(messages, mainProblem):
     finalOutput = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -199,12 +319,12 @@ def finalFormatter(messages, mainProblem):
     return finalOutput.choices[0].message.content
 
 
-def testRecursiveAiEngineers(problem, roles, messages, index=0):
+def recursiveAiEngineers(problem, roles, messages, index=0):
     global currentProgress, threadStopFlag, monitor_thread
     print("Degug")
     if index < len(roles):
-        currentProgress = aiEngineersVer2(problem, roles[index], messages[index], currentProgress)
-        return testRecursiveAiEngineers(problem, roles, messages, index + 1)
+        currentProgress = aiEngineers(problem, roles[index], messages[index], currentProgress)
+        return recursiveAiEngineers(problem, roles, messages, index + 1)
     else:
         # threadStopFlag = True
         # monitor_thread.join()
@@ -289,23 +409,21 @@ def assignGptRoles(finalMessages):
     return finalRoles
 
 
-def assignLayers(inputMessages):
-    characterLayers = []
+def assignLayers(job_matrix, real_job_matrix):
+    lines = job_matrix.split('\n')
+    group_numbers = []
+    for realJob in real_job_matrix:
+        for line in lines:
+            if realJob in line:
+                group_number = line.split(':')[0].split()[-1]
+                group_numbers.append(group_number)
+                break
 
-    return characterLayers
+    return group_numbers
 
 
-# testA = "give me a fibnacii sequence generator"
-# testB = "print out 1 to 10 in python."
-# testC = "give me a maze game that can play at console."
-# testD = "give me a program that can print out the prime numbers between 1 to 100."
-# workSheet = createWorkSheet(testB, "python")
-
-# roles = []
-# messages = []
-# mainProblem = ""
 currentProgress = ""
-# getWorkSheetContent(workSheet, roles, messages, mainProblem)
+mainProblem = "test"
 
 # threadStopFlag = False
 
@@ -313,14 +431,25 @@ currentProgress = ""
 # monitor_thread.daemon = True
 # monitor_thread.start()
 #  """
-# # finalOuput = recursiveAiEngineers(mainProblem, roles, messages, "None", 0)
-# # print("Final Output:", finalOuput)
+a = [
+    'help me print 1 to 5',
+    'help me print 6 to 10',
+    'hele me comebine the functions',
+    'help me test the final program',
+    'help me print 11 to 20',
+    'help me print 21 to 30',
+    'help me test all the functions',
+]
 
-# finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
+temp = getTasksGroup(a, 'print 1 to 30')
 
-# print("Final Output:", finalOutput)
+print(temp)
 
-mainProblem = "test"
+layers = []
+
+layers = assignLayers(temp, a)
+
+print(layers)
 
 
 # Define the routes, this one is default route to display the server is running.
@@ -334,19 +463,15 @@ def index():
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
+        global mainProblem
         data = request.get_json()
         userInput = data.get("code", "")
         lang = data.get("lang", "")
         roles = []
         messages = []
         workSheet = createWorkSheet(userInput, lang)
-        global mainProblem
-
         mainProblem = getWorkSheetContent(workSheet, roles, messages, mainProblem)
-
         messages = convertToDisplayJob(messages)
-        # finalOutput = testRecursiveAiEngineers(mainProblem, roles, messages, 0)
-        # Return the processed result to the frontend
         return jsonify({"result": messages})
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -355,15 +480,14 @@ def gen_code():
 @app.route("/execute_steps", methods=["POST"])
 def execute_steps():
     try:
+        global mainProblem, currentProgress
         data = request.get_json()
         # Should deal with the arrays that send back.
         newMessages = data.get('steps', [])
         newRoles = []
         newMessages = reverseToGptMessages(newMessages)
         newRoles = assignGptRoles(newMessages)
-        global mainProblem, currentProgress
-        finalOutputCode = testRecursiveAiEngineers(mainProblem, newRoles, newMessages, 0)
-
+        finalOutputCode = recursiveAiEngineers(mainProblem, newRoles, newMessages, 0)
         finalOutputCode = finalFormatter(finalOutputCode, mainProblem)
         return jsonify({"result": finalOutputCode})
     except Exception as e:
@@ -371,5 +495,5 @@ def execute_steps():
 
 
 # Run the server
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+# if __name__ == "__main__":
+#     app.run(host="0.0.0.0", port=5000)
