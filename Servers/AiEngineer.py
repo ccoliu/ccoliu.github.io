@@ -37,6 +37,7 @@ BOSS = "You are a software company boss that is skilled at divided the work into
 INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 
 FINAL_PICKER = "You are the last person who is responsible for picking out the program (code) part of the message and print it out in specific format."
+
 # Define some format below #
 WORKSHEET_FORMAT = '''Worksheet\n
 Main problem: (understand what the user want to do and put it here)\n
@@ -185,78 +186,6 @@ def aiEngineers(problem, roles, messages, previousMessage):
     print(output.choices[0].message.content)
 
     return output.choices[0].message.content
-
-
-async def asyncAiEngineers(problem, roles, messages, previousMessage):
-    output = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": roles,
-            },
-            {
-                "role": "user",
-                "content": "Here is the main probelm\n"
-                + problem
-                + '\n'
-                + "Here is the previos message:\n"
-                + previousMessage
-                + '\n'
-                + messages
-                + '\n'
-                + FORMAT_TOKEN
-                + MESSAGE_FORMAT,
-            },
-        ],
-    )
-
-    return output.choices[0].message.content
-
-
-# This function will analyze the messages and assign the layer to it.
-def getTasksLayer(messages, mainProblem):
-    jobs_str = str(messages)
-    jobs_str = f"JOBS: {jobs_str}"
-
-    print(jobs_str)
-    tempOutput = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a task classifier, and you will group tasks that can be executed simultaneously into the same category and assign an order to ensure a plan can proceed smoothly.",
-            },
-            {
-                "role": "user",
-                "content": "Here is the main target of the project\n"
-                + mainProblem
-                + '\n'
-                + "Here are the Jobs that should be assign:\n"
-                + jobs_str
-                + '\n'
-                + "Please assign the layer to the jobs in the following logic:\n"
-                + "If the input job list is JOBS: ['help me print 1 to 5', 'help me print 6 to 10', 'hele me comnebine the print functions', 'help me test the final program', 'help me print 11 to 20'] \n"
-                + "The logic should be:\n"
-                + "Tasks that can be executed simultaneously:'help me print 1 to 5''help me print 6 to 10''help me print 11 to 20' These tasks involve printing different ranges of numbers and have no dependencies on each other, so they can be executed in parallel. Tasks that need to be executed in sequence: 'help me combine the print functions' 'help me test the final program'"
-                + "The output should be:\n"
-                + "LAYERS:[1, 1, 2, 3, 1]\n"
-                + "Now please help me assign the layer to the jobs in the following format:\n"
-                + FORMAT_TOKEN
-                + TASK_LAYER_FORMAT,
-            },
-        ],
-    )
-
-    tempOutput = tempOutput.choices[0].message.content
-
-    numbers_str = tempOutput[tempOutput.index('[') + 1 : tempOutput.index(']')]
-
-    numbers_list_str = numbers_str.split(',')
-
-    numbers_list = [int(num) for num in numbers_list_str]
-
-    return numbers_list
 
 
 # This function will analyze the messages and assign the layer to it.
@@ -416,40 +345,54 @@ def assignLayers(job_matrix, real_job_matrix):
         for line in lines:
             if realJob in line:
                 group_number = line.split(':')[0].split()[-1]
-                group_numbers.append(group_number)
+                group_numbers.append(int(group_number))
                 break
 
     return group_numbers
 
 
-currentProgress = ""
-mainProblem = "test"
+def jobWorker(problem, role, message, previousMessage, barrier):
+    aiEngineers(problem, role, message, previousMessage)
+    barrier.wait()
 
-# threadStopFlag = False
 
-# """ monitor_thread = threading.Thread(target=inspecter)
-# monitor_thread.daemon = True
-# monitor_thread.start()
-#  """
-a = [
-    'help me print 1 to 5',
-    'help me print 6 to 10',
-    'hele me comebine the functions',
-    'help me test the final program',
-    'help me print 11 to 20',
-    'help me print 21 to 30',
-    'help me test all the functions',
-]
+def startProcessing(problem, roles, messages, previousMessage, layerIndex):
+    global currentProgress
+    previousMessage = currentProgress
+    threads = []
+    currentProgress = previousMessage  # 初始化 currentProgress
+    total_jobs = len(layerIndex)  # 獲取總作業數量
 
-temp = getTasksGroup(a, 'print 1 to 30')
+    for layer in set(layerIndex):  # 使用 set 去除重複的層級值
+        print(f'Processing jobs in layer {layer}')
 
-print(temp)
+        layer_jobs = [
+            job for job, layer_number in enumerate(layerIndex, 1) if layer_number == layer
+        ]
+        print(f'Jobs in layer {layer}: {layer_jobs}')
 
-layers = []
+        # 創建 Barrier 物件，等待當前層級的所有作業完成
+        layer_barrier = threading.Barrier(len(layer_jobs))
 
-layers = assignLayers(temp, a)
+        for jobIndex in layer_jobs:
+            # 使用創建的 Barrier 物件作為參數
+            thread = threading.Thread(
+                target=jobWorker,
+                args=(
+                    problem,
+                    roles[jobIndex - 1],
+                    messages[jobIndex - 1],
+                    currentProgress,
+                    layer_barrier,
+                ),
+            )
+            threads.append(thread)
+            thread.start()
 
-print(layers)
+        for thread in threads:
+            thread.join()
+
+    return currentProgress
 
 
 # Define the routes, this one is default route to display the server is running.
@@ -488,11 +431,45 @@ def execute_steps():
         newMessages = reverseToGptMessages(newMessages)
         newRoles = assignGptRoles(newMessages)
         finalOutputCode = recursiveAiEngineers(mainProblem, newRoles, newMessages, 0)
+
+        # This must be done before sending the final output to the frontend.
         finalOutputCode = finalFormatter(finalOutputCode, mainProblem)
+
         return jsonify({"result": finalOutputCode})
     except Exception as e:
         return jsonify({"error": str(e)})
 
+
+start_time = time.time()
+currentProgress = ""
+mainProblem = "print 1 to 20"
+
+a = [
+    'help me print 1 to 5',
+    'help me print 6 to 10',
+    'help me print 11 to 20',
+    'help me combine all the functions',
+    'help me test the final program',
+]
+
+testRoles = assignGptRoles(a)
+# finalOutputCode = recursiveAiEngineers(mainProblem, testRoles, a, 0)
+temp = getTasksGroup(a, 'help me gernerate a maze game')
+layers = []
+layers = assignLayers(temp, a)
+print(layers)
+startProcessing(mainProblem, testRoles, a, currentProgress, layers)
+end_time = time.time()
+
+# 計算執行時間（以秒為單位）
+execution_time = end_time - start_time
+print(f"Execution time: {execution_time} seconds")
+# threadStopFlag = False
+
+# """ monitor_thread = threading.Thread(target=inspecter)
+# monitor_thread.daemon = True
+# monitor_thread.start()
+#  """
 
 # Run the server
 # if __name__ == "__main__":
