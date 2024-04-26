@@ -3,7 +3,6 @@
 # For Flask server
 from flask import Flask, request, jsonify  # Flask interface
 from flask_cors import CORS
-from flask import g
 
 # Import necessary libraries
 from openai import OpenAI  # OpenAI API
@@ -12,6 +11,9 @@ import time
 import threading
 import random
 
+from dataBase import dataBaseTools
+
+dbTools = dataBaseTools()
 # Read API keys from key file.
 with open("key.txt", "r") as file:
     keys = file.readlines()
@@ -511,6 +513,10 @@ def execute_steps():
         finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
         # This must be done before sending the final output to the frontend.
         finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
+
+        dbTools.insertAiEmployeesMode(
+            "fineTune", "codoctopus", mainProblem, newJobs, finalOutputCode
+        )
 
         return jsonify({"result": finalOutputCode})
     except Exception as e:

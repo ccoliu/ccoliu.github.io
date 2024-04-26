@@ -252,6 +252,38 @@ class dataBaseTools:
         return objId
 
     # Insert a document into a collection and retrun the id of the document
+    # Parametres: dbName, collectionName, inputCode, outputCode, summary
+    def insertAiEmployeesMode(
+        self,
+        dbName,
+        collectionName,
+        userInputRequest,
+        dividedTasks,
+        finalOutput,
+        rate="No rate",
+        comment="No comment",
+    ):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        data = {
+            "pin": "data",
+            "type": "generate code",
+            "request": userInputRequest,
+            "tasks": dividedTasks,
+            "output": finalOutput,
+            "rate": rate,
+            "comment": comment,
+        }
+
+        collection.insert_one(data)
+        objId = data.get("_id")
+
+        print(f"AI emloyee document inserted.")
+
+        return objId
+
+    # Insert a document into a collection and retrun the id of the document
     # Use to store the general case and futher use to fine tune the model
     # parametres: dbName, collectionName, input, output
     def insertGeneralCaseDocument(self, dbName, collectionName, input, output):
