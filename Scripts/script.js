@@ -8,6 +8,8 @@ const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 let originalTab = 1;
+let temp = "";
+let buttonDisabled = false;
 
 window.onload = function() {
   serverText = document.querySelector('.server');
@@ -28,6 +30,9 @@ function toggleVisibility(elementId, display) {
 
 //Function to clear the input and result fields
 function clearFields() {
+  if (buttonDisabled == true) {
+    return;
+  }
   const codeInput = document.getElementById("codeInput");
   const fileInput = document.getElementById("fileInput");
   const JobAssignment = document.querySelector('.JobAssignment');
@@ -101,6 +106,9 @@ if (textOutput){
 
 // Function to process code input
 function processCodeInput() {
+  if (buttonDisabled == true) {
+    return;
+  }
   const codeInput = document.getElementById("codeInput");
   const myselect = document.getElementById("myselect");
 
@@ -254,6 +262,7 @@ function sendDataToAnalyzeServer(code) {
 
 function sendDataToGenerateServer(code, lang) {
     recordText = code;
+    temp = code;
     document.querySelector('.myselect').disabled = true;
     fetch(CURRENTWEB + "gen_code", {
         method: "POST",
@@ -330,13 +339,13 @@ const runButton = document.getElementById("runButton");
 const codeInput = document.querySelector(".Inputarea");
 const uploadButton = document.getElementById("uploadButton");
 
-if (clearButton) {
+if (clearButton && !buttonDisabled) {
   clearButton.addEventListener("click", clearFields);
 } else {
   console.error("Element with ID 'clearButton' not found.");
 }
 
-if (runButton) {
+if (runButton && !buttonDisabled) {
   runButton.addEventListener("click", processCodeInput);
 } else {
   console.error("Element with ID 'runButton' not found.");
@@ -534,6 +543,12 @@ function analysisapply() {
 
 const executebtn = document.querySelector('.buttonExecute');
 executebtn.addEventListener('click', () => {
+  recordText = temp;
+  buttonDisabled = true;
+  document.querySelector('.buttonClear').style.cursor = "not-allowed";
+  document.querySelector('.buttonAnalyse').style.cursor = "not-allowed";
+  document.querySelector('.buttonUpload').style.cursor = "not-allowed";
+  document.querySelector('.myselect').disabled = true;
   let textareaIsEmpty = true;
   let textareas = document.querySelectorAll('.AssignTitle');
   let steps = [];
@@ -598,6 +613,10 @@ executebtn.addEventListener('click', () => {
   .finally(() => {
     recordText = "";
     document.querySelector('.myselect').disabled = false;
+    buttonDisabled = false;
+    document.querySelector('.buttonClear').style.cursor = "pointer";
+    document.querySelector('.buttonAnalyse').style.cursor = "pointer";
+    document.querySelector('.buttonUpload').style.cursor = "pointer";
     document.querySelector('.loadinggif2').style.display = "none";
   });
 })
