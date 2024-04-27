@@ -514,11 +514,11 @@ def execute_steps():
         # This must be done before sending the final output to the frontend.
         finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
 
-        dbTools.insertAiEmployeesMode(
+        dataId = dbTools.insertAiEmployeesMode(
             "fineTune", "codoctopus", mainProblem, newJobs, finalOutputCode
         )
 
-        return jsonify({"result": finalOutputCode})
+        return jsonify({"result": finalOutputCode, "id": str(dataId)})
     except Exception as e:
         return jsonify({"error": str(e)})
 
