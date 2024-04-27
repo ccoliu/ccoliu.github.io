@@ -194,24 +194,22 @@ function JobAdd(data) {
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
-  let longcode = "";
+  let longcode = [];
   if (originalTab > 1) {
     textareaArray = document.querySelectorAll('.Inputarea textarea');
     textareaArray.forEach(element => {
       if (element.value != ""){
-        longcode += element.value + "\n\n";
+        longcode.push(element.value);
       }
     });
-    code = longcode + '\b';
   }
-  recordText = code;
-  console.log(code);
+  console.log(longcode);
   fetch(CURRENTWEB + "process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ code }),
+    body: JSON.stringify({ longcode }),
   })
     .then((response) => response.json())
     .then((data) => {
