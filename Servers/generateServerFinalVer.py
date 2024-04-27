@@ -33,7 +33,7 @@ cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
 key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
 
 # Set the server type to https or http
-SERVER_TYPE = "https"
+SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)
@@ -74,7 +74,7 @@ FRONTED_OUTPUT_FORMAT = '''
 Main target:(Always put the main problem here)\n
 Language used:(Always put the language used here)\n
 Final output:\n
-(Add the completed source code here. Usually is the Program pool's content.)
+(Completed source code. Put the Program pool's content here.)
 '''
 
 GROUPED_FORMAT = '''GROUPS_START\n
@@ -121,7 +121,9 @@ def createWorkSheet(request, language):
 
 
 # Use for inspecter to check the progress of the project and lead it to correctness.
-def inspecterCheck(currentProgress, mainProblem, jobMatrix):
+def inspecterCheck(mainProblem, jobMatrix):
+    global currentProgress
+    print("Inspecter is inspecting: ", currentProgress)
     # Turn the job array into string.
     jobMatrixText = ' '.join(jobMatrix)
 
@@ -142,17 +144,19 @@ def inspecterCheck(currentProgress, mainProblem, jobMatrix):
                 + "Here is the current progress:\n"
                 + currentProgress
                 + '\n'
-                + "If you find any probelm that might lead to an error, you will fix it and return the full program with the new code you adjusted, if there is no problem, you will simply return the full program you got.\n"
-                + "No matter what you have or have not done, you should always return the current progress in the following foramt.\n"
-                + MESSAGE_FORMAT,
+                + "You should respond in the following format:\n"
+                + MESSAGE_FORMAT
+                + "If you find any probelm, please fix it and put the correct answer in the program pool and decribe what you had done in the current job, if you find no problem simply respond the 'current progress' content that you recieved. You should always ignore the job that will be done in the future, only check the job that had been done.\n",
             },
         ],
     )
 
     # Use to debug the output
-    # print(inspectResult.choices[0].message.content)
+    print(inspectResult.choices[0].message.content)
 
-    return inspectResult.choices[0].message.content
+    currentProgress = inspectResult.choices[0].message.content
+
+    return
 
 
 # Use for getting the specific content from the worksheet.
@@ -452,6 +456,7 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
         for thread in threads:
             thread.join()
 
+        inspecterCheck(mainTarget, jobArray)
     # After all the task is done, the final output will be the current progress.
     return currentProgress
 
