@@ -49,6 +49,7 @@ function clearFields() {
     JobAssignment.innerHTML = "";
     executebtn.style.display = "none";
   }
+  document.querySelector('.myselect').disabled = false;
 }
 
 const newtab = document.querySelector('.Addnewtab');
@@ -200,6 +201,7 @@ function sendDataToAnalyzeServer(code) {
     textareaArray.forEach(element => {
       if (element.value != ""){
         longcode.push(element.value);
+        recordText += element.value + "\n";
       }
     });
   }
@@ -245,6 +247,7 @@ function sendDataToAnalyzeServer(code) {
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     })
     .finally(() => {
+      recordText = "";
       document.querySelector('.loadinggif').style.display = "none";
     })
 }
@@ -271,7 +274,7 @@ function sendDataToGenerateServer(code, lang) {
             // textOutput.style.marginBottom = "100px";
             // textOutput.style.height = "50%";
             // document.getElementById("AImsg").style.display = "block";
-            // createTicket(data.result, data.id, lang);
+            //createTicket(data.result, data.id, lang);
             document.querySelector('.footerdesc').style.display = "flex";
             document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
             document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
@@ -280,6 +283,7 @@ function sendDataToGenerateServer(code, lang) {
             }, 2000);
             document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
             document.querySelector('.buttonExecute').style.display = "flex";
+            document.querySelector('.myselect').disabled = true;
         } else {
             console.error("Element with ID 'textOutput' not found.");
         }
@@ -302,6 +306,7 @@ function sendDataToGenerateServer(code, lang) {
 // Function to create a ticket
 
 function createTicket(data, id, lang) {
+  console.log(recordText);
   let numberseq = localStorage.getItem("numberseq");
   if (numberseq == null) {
     numberseq = 1;
@@ -566,6 +571,7 @@ executebtn.addEventListener('click', () => {
       textOutput.style.backgroundColor = "#0f0f0f";
       textOutput.style.marginBottom = "100px";
       textOutput.style.height = "30%";
+      createTicket(data.result, data.id);
       document.getElementById("AImsg").style.display = "block";
       document.querySelector('.footerdesc').style.display = "flex";
       document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
@@ -589,6 +595,8 @@ executebtn.addEventListener('click', () => {
     document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
   })
   .finally(() => {
+    recordText = "";
+    document.querySelector('.myselect').disabled = false;
     document.querySelector('.loadinggif2').style.display = "none";
   });
 })
