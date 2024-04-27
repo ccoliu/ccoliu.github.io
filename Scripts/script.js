@@ -254,6 +254,7 @@ function sendDataToAnalyzeServer(code) {
 
 function sendDataToGenerateServer(code, lang) {
     recordText = code;
+    document.querySelector('.myselect').disabled = true;
     fetch(CURRENTWEB + "gen_code", {
         method: "POST",
         headers: {
@@ -283,7 +284,6 @@ function sendDataToGenerateServer(code, lang) {
             }, 2000);
             document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
             document.querySelector('.buttonExecute').style.display = "flex";
-            document.querySelector('.myselect').disabled = true;
         } else {
             console.error("Element with ID 'textOutput' not found.");
         }
@@ -297,6 +297,7 @@ function sendDataToGenerateServer(code, lang) {
           document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+        document.querySelector('.myselect').disabled = false;
     })
     .finally(() => {
       document.querySelector('.loadinggif').style.display = "none";
