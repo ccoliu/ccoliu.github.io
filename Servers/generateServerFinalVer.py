@@ -468,7 +468,7 @@ mainProblem = ""
 # Define the routes, this one is default route to display the server is running.
 @app.route("/", methods=["GET"])
 def index():
-    helloWorld = "Welcome! This is the Codoctopus AI engineers server!"
+    helloWorld = "Welcome! This is the Code Assistance's Generate Server!"
     return helloWorld
 
 
