@@ -7,6 +7,7 @@ from flask_cors import CORS
 
 import ssl  # Local https key
 from bson import json_util  # For MongoDB may use the json_util
+import threading
 
 # Import self defined classes
 from fileFormatt import StringToJsonl
@@ -247,29 +248,44 @@ def index():
     return helloWorld
 
 
-# Process the code received from the frontend.
-# Use for modify mode.
-@app.route("/process_code", methods=["POST"])
-def process_code():
+def process_individual_code(code, results, index):
     try:
-        data = request.get_json()
-        code = data.get("code", "")
-
         problems = analyzeCode(code)
-
         optimizedCode = optimizeCode(code, problems)
-
         summary = describeCode(optimizedCode)
 
         dataId = dbTools.insertModifyDocument(
             "fineTune", "codoctopus", code, optimizedCode, summary
         )
 
-        print(optimizedCode + "\n")
+        # Store result in the results list at the index corresponding to the original code
+        results[index] = {"optimizedCode": optimizedCode, "summary": summary, "id": str(dataId)}
+    except Exception as e:
+        results[index] = {"error": str(e)}
 
-        output = f"{optimizedCode}"
-        # Return the processed result to the frontend
-        return jsonify({"result": output, "id": str(dataId)})
+
+# Process the code received from the frontend.
+# Use for modify mode.
+@app.route("/process_code", methods=["POST"])
+def process_code():
+    try:
+        data = request.get_json()
+        inputCode = data.get('longcode', [])
+
+        threads = []
+        results = [{} for _ in inputCode]  # Pre-allocate a list for results
+
+        for index, code in enumerate(inputCode):
+            thread = threading.Thread(target=process_individual_code, args=(code, results, index))
+            threads.append(thread)
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        print(results)
+        # Return the processed results to the frontend
+        return jsonify({"results": results})
     except Exception as e:
         return jsonify({"error": str(e)})
 
