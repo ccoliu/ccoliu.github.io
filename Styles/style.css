@@ -189,7 +189,7 @@ div.buttonContainer {
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    margin-left: auto;
+    margin-left: 10px;
 }
 
 a.buttonClear {
@@ -226,6 +226,7 @@ a.buttonClear:hover {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 0;
 }
 
 a.buttonExecute {
@@ -433,7 +434,7 @@ h2.AImsg {
     font: "Lexend Deca", sans-serif;
     margin-left: auto;
     margin-right: auto;
-    margin-left: -55px;
+    margin-left: -40px;
 }
 
 .inputfile {
@@ -704,7 +705,7 @@ a.buttonUpload:hover {
     margin-left: 12px;
 }
 
-.editbtn:hover, .abortbtn:hover, .JobAdd:hover, .Jobbtn:hover {
+.editbtn:hover, .JobAdd:hover, .Jobbtn:hover {
     background-color: #2a2a2a;
 }
 
@@ -720,7 +721,11 @@ div.loading, div.loading2 {
     width: 54px;
     height: 54px;
     background-color: transparent;
-    margin-left: -13px;
+    margin-left: -0px;
+}
+
+.loadinggif2 {
+    margin-left: -20px;
 }
 
 @media screen and (max-height: 550px) {
