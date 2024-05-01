@@ -65,10 +65,11 @@ ASK_FOR_COMPELETION = "Please give me the compelete source code."
 
 SIMILARITY_FORMAT = "If there exists two codes, please analyze the percentage of similarity between them. The legal output format should be: \"The similarity between the two codes is: (Percentage Input) \", with analysis in the following newlines. For the last paragraph, judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis."
 
-AI_CODE_FORMAT = ''' Analyze result:
-AI code percentage: (Percentage)
-Human code percentage: (Percentage)
-(The human part and the ai part should be 100 in total)
+AI_CODE_FORMAT = '''This is an AI-generated code for probability: (Percentage Input)\n
+(With analysis in the following newlines.)\n
+(Judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis.)\n
+Final Judgement: (Plagiarism/Written by human)\n
+Jugement Reason: (Reasons using bullet points)\n
 '''
 
 AI_CODE_CHECK_LOGIC = "You will reviced two code one is written by AI and the other is written by human, you need to analyze the code and return the percentage of AI code in the human code."
@@ -185,6 +186,7 @@ def aiCodeChecker(inputCode, aiCode):
                 + "Here is the AI code\n"
                 + aiCode
                 + "\n"
+                + "Help me determine how similar human code and AI code are, and it will always be humans copying AI.\n"
                 + "Please return in the following format:\n"
                 + AI_CODE_FORMAT,
             },
@@ -192,29 +194,6 @@ def aiCodeChecker(inputCode, aiCode):
     )
 
     print(analyzeResult.choices[0].message.content)
-    return analyzeResult.choices[0].message.content
-
-
-def getIssue(inputCode):
-    analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": ISSUE_ANALYZER,
-            },
-            {
-                "role": "user",
-                "content": "Here is the source code\n"
-                + inputCode
-                + "\n"
-                + "Please return the main target of the code and the language source code uses.",
-            },
-        ],
-    )
-
-    # print(analyzeResult.choices[0].message.content)
-
     return analyzeResult.choices[0].message.content
 
 
@@ -228,15 +207,14 @@ def aiWriteCode(inputTarget):
             },
             {
                 "role": "user",
-                "content": "Here is the main target\n"
+                "content": "Here is a source code\n"
                 + inputTarget
                 + "\n"
-                + "Please help me write the code using the language in the main target.",
+                + "Please help me rewrite the code using the same language, that can implement the same mechanism as the source code, but with your own coding style and logic.\n"
+                + "Simply return the code you write.",
             },
         ],
     )
-
-    # print(analyzeResult.choices[0].message.content)
 
     return analyzeResult.choices[0].message.content
 
@@ -306,8 +284,7 @@ def similarity():
                 "fineTune", "similarityCheck", firstInput, secondInput, analyzeResult
             )
         else:
-            issue = getIssue(firstInput)
-            aiCode = aiWriteCode(issue)
+            aiCode = aiWriteCode(firstInput)
             analyzeResult = aiCodeChecker(firstInput, aiCode)
             dbTools.insertsimilarityCheck(
                 "fineTune", "similarityCheck", firstInput, aiCode, analyzeResult
