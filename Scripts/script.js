@@ -224,7 +224,7 @@ function JobAdd(data) {
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
   let longcode = [];
-  if (originalTab > 1) {
+  if (originalTab > 0) {
     textareaArray = document.querySelectorAll('.Inputarea textarea');
     textareaArray.forEach(element => {
       if (element.value != ""){
