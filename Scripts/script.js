@@ -8,6 +8,7 @@ const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 let originalTab = 1;
+let exectab = 1;
 let temp = "";
 let buttonDisabled = false;
 let uploadDisabled = false;
@@ -38,7 +39,13 @@ function clearResponse() {
   } else {
     console.error("Element with ID 'textOutput' not found.");
   }
-  document.querySelector('.AImsg').style.display = "none";
+  if (document.querySelector('.responseInfo')) {
+    document.querySelector('.responseInfo').style.display = "none";
+  }
+  else
+  {
+    document.querySelector('.AImsg').style.display = "none";
+  }
 }
 
 //Function to clear the input and result fields
@@ -67,11 +74,20 @@ function clearFields() {
     JobAssignment.innerHTML = "";
     executebtn.style.display = "none";
   }
-  document.querySelector('.myselect').disabled = false;
-  document.querySelector('.textEnter').disabled = false;
-  document.querySelector('.textEnter').style.filter = "brightness(1)";
-  document.querySelector('.buttonUpload').style.filter = "brightness(1)";
-  document.querySelector('.buttonUpload').style.cursor = "pointer";
+  if (document.querySelector('.myselect'))
+  {
+    document.querySelector('.myselect').disabled = false;
+  }
+  if (document.querySelector('.textEnter'))
+  {
+    document.querySelector('.textEnter').disabled = false;
+    document.querySelector('.textEnter').style.filter = "brightness(1)";
+  }
+  if (document.querySelector('.buttonUpload'))
+  {
+    document.querySelector('.buttonUpload').style.filter = "brightness(1)";
+    document.querySelector('.buttonUpload').style.cursor = "pointer";
+  }
   buttonDisabled = false;
   uploadDisabled = false;
   clearResponse();
@@ -243,6 +259,7 @@ function sendDataToAnalyzeServer(code) {
   })
     .then((response) => response.json())
     .then((data) => {
+      exectab = originalTab;
       const textOutput = document.getElementById("textOutput");
       if (textOutput) {
         textOutput.value = data.result;
@@ -251,7 +268,6 @@ function sendDataToAnalyzeServer(code) {
         textOutput.style.backgroundColor = "#0f0f0f";
         textOutput.style.marginBottom = "100px";
         textOutput.style.height = "30%";
-        document.getElementById("AImsg").style.display = "block";
         createTicket(data.result, data.id);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
@@ -260,6 +276,18 @@ function sendDataToAnalyzeServer(code) {
             document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
         document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+        document.querySelector('.responseInfo').style.display = "flex";
+        document.querySelector('.AImsg').style.display = "block";
+        document.getElementById('arrowleft').style.filter = "brightness(0.4)";
+        document.getElementById('arrowleft').style.cursor = "not-allowed";
+        if (originalTab == 1) {
+          document.getElementById('arrowright').style.filter = "brightness(0.4)";
+          document.getElementById('arrowright').style.cursor = "not-allowed";
+        }
+        else {
+          document.getElementById('arrowright').style.filter = "brightness(1)";
+          document.getElementById('arrowright').style.cursor = "pointer";
+        }
       } else {
         console.error("Element with ID 'textOutput' not found.");
       }
@@ -302,14 +330,6 @@ function sendDataToGenerateServer(code, lang) {
         console.log(typeof(data));
         JobAdd(data);
         if (textOutput) {
-            // textOutput.value = "";
-            // textOutput.style.display = "flex";
-            // textOutput.style.border = "1px solid #D0D0D0";
-            // textOutput.style.backgroundColor = "#0f0f0f";
-            // textOutput.style.marginBottom = "100px";
-            // textOutput.style.height = "50%";
-            // document.getElementById("AImsg").style.display = "block";
-            //createTicket(data.result, data.id, lang);
             document.querySelector('.footerdesc').style.display = "flex";
             document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
             document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
@@ -393,9 +413,15 @@ if (uploadButton) {
         if (originalTab < filenum) {
             document.querySelector('.Addnewtab').click();
         }
-        console.log('.textEnter' + filenum.toString());
-        document.querySelector('.textEnter' + filenum.toString()).value = reader.result;
-        console.log(document.querySelector('.textEnter' + filenum.toString()).value);
+        //console.log('.textEnter' + filenum.toString());
+        if (document.querySelector('.textEnter' + filenum.toString()).value != "") {
+          filenum++;
+          processFile(file, filenum);
+        }
+        else{
+          document.querySelector('.textEnter' + filenum.toString()).value = reader.result;
+        }
+        //console.log(document.querySelector('.textEnter' + filenum.toString()).value);
         resolve();
       }
       reader.onerror = reject;
@@ -595,88 +621,132 @@ function abortbtnDisable(bool) {
 }
 
 const executebtn = document.querySelector('.buttonExecute');
-executebtn.addEventListener('click', () => {
-  recordText = temp;
-  buttonDisabled = true;
-  document.querySelector('.buttonClear').style.cursor = "not-allowed";
-  document.querySelector('.buttonClear').style.filter = "brightness(0.5)";
-  document.querySelector('.buttonAnalyse').style.cursor = "not-allowed";
-  document.querySelector('.buttonAnalyse').style.filter = "brightness(0.5)";
-  document.querySelector('.JobAdd').style.cursor = "not-allowed";
-  document.querySelector('.JobAdd').style.filter = "brightness(0.5)";
-  abortbtnDisable(true);
-  document.querySelector('.myselect').disabled = true;
-  let textareaIsEmpty = true;
-  let textareas = document.querySelectorAll('.AssignTitle');
-  let steps = [];
-  textareas.forEach(textarea => {
-    if (textarea.value != "") {
-      textareaIsEmpty = false;
-    }
-    steps.push(textarea.value);
-  });
-  if (textareaIsEmpty || textareas.length == 0) {
-    document.querySelector('.footerdesc').style.display = "flex";
-    document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
-    document.querySelector('.footerdesc').innerHTML = "No job assignment to execute or job assignments are empty! Please retry.";
-    setTimeout(() => {
-        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
-    }, 2000);
-    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    return;
-  }
-  console.log(steps);
-  document.querySelector('.loadinggif2').style.display = "flex";
-  fetch(CURRENTWEB + "execute_steps", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ steps }),
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    const textOutput = document.getElementById("textOutput");
-    if (textOutput) {
-      textOutput.value = data.result;
-      textOutput.style.display = "flex";
-      textOutput.style.border = "1px solid #D0D0D0";
-      textOutput.style.backgroundColor = "#0f0f0f";
-      textOutput.style.marginBottom = "100px";
-      textOutput.style.height = "30%";
-      createTicket(data.result, data.id);
-      document.getElementById("AImsg").style.display = "block";
+if (executebtn) {
+  executebtn.addEventListener('click', () => {
+    recordText = temp;
+    buttonDisabled = true;
+    document.querySelector('.buttonClear').style.cursor = "not-allowed";
+    document.querySelector('.buttonClear').style.filter = "brightness(0.5)";
+    document.querySelector('.buttonAnalyse').style.cursor = "not-allowed";
+    document.querySelector('.buttonAnalyse').style.filter = "brightness(0.5)";
+    document.querySelector('.JobAdd').style.cursor = "not-allowed";
+    document.querySelector('.JobAdd').style.filter = "brightness(0.5)";
+    abortbtnDisable(true);
+    document.querySelector('.myselect').disabled = true;
+    let textareaIsEmpty = true;
+    let textareas = document.querySelectorAll('.AssignTitle');
+    let steps = [];
+    textareas.forEach(textarea => {
+      if (textarea.value != "") {
+        textareaIsEmpty = false;
+      }
+      steps.push(textarea.value);
+    });
+    if (textareaIsEmpty || textareas.length == 0) {
       document.querySelector('.footerdesc').style.display = "flex";
-      document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
-      document.querySelector('.footerdesc').innerHTML = "Execute Successful.";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "No job assignment to execute or job assignments are empty! Please retry.";
       setTimeout(() => {
           document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
       }, 2000);
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    } else {
-      console.error("Element with ID 'textOutput' not found.");
+      return;
     }
+    console.log(steps);
+    document.querySelector('.loadinggif2').style.display = "flex";
+    fetch(CURRENTWEB + "execute_steps", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ steps }),
+    })
+    .then((response) => response.json())
+    .then((data) => {
+      const textOutput = document.getElementById("textOutput");
+      if (textOutput) {
+        textOutput.value = data.result;
+        textOutput.style.display = "flex";
+        textOutput.style.border = "1px solid #D0D0D0";
+        textOutput.style.backgroundColor = "#0f0f0f";
+        textOutput.style.marginBottom = "100px";
+        textOutput.style.height = "30%";
+        createTicket(data.result, data.id);
+        document.getElementById("AImsg").style.display = "block";
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
+        document.querySelector('.footerdesc').innerHTML = "Execute Successful.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+      } else {
+        console.error("Element with ID 'textOutput' not found.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the code.";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    })
+    .finally(() => {
+      recordText = "";
+      buttonDisabled = false;
+      document.querySelector('.buttonClear').style.cursor = "pointer";
+      document.querySelector('.buttonClear').style.filter = "brightness(1)";
+      document.querySelector('.buttonAnalyse').style.cursor = "pointer";
+      document.querySelector('.buttonAnalyse').style.filter = "brightness(1)";
+      document.querySelector('.JobAdd').style.cursor = "pointer";
+      document.querySelector('.JobAdd').style.filter = "brightness(1)";
+      abortbtnDisable(false);
+      document.querySelector('.loadinggif2').style.display = "none";
+    });
   })
-  .catch((error) => {
-    console.error("Error:", error);
-    document.querySelector('.footerdesc').style.display = "flex";
-    document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
-    document.querySelector('.footerdesc').innerHTML = "An error occurred while processing the code.";
-    setTimeout(() => {
-        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
-    }, 2000);
-    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-  })
-  .finally(() => {
-    recordText = "";
-    buttonDisabled = false;
-    document.querySelector('.buttonClear').style.cursor = "pointer";
-    document.querySelector('.buttonClear').style.filter = "brightness(1)";
-    document.querySelector('.buttonAnalyse').style.cursor = "pointer";
-    document.querySelector('.buttonAnalyse').style.filter = "brightness(1)";
-    document.querySelector('.JobAdd').style.cursor = "pointer";
-    document.querySelector('.JobAdd').style.filter = "brightness(1)";
-    abortbtnDisable(false);
-    document.querySelector('.loadinggif2').style.display = "none";
+}
+
+const buttonleftarrow = document.getElementById('arrowleft');
+const buttonrightarrow = document.getElementById('arrowright');
+let currentTab = 1;
+
+if (buttonleftarrow) {
+  buttonleftarrow.addEventListener('click', () => {
+    currentTab--;
+    if (currentTab < 1) {
+      currentTab = 1;
+      return;
+    }
+    if (currentTab == 1) {
+      buttonleftarrow.style.cursor = "not-allowed";
+      buttonleftarrow.style.filter = "brightness(0.4)";
+    }
+    if (currentTab < exectab) {
+      buttonrightarrow.style.cursor = "pointer";
+      buttonrightarrow.style.filter = "brightness(1)";
+    }
+    document.querySelector('.tabInfo').innerHTML = "Tab " + currentTab.toString();
   });
-})
+}
+
+if (buttonrightarrow) {
+  buttonrightarrow.addEventListener('click', () => {
+    currentTab++;
+    if (currentTab > exectab) {
+      currentTab = originalTab;
+      return;
+    }
+    if (currentTab == exectab) {
+      buttonrightarrow.style.cursor = "not-allowed";
+      buttonrightarrow.style.filter = "brightness(0.4)";
+    }
+    if (currentTab > 1) {
+      buttonleftarrow.style.cursor = "pointer";
+      buttonleftarrow.style.filter = "brightness(1)";
+    }
+    document.querySelector('.tabInfo').innerHTML = "Tab " + currentTab.toString();
+  });
+}

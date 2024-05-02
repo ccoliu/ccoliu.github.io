@@ -728,6 +728,48 @@ div.loading, div.loading2 {
     margin-left: -20px;
 }
 
+.tabChange {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 25px;
+    margin-left: 20px;
+    margin-right: auto;
+    flex-direction: row;
+}
+
+.responseInfo {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: row;
+}
+
+.tabInfo {
+    margin-top: 15px;
+    margin-left: 10px;
+    margin-right: 10px;
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+}
+
+.tabChange span {
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+.tabChange span:hover {
+    color: #b3b2b0;
+}
+
+#arrowright {
+    margin-left: 0;
+}
+
 @media screen and (max-height: 550px) {
     body {
         overflow-y: auto;
