@@ -55,6 +55,8 @@ SIMILARITY_CHECKER = "You are a similarity checker, you will compare the origina
 
 AI_CHECKER = "You will reviced two code one is written by AI and the other is written by human, you need to analyze the code to determine if the human code copied the AI."
 
+DEPENDENT_CODE_MODIFIER = "You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code."
+
 # Deine some format for the AI to follow.
 ASK_FOR_CODE = '''Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code.\n
 The output should be in the following format:\n
@@ -94,7 +96,7 @@ def analyzeCode(inputCode):
             },
             {
                 "role": "user",
-                "content": "Here is the sorce code\n"
+                "content": "Here is the source code\n"
                 + inputCode
                 + "Please help me find the potential problems in the code in the following format.\n"
                 + BULLIT_LIST_FORMAT,
@@ -152,7 +154,9 @@ def describeCode(inputCode):
         ],
         max_tokens=100,
     )
-    print(analyzeResult.choices[0].message.content)
+
+    # print(analyzeResult.choices[0].message.content)
+
     return analyzeResult.choices[0].message.content
 
 
@@ -237,6 +241,28 @@ def aiWriteCode(inputCode):
     return analyzeResult.choices[0].message.content
 
 
+def modifyDependency(inputString):
+    modifiedString = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": DEPENDENT_CODE_MODIFIER,
+            },
+            {
+                "role": "user",
+                "content": "Here is the content of diffferent tabs of source code\n"
+                + inputString
+                + "\n"
+                + "If you find any tabs that are depent on each other, please modify the code based on the problems that may occur in the code, if all the code are fine, don't change any thing.\n"
+                + "Please return in the exact same format you got(Tab #: content), all the tab should be print no matter the content had been modified or not.(do not explain what you have done.)\n",
+            },
+        ],
+    )
+
+    return modifiedString.choices[0].message.content
+
+
 # Display the server's web page use for debugging.
 @app.route("/", methods=["GET"])
 def index():
@@ -244,7 +270,7 @@ def index():
     return helloWorld
 
 
-def process_individual_code(code, results, index):
+def processEachTab(code, results, index, dependedArray):
     try:
         problems = analyzeCode(code)
         optimizedCode = optimizeCode(code, problems)
@@ -256,6 +282,7 @@ def process_individual_code(code, results, index):
 
         # Store result in the results list at the index corresponding to the original code
         results[index] = {"optimizedCode": optimizedCode, "summary": summary, "id": str(dataId)}
+        dependedArray.append(optimizedCode)
     except Exception as e:
         results[index] = {"error": str(e)}
 
@@ -268,19 +295,27 @@ def process_code():
         data = request.get_json()
         inputCode = data.get('longcode', [])
 
-        print(inputCode)
         threads = []
         results = [{} for _ in inputCode]  # Pre-allocate a list for results
-
+        dependedArray = []
         for index, code in enumerate(inputCode):
-            thread = threading.Thread(target=process_individual_code, args=(code, results, index))
+            thread = threading.Thread(
+                target=processEachTab, args=(code, results, index, dependedArray)
+            )
             threads.append(thread)
             thread.start()
 
         for thread in threads:
             thread.join()
 
+        # Now the each modified result is in a big string.
+        afterDependencyCheck = converDependentArrayToString(dependedArray)
+        afterDependencyCheck = modifyDependency(afterDependencyCheck)
+        afterDependencyCheck = converToFinalTabContent(afterDependencyCheck)
+        replaceOptimizedCode(afterDependencyCheck, results)
+
         print(results)
+
         # Return the processed results to the frontend
         return jsonify({"results": results})
     except Exception as e:
@@ -402,6 +437,34 @@ def viewer_comment():
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
+
+
+def converDependentArrayToString(dependent_array):
+    formatted_string = ""
+    for index, content in enumerate(dependent_array):
+        formatted_string += f"Tab {index + 1}: {content}\n"
+    return formatted_string
+
+
+def converToFinalTabContent(inputString):
+    lines = inputString.split('\n')
+    content = []
+    for line in lines:
+        parts = line.split(':')
+        if len(parts) > 1:
+            content.append(parts[1].strip())
+
+    return content
+
+
+def replaceOptimizedCode(results, dependentArray):
+    if len(dependentArray) < len(results):
+        print("Error: final_modified array does not have enough entries.")
+        return
+
+    for index, result in enumerate(results):
+        if index < len(dependentArray):
+            result['optimizedCode'] = dependentArray[index]
 
 
 # Condtion to pick which server to use.
