@@ -65,10 +65,9 @@ ASK_FOR_COMPELETION = "Please give me the compelete source code."
 
 SIMILARITY_FORMAT = "If there exists two codes, please analyze the percentage of similarity between them. The legal output format should be: \"The similarity between the two codes is: (Percentage Input) \", with analysis in the following newlines. For the last paragraph, judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis."
 
-AI_CODE_FORMAT = '''This is an AI-generated code for probability: (Percentage Input)\n
+AI_CODE_FORMAT = '''This is an AI-generated code for probability: (Percentage that the human code copy from AI)\n
 (With analysis in the following newlines.)\n
-(Judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis.)\n
-Final Judgement: (Plagiarism/Written by human)\n
+Final Judgement: (Plagiarism/Written by human (judge if the human code may plagiarism AI))\n
 Jugement Reason: (Reasons using bullet points)\n
 '''
 
@@ -186,7 +185,8 @@ def aiCodeChecker(inputCode, aiCode):
                 + "Here is the AI code\n"
                 + aiCode
                 + "\n"
-                + "Help me determine how similar human code and AI code are, and it will always be humans copying AI.\n"
+                + "Help me determine how similar human code and AI code are, based on the logic, sturcture, and coding style of the code.\n"
+                + "For example if the two code have all the same functions but the varaible name is different, you should think the human code is copied from AI code, on the other hand, if the AI code is highly structered and looked more neat, you should think the human code is written by human because human written code is usually not that neat.\n"
                 + "Please return in the following format:\n"
                 + AI_CODE_FORMAT,
             },
@@ -197,20 +197,20 @@ def aiCodeChecker(inputCode, aiCode):
     return analyzeResult.choices[0].message.content
 
 
-def aiWriteCode(inputTarget):
+def aiWriteCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": "You are a code master, good at writing code",
+                "content": "You are a code master, good at writing code.",
             },
             {
                 "role": "user",
-                "content": "Here is a source code\n"
-                + inputTarget
+                "content": "Here is the source code\n"
+                + inputCode
                 + "\n"
-                + "Please help me rewrite the code using the same language, that can implement the same mechanism as the source code, but with your own coding style and logic.\n"
+                + "First you will analzye the source code and find out all the job the code can do, then you will write a code that can do the same job as the source code based on your own logic, coding style, and structure.\n"
                 + "Simply return the code you write.",
             },
         ],
