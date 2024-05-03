@@ -1,6 +1,3 @@
-// const { text } = require("stream/consumers");
-
-// const { error } = require("console");
 
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
@@ -237,19 +234,25 @@ function JobAdd(data) {
   createNewJobBtn();
 }
 
+IDs = [];
+responses = [];
+recordTexts = [];
+
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
   let longcode = [];
+  recordTexts = [];
   if (originalTab > 0) {
     textareaArray = document.querySelectorAll('.Inputarea textarea');
     textareaArray.forEach(element => {
       if (element.value != ""){
         longcode.push(element.value);
+        recordTexts.push(element.value);
         recordText += element.value + "\n";
       }
     });
   }
-  console.log(longcode);
+  console.log(recordTexts);
   fetch(CURRENTWEB + "process_code", {
     method: "POST",
     headers: {
@@ -259,16 +262,20 @@ function sendDataToAnalyzeServer(code) {
   })
     .then((response) => response.json())
     .then((data) => {
-      exectab = originalTab;
+      for (let i=0;i<Object.values(data)[0].length;i++){
+        IDs.push(Object.values(data)[0][i].id);
+        responses.push(Object.values(data)[0][i].optimizedCode + "\n\n" + Object.values(data)[0][i].summary);
+      }
+      exectab = IDs.length;
       const textOutput = document.getElementById("textOutput");
       if (textOutput) {
-        textOutput.value = data.result;
+        textOutput.value = responses[0];
         textOutput.style.display = "flex";
         textOutput.style.border = "1px solid #D0D0D0";
         textOutput.style.backgroundColor = "#0f0f0f";
         textOutput.style.marginBottom = "100px";
         textOutput.style.height = "30%";
-        createTicket(data.result, data.id);
+        createAnalyzeTicket(responses, IDs);
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
         document.querySelector('.footerdesc').innerHTML = "Analyze Successful.";
@@ -375,6 +382,26 @@ function createTicket(data, id, lang) {
   console.log('ticket' + numberseq);
   numberseq++;
   localStorage.setItem("numberseq", numberseq);
+  console.log(numberseq);
+}
+
+function createAnalyzeTicket(responses, ids, lang) {
+  console.log(recordText);
+  let numberseq = localStorage.getItem("numberseq");
+  if (numberseq == null) {
+    numberseq = 1;
+  }
+  for (let i=0;i<responses.length;i++){
+    var ticket = [numberseq, codeType, processTime, (lang ? lang : "N/A")];
+    console.log(ticket);
+    localStorage.setItem('ticket' + numberseq, ticket);
+    localStorage.setItem('record' + numberseq, recordTexts[i]);
+    localStorage.setItem('response' + numberseq, responses[i]);
+    localStorage.setItem('id' + numberseq, ids[i]);
+    console.log('ticket' + numberseq);
+    numberseq++;
+    localStorage.setItem("numberseq", numberseq);
+  }
   console.log(numberseq);
 }
 
@@ -729,6 +756,7 @@ if (buttonleftarrow) {
       buttonrightarrow.style.filter = "brightness(1)";
     }
     document.querySelector('.tabInfo').innerHTML = "Tab " + currentTab.toString();
+    textOutput.value = responses[currentTab - 1];
   });
 }
 
@@ -748,5 +776,6 @@ if (buttonrightarrow) {
       buttonleftarrow.style.filter = "brightness(1)";
     }
     document.querySelector('.tabInfo').innerHTML = "Tab " + currentTab.toString();
+    textOutput.value = responses[currentTab - 1];
   });
 }
