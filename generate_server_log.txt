@@ -1,0 +1,20 @@
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server] You may use format tools now!
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server System] * Running on http://140.118.153.223:5001
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server System] Press CTRL+C to quit
+[Generate Server] * Debug mode: off
+[Generate Server] You may use format tools now!
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server System] * Running on http://140.118.153.223:5001
+[Generate Server] * Debug mode: off
+[Generate Server System] Press CTRL+C to quit

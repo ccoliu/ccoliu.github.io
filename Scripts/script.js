@@ -2,6 +2,7 @@
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
 const LOCALWEB = "http://127.0.0.1:5000/"
+const LOCALGENERATE = "http://127.0.0.1:5001/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 let originalTab = 1;
@@ -240,6 +241,8 @@ recordTexts = [];
 
 // Function to send code data to the server
 function sendDataToAnalyzeServer(code) {
+  IDs = [];
+  responses = [];
   let longcode = [];
   recordTexts = [];
   if (originalTab > 0) {
@@ -267,6 +270,8 @@ function sendDataToAnalyzeServer(code) {
         responses.push(Object.values(data)[0][i].optimizedCode + "\n\n" + Object.values(data)[0][i].summary);
       }
       exectab = IDs.length;
+      currentTab = 1;
+      document.querySelector('.tabInfo').innerHTML = "Tab " + currentTab.toString();
       const textOutput = document.getElementById("textOutput");
       if (textOutput) {
         textOutput.value = responses[0];
@@ -324,7 +329,7 @@ function sendDataToGenerateServer(code, lang) {
     document.querySelector('.textEnter').style.filter = "brightness(0.5)";
     document.querySelector('.buttonUpload').style.cursor = "not-allowed";
     document.querySelector('.buttonUpload').style.filter = "brightness(0.5)";
-    fetch(CURRENTWEB + "gen_code", {
+    fetch(LOCALGENERATE + "gen_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -681,7 +686,7 @@ if (executebtn) {
     }
     console.log(steps);
     document.querySelector('.loadinggif2').style.display = "flex";
-    fetch(CURRENTWEB + "execute_steps", {
+    fetch(LOCALGENERATE + "execute_steps", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

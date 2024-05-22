@@ -310,8 +310,14 @@ def process_code():
 
         # Now the each modified result is in a big string.
         afterDependencyCheck = converDependentArrayToString(dependedArray)
+        print("first check")
+        print(afterDependencyCheck)
         afterDependencyCheck = modifyDependency(afterDependencyCheck)
+        print("second check")
+        print(afterDependencyCheck)
         afterDependencyCheck = converToFinalTabContent(afterDependencyCheck)
+        print("third check")
+        print(afterDependencyCheck)
         replaceOptimizedCode(afterDependencyCheck, results)
 
         print(results)
@@ -457,14 +463,17 @@ def converToFinalTabContent(inputString):
     return content
 
 
-def replaceOptimizedCode(results, dependentArray):
+def replaceOptimizedCode(results, dependentArray, default_string="Can't identify the code."):
     if len(dependentArray) < len(results):
         print("Error: final_modified array does not have enough entries.")
         return
 
     for index, result in enumerate(results):
-        if index < len(dependentArray):
-            result['optimizedCode'] = dependentArray[index]
+        if 'optimizedCode' in result:
+            if index < len(dependentArray):
+                result['optimizedCode'] = dependentArray[index]
+        else:
+            result = default_string
 
 
 # Condtion to pick which server to use.
