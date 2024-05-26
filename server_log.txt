@@ -28,3 +28,106 @@
 [Server] * Debug mode: off
 [Server System] 127.0.0.1 - - [22/May/2024 17:09:04] "OPTIONS /process_code HTTP/1.1" 200 -
 [Server System] 127.0.0.1 - - [22/May/2024 17:09:08] "POST /process_code HTTP/1.1" 200 -
+[Server] You may use format tools now!
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server] You may use format tools now!
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server] Successfully connected to MongoDB!
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server] * Debug mode: off
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server System] * Running on all addresses (0.0.0.0)
+[Server System] * Running on http://127.0.0.1:5000
+[Server System] * Running on http://192.168.0.241:5000
+[Server System] Press CTRL+C to quit
+[Server System] 127.0.0.1 - - [26/May/2024 12:07:35] "OPTIONS /process_code HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:07:38] "POST /process_code HTTP/1.1" 200 -
+[Server] You may use format tools now!
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server] You may use format tools now!
+[Server System] * Running on all addresses (0.0.0.0)
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on http://127.0.0.1:5000
+[Server] Successfully connected to MongoDB!
+[Server System] * Running on http://192.168.0.241:5000
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server System] Press CTRL+C to quit
+[Server] * Debug mode: off
+[Server System] 127.0.0.1 - - [26/May/2024 12:13:40] "OPTIONS /process_code HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:13:44] "POST /process_code HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:01] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:01] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:03] "OPTIONS /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:03] "POST /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:13] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:13] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:17] "OPTIONS /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 12:14:17] "POST /viewData HTTP/1.1" 200 -
+[Server] You may use format tools now!
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server] You may use format tools now!
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server] Successfully connected to MongoDB!
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server] * Debug mode: off
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server System] * Running on all addresses (0.0.0.0)
+[Server System] * Running on http://127.0.0.1:5000
+[Server System] * Running on http://192.168.0.241:5000
+[Server System] Press CTRL+C to quit
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:15] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:15] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:26] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:26] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:28] "OPTIONS /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:28] "POST /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:39] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:39] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:41] "OPTIONS /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 13:59:41] "POST /viewData HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:00:04] "OPTIONS /retrieve_comment HTTP/1.1" 200 -
+[Server] You may use format tools now!
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on all addresses (0.0.0.0)
+[Server] You may use format tools now!
+[Server System] * Running on http://127.0.0.1:5000
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on http://192.168.0.241:5000
+[Server] Successfully connected to MongoDB!
+[Server System] Press CTRL+C to quit
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server] * Debug mode: off
+[Server System] 127.0.0.1 - - [26/May/2024 14:08:55] "OPTIONS /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:08:55] "POST /communitySearch HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:09:20] "OPTIONS /retrieve_comment HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:09:20] "POST /retrieve_comment HTTP/1.1" 200 -
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server] You may use format tools now!
+[Server System] * Running on all addresses (0.0.0.0)
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on http://127.0.0.1:5000
+[Server] You may use format tools now!
+[Server System] * Running on http://192.168.0.241:5000
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] Press CTRL+C to quit
+[Server] Successfully connected to MongoDB!
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server] * Debug mode: off
+[Server System] 127.0.0.1 - - [26/May/2024 14:46:27] "OPTIONS /process_code HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:46:31] "POST /process_code HTTP/1.1" 200 -
+[Server] You may use format tools now!
+[Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on all addresses (0.0.0.0)
+[Server] You may use format tools now!
+[Server System] * Running on http://127.0.0.1:5000
+[Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Server System] * Running on http://192.168.0.241:5000
+[Server] Successfully connected to MongoDB!
+[Server System] Press CTRL+C to quit
+[Server] * Serving Flask app 'restServerFinalVer'
+[Server] * Debug mode: off
+[Server System] 127.0.0.1 - - [26/May/2024 14:52:29] "OPTIONS /process_code HTTP/1.1" 200 -
+[Server System] 127.0.0.1 - - [26/May/2024 14:52:33] "POST /process_code HTTP/1.1" 200 -

@@ -1,4 +1,17 @@
-'''This file is the server for the Code Assistance project. It is responsible for processing the code received from the frontend and returning the processed result to the frontend.'''
+import os
+import sys
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 # Import necessary libraries
 from openai import OpenAI  # OpenAI API
@@ -15,8 +28,8 @@ from trainingClass import TrainingTool
 from dataBase import dataBaseTools
 
 # Set up SSL key for Flask to use https.
-cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
-key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
+cert_path = resource_path('C:/Users/whps9/ccoliu.github.io/certificate.crt')
+key_path = resource_path('C:/Users/whps9/ccoliu.github.io/private_key.key')
 
 # Set the server type to https or http
 SERVER_TYPE = "http"
@@ -31,7 +44,8 @@ fineTuneTools = TrainingTool()
 dbTools = dataBaseTools()
 
 # Read API keys from key file.
-with open("key.txt", "r") as file:
+key_file_path = resource_path("key.txt")
+with open(key_file_path, "r") as file:
     keys = file.readlines()
 
 api_key_model_1 = keys[0].strip()
@@ -57,7 +71,7 @@ AI_CHECKER = "You will reviced two code one is written by AI and the other is wr
 
 DEPENDENT_CODE_MODIFIER = "You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code."
 
-# Deine some format for the AI to follow.
+# Define some format for the AI to follow.
 ASK_FOR_CODE = '''Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code.\n
 The output should be in the following format:\n
 Using language: (Language the program use)
@@ -472,6 +486,9 @@ def replaceOptimizedCode(results, dependentArray, default_string="Can't identify
         if 'optimizedCode' in result:
             if index < len(dependentArray):
                 result['optimizedCode'] = dependentArray[index]
+                dbTools.updateDocument(
+                    "fineTune", "codoctopus", result['id'], "optimizedCode", result['optimizedCode']
+                )
         else:
             result = default_string
 

@@ -1,5 +1,17 @@
+import os
+import sys
 import json
 import shutil
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 class StringToJsonl:
@@ -29,7 +41,8 @@ class StringToJsonl:
             jsonl_string = json.dumps(jsonl_data)
 
             # Keep Writing Data to JSONL
-            with open('Misc/fineTuneData.jsonl', 'a') as file:
+            file_path = resource_path('Misc/fineTuneData.jsonl')
+            with open(file_path, 'a') as file:
                 file.write(jsonl_string + '\n')
                 print("Write success")
 
@@ -51,7 +64,8 @@ class StringToJsonl:
             jsonl_string = json.dumps(jsonl_data)
 
             # Keep Writing Data to JSONL
-            with open('Misc/fact.jsonl', 'a') as file:
+            file_path = resource_path('Misc/fact.jsonl')
+            with open(file_path, 'a') as file:
                 file.write(jsonl_string + '\n')
                 print("Write success")
         else:
@@ -59,9 +73,8 @@ class StringToJsonl:
             return
 
     def createBackUp(self):
-
-        source_file = 'Misc/fineTuneData.jsonl'
-        backup_file = 'Misc/backUpData.jsonl'
+        source_file = resource_path('Misc/fineTuneData.jsonl')
+        backup_file = resource_path('Misc/backUpData.jsonl')
 
         # Copy file
         shutil.copyfile(source_file, backup_file)
@@ -69,25 +82,26 @@ class StringToJsonl:
         print("Create backup success!")
 
     def cpyFromBackUp(self, current_file):
-
-        # source_file = 'Misc/fineTuneData.jsonl'
-        backup_file = 'Misc/backUpData.jsonl'
+        current_file_path = resource_path(current_file)
+        backup_file = resource_path('Misc/backUpData.jsonl')
 
         # Copy file from backup to current file
-        shutil.copyfile(backup_file, current_file)
+        shutil.copyfile(backup_file, current_file_path)
 
         print("Copy success!")
 
     def clearFile(self, fileName):
+        file_path = resource_path(fileName)
         # Open with write mode and close it immediately
-        with open(fileName, 'w') as file:
+        with open(file_path, 'w') as file:
             pass
 
         print("File has been cleared!")
 
     # Read txt file into jsonl format Q: A: must be a pair
     def read_file(self, filename, enterMode):
-        with open(filename, 'r', encoding='utf-8') as file:
+        file_path = resource_path(filename)
+        with open(file_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
 
         questions = []
@@ -133,6 +147,7 @@ class StringToJsonl:
     # Write DB data to JSONL file use for fine-tuning.
     # In type factDesctiption systemOutput put the request and userComment put the answer.
     def write_to_file(self, dataType, systemOutput, userRate, userComment, filePath):
+        file_path = resource_path(filePath)
         # If the data gets from DB is modify.
         if dataType == "modify code":
             jsonl_data = {
@@ -156,7 +171,7 @@ class StringToJsonl:
             jsonl_string = json.dumps(jsonl_data)
 
             # Keep Writing Data to JSONL
-            with open(filePath, 'a') as file:
+            with open(file_path, 'a') as file:
                 file.write(jsonl_string + '\n')
                 print("Write success")
 
@@ -182,7 +197,7 @@ class StringToJsonl:
             jsonl_string = json.dumps(jsonl_data)
 
             # Keep Writing Data to JSONL
-            with open(filePath, 'a') as file:
+            with open(file_path, 'a') as file:
                 file.write(jsonl_string + '\n')
                 print("Write success")
 
@@ -201,7 +216,7 @@ class StringToJsonl:
             jsonl_string = json.dumps(jsonl_data)
 
             # Keep Writing Data to JSONL
-            with open(filePath, 'a') as file:
+            with open(file_path, 'a') as file:
                 file.write(jsonl_string + '\n')
                 print("Write success")
         else:

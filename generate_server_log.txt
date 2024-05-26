@@ -18,3 +18,370 @@
 [Generate Server System] * Running on http://140.118.153.223:5001
 [Generate Server] * Debug mode: off
 [Generate Server System] Press CTRL+C to quit
+[Generate Server] You may use format tools now!
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server] * Debug mode: off
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server System] Press CTRL+C to quit
+[Generate Server] You may use format tools now!
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server System] Press CTRL+C to quit
+[Generate Server] * Debug mode: off
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server] You may use format tools now!
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server System] Press CTRL+C to quit
+[Generate Server] * Debug mode: off
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:56:56] "OPTIONS /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:56:59] "POST /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:57:08] "OPTIONS /execute_steps HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:57:33] "POST /execute_steps HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:57:45] "OPTIONS /execute_steps HTTP/1.1" 200 -
+[Generate Server] Processing jobs in layer 1
+[Generate Server] Jobs in layer 1: [1, 2, 3, 4]
+[Generate Server] Inspecter is inspecting:  Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] 
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Read the CSV file, check for missing values, and inspect data types.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] 
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] This code will read the CSV file, show the first 5 rows of the data, check for missing values, and display the data types of each column.
+[Generate Server] Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] 
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Read the CSV file, check for missing values, and inspect data types.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] 
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current progress.
+[Generate Server] Processing jobs in layer 2
+[Generate Server] Jobs in layer 2: [5]
+[Generate Server] Inspecter is inspecting:  Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Read the CSV file, check for missing values, and inspect data types.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] The current code appears to be correctly reading the CSV file, displaying the first 5 rows of data, checking for missing values, and inspecting data types. Everything seems to be in order, meeting the main problem requirements.
+[Generate Server] Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Read the CSV file, check for missing values, and inspect data types.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current progress
+[Generate Server] Processing jobs in layer 3
+[Generate Server] Jobs in layer 3: [6]
+[Generate Server] Inspecter is inspecting:  Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file and store it in a DataFrame called 'data'
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Adjust variable names for consistency and ensure the program runs correctly.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file and store it in a DataFrame called 'data'
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file and store it in a DataFrame called 'data'
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Adjust variable names for consistency and ensure the program runs correctly.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file and store it in a DataFrame called 'data'
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] Current progress.
+[Generate Server] Generate data document inserted.
+[Generate Server] Processing jobs in layer 1
+[Generate Server] Jobs in layer 1: [1, 2]
+[Generate Server] Inspecter is inspecting:  Main problem: Read and preprocess the CSV file to prepare for analysis.
+[Generate Server] 
+[Generate Server] Program pool:
+[Generate Server] ```python
+[Generate Server] import pandas as pd
+[Generate Server] 
+[Generate Server] # Read the CSV file and store it in a DataFrame called 'data'
+[Generate Server] data = pd.read_csv("data.csv")
+[Generate Server] 
+[Generate Server] # Display the first 5 rows of the data
+[Generate Server] print(data.head())
+[Generate Server] 
+[Generate Server] # Check for missing values
+[Generate Server] print(data.isnull().sum())
+[Generate Server] 
+[Generate Server] # Check data types of each column
+[Generate Server] print(data.dtypes)
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] Current job: Implement big data analysis tools to analyze the preprocessed data.
+[Generate Server] 
+[Generate Server] Current job output:
+[Generate Server] ```python
+[Generate Server] # Import necessary libraries for big data analysis
+[Generate Server] from pyspark.sql import SparkSession
+[Generate Server] from pyspark.sql.functions import col
+[Generate Server] 
+[Generate Server] # Initialize Spark session
+[Generate Server] spark = SparkSession.builder.appName("DataAnalysis").getOrCreate()
+[Generate Server] 
+[Generate Server] # Create Spark DataFrame from the CSV data
+[Generate Server] spark_data = spark.read.csv("data.csv", header=True)
+[Generate Server] 
+[Generate Server] # Display the schema of the data
+[Generate Server] spark_data.printSchema()
+[Generate Server] 
+[Generate Server] # Display summary statistics of numerical columns
+[Generate Server] spark_data.describe().show()
+[Generate Server] 
+[Generate Server] # Count the number of records in the dataset
+[Generate Server] print("Total number of records: ", spark_data.count())
+[Generate Server] 
+[Generate Server] # Perform data exploration and analysis using Spark SQL
+[Generate Server] spark_data.createOrReplaceTempView("data_table")
+[Generate Server] result = spark.sql("SELECT COUNT(*) AS record_count, AVG(sales) AS avg_sales FROM data_table WHERE sales > 0")
+[Generate Server] result.show()
+[Generate Server] ```
+[Generate Server] 
+[Generate Server] By incorporating Apache Spark's capabilities, we can now perform big data analysis on the preprocessed data to derive useful insights and make informed decisions.
+[Generate Server System] 127.0.0.1 - - [26/May/2024 13:58:28] "POST /execute_steps HTTP/1.1" 200 -
+[Generate Server] You may use format tools now!
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server] * Debug mode: off
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server System] Press CTRL+C to quit
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:07:22] "OPTIONS /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:07:25] "POST /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:07:44] "OPTIONS /execute_steps HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:08:20] "POST /execute_steps HTTP/1.1" 200 -
+[Generate Server] You may use format tools now!
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server System] Press CTRL+C to quit
+[Generate Server] * Debug mode: off
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:46:10] "OPTIONS /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:46:13] "POST /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:46:19] "OPTIONS /gen_code HTTP/1.1" 200 -
+[Generate Server System] 127.0.0.1 - - [26/May/2024 14:46:22] "POST /gen_code HTTP/1.1" 200 -
+[Generate Server] You may use format tools now!
+[Generate Server] Current file is write into fineTuneData.jsonl & fact.jsonl
+[Generate Server] Successfully connected to MongoDB!
+[Generate Server] * Serving Flask app 'generateServerFinalVer'
+[Generate Server] * Debug mode: off
+[Generate Server System] WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+[Generate Server System] * Running on all addresses (0.0.0.0)
+[Generate Server System] * Running on http://127.0.0.1:5001
+[Generate Server System] * Running on http://192.168.0.241:5001
+[Generate Server System] Press CTRL+C to quit

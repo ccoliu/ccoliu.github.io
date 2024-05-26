@@ -1,5 +1,20 @@
 '''This is the database class has tools to manupulate the database.'''
 
+import os
+import sys
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
 # Import the mongodb library
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -12,7 +27,8 @@ from fileFormatt import StringToJsonl  # Self defined class to write the data to
 class dataBaseTools:
     def __init__(self):
         # Get URI form dbURI.txt
-        with open("dbURI.txt", "r") as file:
+        uri_file_path = resource_path("dbURI.txt")
+        with open(uri_file_path, "r") as file:
             uriArray = file.readlines()
             uri = uriArray[0].strip()
 
@@ -283,6 +299,40 @@ class dataBaseTools:
 
         return objId
 
+    def insertGenerateData(
+        self,
+        dbName,
+        collectionName,
+        userInputRequest,
+        dividedTasks,
+        finalTasks,
+        finalOutput,
+        summary,
+        rate="No rate",
+        comment="No comment",
+    ):
+        db = self.client[dbName]
+        collection = db[collectionName]
+
+        data = {
+            "pin": "data",
+            "type": "generate code",
+            "request": userInputRequest,
+            "tasks": dividedTasks,
+            "finalTasks": finalTasks,
+            "output": finalOutput,
+            "summary": summary,
+            "rate": rate,
+            "comment": comment,
+        }
+
+        collection.insert_one(data)
+        objId = data.get("_id")
+
+        print(f"Generate data document inserted.")
+
+        return objId
+
     # Insert a document into a collection and retrun the id of the document
     # Use to store the general case and futher use to fine tune the model
     # parametres: dbName, collectionName, input, output
@@ -549,7 +599,5 @@ class dataBaseTools:
 
 
 # TODO:
-# Add the tje similarity check function to the database.
-# Add the community search function to serarch simularity from the database.
-# Change the back end structure to make it automatically.
-# Auto generate the fine tune data of simularity check.
+# 1. Generate server data base structure modify the data base structure to fit the server.
+# 2. Rest server data base structure modify the data base structure to fit the rest server.

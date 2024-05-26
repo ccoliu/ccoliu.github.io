@@ -1,9 +1,20 @@
+import os
+import sys
 import subprocess
 import threading
 import queue
 import keyboard
-import sys
 import time
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 
 def enqueue_output(out, q):
@@ -16,7 +27,8 @@ def enqueue_output(out, q):
 
 
 def stream_output(name, output_queue, error_queue, display_queue, stop_event, log_file):
-    with open(log_file, 'a') as f:
+    log_file_path = resource_path(log_file)
+    with open(log_file_path, 'a') as f:
         while not stop_event.is_set() or not output_queue.empty() or not error_queue.empty():
             try:
                 output = output_queue.get_nowait()
@@ -37,8 +49,13 @@ def stream_output(name, output_queue, error_queue, display_queue, stop_event, lo
 
 def execute_script(script, name, display_queue, stop_event, log_file):
     try:
+        script_path = resource_path(script)
         process = subprocess.Popen(
-            ['python', script], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1
+            ['python', script_path],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
         )
 
         output_queue = queue.Queue()
@@ -56,6 +73,9 @@ def execute_script(script, name, display_queue, stop_event, log_file):
         stdout_thread.join()
         stderr_thread.join()
         process.wait()
+
+        if process.poll() is None:
+            process.terminate()
     except Exception as e:
         display_queue.put(f"Failed to execute {script}: {e}")
 
@@ -71,14 +91,14 @@ def main():
 
     scripts = [
         (
-            "C:\\Users\\whps9\\ccoliu.github.io\\Servers\\generateServerFinalVer.py",
+            "Servers/generateServerFinalVer.py",
             "Generate Server",
             display_queue_1,
             stop_event_1,
             log_file_1,
         ),
         (
-            "C:\\Users\\whps9\\ccoliu.github.io\\Servers\\restServerFinalVer.py",
+            "Servers/restServerFinalVer.py",
             "Server",
             display_queue_2,
             stop_event_2,

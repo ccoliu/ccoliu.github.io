@@ -1,4 +1,17 @@
-'''This is the Ai Engineer that can divide a project into several tasks and assign to several people to finish the project. The Ai Engineer will generate the worksheet for the team to solve the problem and assign the roles to the team members. The Ai Engineer will also inspect the progress of the project and fix the problem if there is any. The Ai Engineer will also combine all the tasks and adjust the variable name to make sure the program runs correctly'''
+import os
+import sys
+
+
+def resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 
 # For Flask server
 from flask import Flask, request, jsonify  # Flask interface
@@ -15,8 +28,10 @@ import ssl  # Local https key
 from dataBase import dataBaseTools
 
 dbTools = dataBaseTools()
-# Read API keys from key file.
-with open("key.txt", "r") as file:
+
+# Read API keys from key file using resource_path function
+key_file_path = resource_path("key.txt")
+with open(key_file_path, "r") as file:
     keys = file.readlines()
 
 api_key_model_1 = keys[0].strip()
@@ -29,8 +44,8 @@ client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 # Set up SSL key for Flask to use https.
-cert_path = 'C:/Users/whps9/ccoliu.github.io/certificate.crt'
-key_path = 'C:/Users/whps9/ccoliu.github.io/private_key.key'
+cert_path = resource_path('C:/Users/whps9/ccoliu.github.io/certificate.crt')
+key_path = resource_path('C:/Users/whps9/ccoliu.github.io/private_key.key')
 
 # Set the server type to https or http
 SERVER_TYPE = "http"
@@ -45,6 +60,8 @@ BOSS = "You are a software company boss that is skilled at divided the work into
 INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 
 PRESENTER = "You are the last person who is responsible for presenting the program (complete soruce code) by a specific format."
+
+REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
 
 # Define some output format below.
 WORKSHEET_FORMAT = '''Worksheet\n
@@ -88,6 +105,28 @@ GROUPS_END\n
 '''
 
 FORMAT_TOKEN = "You should return in the following format:\n"
+
+
+# This function will read the code and decribe it in human language.
+def describeCode(inputCode):
+    analyzeResult = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": REVERSE_DISCRIBER,
+            },
+            {
+                "role": "user",
+                "content": inputCode + "\n" + "Please summarize in 1 sentences with in 100 tokens.",
+            },
+        ],
+        max_tokens=100,
+    )
+
+    # print(analyzeResult.choices[0].message.content)
+
+    return analyzeResult.choices[0].message.content
 
 
 # Use to creating the worksheet for the team to solve the problem.
@@ -476,7 +515,7 @@ def index():
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
-        global mainProblem
+        global mainProblem, originalTasks
         data = request.get_json()
         userInput = data.get("code", "")
         lang = data.get("lang", "")
@@ -488,6 +527,7 @@ def gen_code():
         mainProblem = getWorkSheetContent(workSheet, roles, dividedJobs, mainProblem)
         dividedJobs = convertJobToFrontFormat(dividedJobs)
 
+        originalTasks = dividedJobs
         return jsonify({"result": dividedJobs})
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -514,8 +554,10 @@ def execute_steps():
         # This must be done before sending the final output to the frontend.
         finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
 
-        dataId = dbTools.insertAiEmployeesMode(
-            "fineTune", "codoctopus", mainProblem, newJobs, finalOutputCode
+        summary = describeCode(finalOutputCode)
+
+        dataId = dbTools.insertGenerateData(
+            "fineTune", "codoctopus", mainProblem, originalTasks, newJobs, finalOutputCode, summary
         )
 
         return jsonify({"result": finalOutputCode, "id": str(dataId)})
