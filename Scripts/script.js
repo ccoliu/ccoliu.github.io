@@ -1,8 +1,10 @@
 
 //////////////IP SETTINGS/////////////////////
 const GITWEB = "https://140.118.184.235:5000/"
-const LOCALWEB = "http://127.0.0.1:5000/"
-const LOCALGENERATE = "http://127.0.0.1:5001/"
+const LOCALWEB = "https://127.0.0.1:5000/"
+const LOCALGENERATE = "https://127.0.0.1:5001/"
+const GLOBALGENERATE = "https://127.0.0.1:5001/"
+currentGenerateServerIP = LOCALGENERATE;
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 let originalTab = 1;
@@ -329,7 +331,7 @@ function sendDataToGenerateServer(code, lang) {
     document.querySelector('.textEnter').style.filter = "brightness(0.5)";
     document.querySelector('.buttonUpload').style.cursor = "not-allowed";
     document.querySelector('.buttonUpload').style.filter = "brightness(0.5)";
-    fetch(LOCALGENERATE + "gen_code", {
+    fetch(currentGenerateServerIP + "gen_code", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -543,8 +545,10 @@ let serverText = document.querySelector('.server');
 serverText.addEventListener('click', () => {
   if (CURRENTWEB == LOCALWEB) {
     CURRENTWEB = GITWEB;
+    currentGenerateServerIP = LOCALGENERATE;
   } else {
     CURRENTWEB = LOCALWEB;
+    currentGenerateServerIP = GLOBALGENERATE;
   }
   localStorage.setItem("server", CURRENTWEB);
   window.location.reload();
@@ -686,7 +690,7 @@ if (executebtn) {
     }
     console.log(steps);
     document.querySelector('.loadinggif2').style.display = "flex";
-    fetch(LOCALGENERATE + "execute_steps", {
+    fetch(currentGenerateServerIP + "execute_steps", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

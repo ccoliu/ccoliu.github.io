@@ -48,7 +48,7 @@ cert_path = resource_path('C:/Users/whps9/ccoliu.github.io/certificate.crt')
 key_path = resource_path('C:/Users/whps9/ccoliu.github.io/private_key.key')
 
 # Set the server type to https or http
-SERVER_TYPE = "http"
+SERVER_TYPE = "https"
 
 # Create a Flask app
 app = Flask(__name__)
