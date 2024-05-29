@@ -1,9 +1,9 @@
 
 //////////////IP SETTINGS/////////////////////
-const GITWEB = "https://140.118.184.235:5000/"
-const LOCALWEB = "https://127.0.0.1:5000/"
-const LOCALGENERATE = "https://127.0.0.1:5001/"
-const GLOBALGENERATE = "https://127.0.0.1:5001/"
+const GITWEB = "https://140.118.101.66:61911/"
+const LOCALWEB = "https://140.118.101.66:61911/"
+const LOCALGENERATE = "https://140.118.101.66:56494/"
+const GLOBALGENERATE = "https://140.118.101.66:56494/"
 currentGenerateServerIP = LOCALGENERATE;
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
@@ -545,10 +545,10 @@ let serverText = document.querySelector('.server');
 serverText.addEventListener('click', () => {
   if (CURRENTWEB == LOCALWEB) {
     CURRENTWEB = GITWEB;
-    currentGenerateServerIP = LOCALGENERATE;
+    currentGenerateServerIP = GLOBALGENERATE;
   } else {
     CURRENTWEB = LOCALWEB;
-    currentGenerateServerIP = GLOBALGENERATE;
+    currentGenerateServerIP = LOCALWEB;
   }
   localStorage.setItem("server", CURRENTWEB);
   window.location.reload();
