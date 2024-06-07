@@ -1,5 +1,5 @@
 //////////////IP SETTINGS/////////////////////
-const GITWEB = "https://140.118.101.66:56494"
+const GITWEB = "https://140.118.101.66:61911/"
 const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
