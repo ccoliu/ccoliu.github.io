@@ -37,8 +37,11 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
         console.log(error);
-        ServerStatusRes.innerHTML = "Offline";
-        ServerStatusRes.style.color = "red";
+        if (error.includes("ERR_CERT_AUTHORITY_INVALID"))
+        {
+            ServerStatusRes.innerHTML = "Must unblock server";
+            ServerStatusRes.style.color = "red";
+        }
     });
 }
   
