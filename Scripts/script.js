@@ -36,6 +36,7 @@ if (ServerStatus && ServerStatusRes) {
       }
     })
     .catch(error => {
+      console.log(error);
       ServerStatusRes.innerHTML = "Offline";
       ServerStatusRes.style.color = "red";
   });
@@ -53,6 +54,7 @@ if (ServerStatus && ServerStatusRes) {
       }
     })
     .catch(error => {
+      console.log(error);
       ServerStatusRes.innerHTML = "Offline";
       ServerStatusRes.style.color = "red";
     });
