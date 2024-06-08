@@ -160,6 +160,7 @@ div.server {
 
 p.ServerStatus {
     width: auto;
+    font-size: 16px;
     margin-right: 5px;
     margin-left: 52vw;
 }

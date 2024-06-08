@@ -29,19 +29,16 @@ if (ServerStatus && ServerStatusRes) {
       if (!response.ok) {
         ServerStatusRes.innerHTML = "Offline";
         ServerStatusRes.style.color = "red";
-        ServerStatusRes.style.fontSize = "20px";
       }
       else {
         ServerStatusRes.innerHTML = "Online";
         ServerStatusRes.style.color = "green";
-        ServerStatusRes.style.fontSize = "20px";
       }
     })
     .catch(error => {
       console.log(error);
       ServerStatusRes.innerHTML = "Must unblock server";
       ServerStatusRes.style.color = "red";
-      ServerStatusRes.style.fontSize = "16px";
   });
   }
   else {
@@ -50,19 +47,16 @@ if (ServerStatus && ServerStatusRes) {
       if (!response.ok) {
         ServerStatusRes.innerHTML = "Offline";
         ServerStatusRes.style.color = "red";
-        ServerStatusRes.style.fontSize = "20px";
       }
       else {
         ServerStatusRes.innerHTML = "Online";
         ServerStatusRes.style.color = "green";
-        ServerStatusRes.style.fontSize = "20px";
       }
     })
     .catch(error => {
       console.log(error);
       ServerStatusRes.innerHTML = "Must unblock server";
       ServerStatusRes.style.color = "red";
-      ServerStatusRes.style.fontSize = "16px";
     });
   }
 }
