@@ -37,11 +37,8 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
         console.log(error);
-        if (error.includes("ERR_CERT_AUTHORITY_INVALID"))
-        {
-            ServerStatusRes.innerHTML = "Must unblock server";
-            ServerStatusRes.style.color = "red";
-        }
+        ServerStatusRes.innerHTML = "Must unblock server";
+        ServerStatusRes.style.color = "red";
     });
 }
   
@@ -152,6 +149,17 @@ submitbtn.addEventListener("click", () => {
 
     if (document.querySelector('.input1').value == "") {
         createErrorMsg("Please enter the text.");
+        return;
+    }
+
+    if (ServerStatusRes.innerHTML == "Must unblock server") {
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "Server is blocked! Click Server Status for more information.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
         return;
     }
 

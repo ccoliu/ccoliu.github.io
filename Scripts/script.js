@@ -37,11 +37,8 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
       console.log(error);
-      if (error.includes("ERR_CERT_AUTHORITY_INVALID"))
-      {
-        ServerStatusRes.innerHTML = "Must unblock server";
-        ServerStatusRes.style.color = "red";
-      }
+      ServerStatusRes.innerHTML = "Must unblock server";
+      ServerStatusRes.style.color = "red";
   });
   }
   else {
@@ -58,11 +55,9 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
       console.log(error);
-      if (error.includes("ERR_CERT_AUTHORITY_INVALID"))
-        {
-          ServerStatusRes.innerHTML = "Must unblock server";
-          ServerStatusRes.style.color = "red";
-        }
+      console.log(error);
+      ServerStatusRes.innerHTML = "Must unblock server";
+      ServerStatusRes.style.color = "red";
     });
   }
 }
@@ -218,7 +213,18 @@ function processCodeInput() {
           document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
       }, 2000);
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
-    } else {
+    }
+    else if (ServerStatusRes.innerHTML == "Must unblock server") {
+        document.querySelector('.footerdesc').style.display = "flex";
+        document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+        document.querySelector('.footerdesc').innerHTML = "Server is blocked! Click Server Status for more information.";
+        setTimeout(() => {
+            document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+        }, 2000);
+        document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+        return;
+    }
+     else {
       processTime = new Date().getTime();
       document.querySelector('.loadinggif').style.display = "flex";
       if (window.location.href.includes("modify")){
