@@ -108,7 +108,6 @@ h1.InnerText {
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-top: 5px;
     line-height: 48px;
-    white-space: nowrap;
 }
 
 h1 a {
@@ -120,7 +119,7 @@ h1 a:hover {
     text-decoration: none;
 }
 
-p.InnerShort {
+p.InnerShort, p.ServerStatus, p.ServerStatusRes {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     margin: 0;
     padding: 0;
@@ -128,6 +127,24 @@ p.InnerShort {
     margin-left: 20px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-right: 20px;
+}
+
+div.server {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    flex-direction: row;
+}
+
+p.ServerStatus {
+    width: auto;
+    margin-right: 5px;
+    margin-left: 45vw;
+}
+
+p.ServerStatusRes {
+    margin-left: -15px;
+    cursor: pointer;
 }
 
 h2.beginText, h2.TicketInfo {
@@ -408,6 +425,7 @@ div.loading {
     width: 54px;
     height: 54px;
     background-color: transparent;
+    margin-left: -12px;
 }
 
 .disclaimer {
@@ -467,9 +485,26 @@ div.loading {
     flex-direction: row;
 }
 
+@media screen and (max-width: 1600px){
+    p.ServerStatus {
+        margin-left: 30vw;
+    }
+}
+
+@media screen and (max-width: 1200px){
+    p.ServerStatus {
+        margin-left: 20vw;
+    }
+}
+
 @media screen and (max-width: 900px) {
     form {
         width: 200px;
+    }
+    h1.InnerText {
+        font: 400 28px/1.5 "Noto Sans", sans-serif;
+        margin-left: 0px;
+        margin-top: 10px;  
     }
     a.buttonUpload {
         width: 80px;
@@ -482,5 +517,12 @@ div.loading {
     div .textarea {
         gap: 0px;
         margin-left: 12px;
+    }
+    p.ServerStatus {
+        font-size: 16px;
+        margin-left: 10px;
+    }
+    p.ServerStatusRes {
+        font-size: 16px;
     }
 }

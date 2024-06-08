@@ -1,5 +1,7 @@
 
 //////////////IP SETTINGS/////////////////////
+//https://140.118.101.66:56494/ -> Generate Server
+//https://140.118.101.66:61911/ -> Analyze Server
 const GITWEB = "https://140.118.101.66:61911/"
 const LOCALWEB = "https://140.118.101.66:61911/"
 const LOCALGENERATE = "https://140.118.101.66:56494/"
@@ -13,9 +15,60 @@ let temp = "";
 let buttonDisabled = false;
 let uploadDisabled = false;
 
-window.onload = function() {
-  serverText = document.querySelector('.server');
-  serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+// window.onload = function() {
+//   serverText = document.querySelector('.server');
+//   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+// }
+
+const ServerStatus = document.querySelector('.ServerStatus');
+const ServerStatusRes = document.querySelector('.ServerStatusRes');
+if (ServerStatus && ServerStatusRes) {
+  if (window.location.href.includes("modify")) {
+    fetch(LOCALWEB)
+    .then (response => {
+      if (!response.ok) {
+        ServerStatusRes.innerHTML = "Offline";
+        ServerStatusRes.style.color = "red";
+      }
+      else {
+        ServerStatusRes.innerHTML = "Online";
+        ServerStatusRes.style.color = "green";
+      }
+    })
+    .catch(error => {
+      ServerStatusRes.innerHTML = "Offline";
+      ServerStatusRes.style.color = "red";
+  });
+  }
+  else {
+    fetch(currentGenerateServerIP)
+    .then (response => {
+      if (!response.ok) {
+        ServerStatusRes.innerHTML = "Offline";
+        ServerStatusRes.style.color = "red";
+      }
+      else {
+        ServerStatusRes.innerHTML = "Online";
+        ServerStatusRes.style.color = "green";
+      }
+    })
+    .catch(error => {
+      ServerStatusRes.innerHTML = "Offline";
+      ServerStatusRes.style.color = "red";
+    });
+  }
+}
+
+if (ServerStatusRes) {
+  ServerStatusRes.addEventListener('click', () => {
+    if (window.location.href.includes("modify"))
+      {
+        window.open(LOCALWEB, '_blank');
+      }
+    else {
+      window.open(currentGenerateServerIP, '_blank');
+    }
+  });
 }
 
 
@@ -258,7 +311,7 @@ function sendDataToAnalyzeServer(code) {
     });
   }
   console.log(recordTexts);
-  fetch(CURRENTWEB + "process_code", {
+  fetch(LOCALWEB + "process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -540,19 +593,19 @@ if (uploadButton) {
 }
 
 
-let serverText = document.querySelector('.server');
+// let serverText = document.querySelector('.server');
 
-serverText.addEventListener('click', () => {
-  if (CURRENTWEB == LOCALWEB) {
-    CURRENTWEB = GITWEB;
-    currentGenerateServerIP = GLOBALGENERATE;
-  } else {
-    CURRENTWEB = LOCALWEB;
-    currentGenerateServerIP = LOCALWEB;
-  }
-  localStorage.setItem("server", CURRENTWEB);
-  window.location.reload();
-});
+// serverText.addEventListener('click', () => {
+//   if (CURRENTWEB == LOCALWEB) {
+//     CURRENTWEB = GITWEB;
+//     currentGenerateServerIP = GLOBALGENERATE;
+//   } else {
+//     CURRENTWEB = LOCALWEB;
+//     currentGenerateServerIP = LOCALWEB;
+//   }
+//   localStorage.setItem("server", CURRENTWEB);
+//   window.location.reload();
+// });
 
 if (newtab) {
   newtab.addEventListener('click', () => {

@@ -4,21 +4,48 @@ const LOCALWEB = "http://127.0.0.1:5000/"
 let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
 /////////////////////////////////////////////
 
-window.onload = function() {
-  serverText = document.querySelector('.server');
-  serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
-}
+// window.onload = function() {
+//   serverText = document.querySelector('.server');
+//   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+// }
 
-let serverText = document.querySelector('.server');
-serverText.addEventListener('click', () => {
-  if (CURRENTWEB == LOCALWEB) {
-    CURRENTWEB = GITWEB;
-  } else {
-    CURRENTWEB = LOCALWEB;
-  }
-  localStorage.setItem("server", CURRENTWEB);
-  window.location.reload();
-});
+// let serverText = document.querySelector('.server');
+// serverText.addEventListener('click', () => {
+//   if (CURRENTWEB == LOCALWEB) {
+//     CURRENTWEB = GITWEB;
+//   } else {
+//     CURRENTWEB = LOCALWEB;
+//   }
+//   localStorage.setItem("server", CURRENTWEB);
+//   window.location.reload();
+// });
+
+
+const ServerStatus = document.querySelector('.ServerStatus');
+const ServerStatusRes = document.querySelector('.ServerStatusRes');
+if (ServerStatus && ServerStatusRes) {
+    fetch(GITWEB)
+    .then (response => {
+        if (!response.ok) {
+          ServerStatusRes.innerHTML = "Offline";
+          ServerStatusRes.style.color = "red";
+        }
+        else {
+          ServerStatusRes.innerHTML = "Online";
+          ServerStatusRes.style.color = "green";
+        }
+    })
+    .catch(error => {
+        ServerStatusRes.innerHTML = "Offline";
+        ServerStatusRes.style.color = "red";
+    });
+}
+  
+if (ServerStatusRes) {
+    ServerStatusRes.addEventListener('click', () => {
+        window.open(GITWEB, '_blank');
+    });
+}
 
 function enhanceTextInput(event, element) {
     const keyPairs = {
@@ -129,7 +156,7 @@ submitbtn.addEventListener("click", () => {
     document.querySelector('.loadinggif').style.display = "flex";
 
  
-    fetch(CURRENTWEB + "similarity", {
+    fetch(GITWEB + "similarity", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
