@@ -1,8 +1,8 @@
 
-window.onload = function() {
-  serverText = document.querySelector('.server');
-  serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
-}
+// window.onload = function() {
+//   serverText = document.querySelector('.server');
+//   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+// }
 
 const submitbtn = document.querySelector('.submitbtn');
 const search = document.querySelector('.inputsearch');

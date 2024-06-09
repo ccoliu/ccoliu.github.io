@@ -31,8 +31,8 @@ function sendCode(dataChunk) {
 }
 
 window.onload = () => {
-    serverText = document.querySelector('.server');
-    serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+    // serverText = document.querySelector('.server');
+    // serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 
     localStorage.removeItem('current');
     yesBtnClicked = false;

@@ -46,8 +46,8 @@ function sendCode(dataChunk) {
 }
 
 window.onload = () => {
-    serverText = document.querySelector('.server');
-    serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
+    // serverText = document.querySelector('.server');
+    // serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 
     let location = window.location.href;
     locationsplit = location.split('?=')[1];
