@@ -145,6 +145,9 @@ function clearFields() {
   }
   buttonDisabled = false;
   uploadDisabled = false;
+  document.querySelectorAll('.lengthInfo').forEach(element => {
+    element.innerHTML = "0/10000 character(s)";
+  });
   clearResponse();
 }
 
@@ -257,6 +260,14 @@ function enhanceTextInput(event, element) {
     "'": "''",
     "<": "<>",
   };
+  let nearestlengthInfo;
+  if (window.location.href.includes("modify")) {
+    nearestlengthInfo = element.parentElement.querySelector('.tabWindow' + element.className[element.className.length - 1]).querySelector('.lengthInfo');
+  }
+  else
+  {
+    nearestlengthInfo = element.parentElement.querySelector('.lengthInfo');
+  }
 
   if (keyPairs[event.key]) {
     event.preventDefault();
@@ -267,6 +278,21 @@ function enhanceTextInput(event, element) {
       keyPairs[event.key] +
       value.substring(selectionEnd);
     element.selectionStart = element.selectionEnd = selectionStart + 1;
+  }
+  blockLength = element.value.length;
+  if (blockLength > 10000) {
+    document.querySelector('.footerdesc').style.display = "flex";
+    document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+    document.querySelector('.footerdesc').innerHTML = "Can only input 10000 characters!";
+    setTimeout(() => {
+        document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+    }, 2000);
+    document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+    element.value = element.value.substring(0, 10000);
+    nearestlengthInfo.innerHTML = "10000/10000 character(s)";
+  }
+  else {
+    nearestlengthInfo.innerHTML = blockLength + "/10000 character(s)";
   }
 }
 
@@ -483,7 +509,7 @@ const clearButton = document.getElementById("clearButton");
 const runButton = document.getElementById("runButton");
 const codeInput = document.querySelector(".Inputarea");
 const uploadButton = document.getElementById("uploadButton");
-
+const textInput = document.querySelector("div textarea");
 if (clearButton && !buttonDisabled) {
   clearButton.addEventListener("click", clearFields);
 } else {
@@ -497,7 +523,24 @@ if (runButton && !buttonDisabled) {
 }
 
 if (codeInput) {
-  codeInput.addEventListener("keydown", function (event) {
+  codeInput.addEventListener("keydown", (event) => {
+    if (event.target.matches('textarea')) {
+        enhanceTextInput(event, event.target);
+    }
+  });
+  codeInput.addEventListener("input", (event) => {
+      if (event.target.matches('textarea')) {
+          enhanceTextInput(event, event.target);
+      }
+  });
+}
+else if (textInput) {
+  textInput.addEventListener("keydown", function (event) {
+    if (event.target.matches("textarea")) {
+      enhanceTextInput(event, event.target);
+    }
+  });
+  textInput.addEventListener("input", function (event) {
     if (event.target.matches("textarea")) {
       enhanceTextInput(event, event.target);
     }
@@ -514,12 +557,21 @@ if (uploadButton) {
             document.querySelector('.Addnewtab').click();
         }
         //console.log('.textEnter' + filenum.toString());
-        if (document.querySelector('.textEnter' + filenum.toString()).value != "") {
+        if (window.location.href.includes("modify") && document.querySelector('.textEnter' + filenum.toString()).value != "") {
           filenum++;
           processFile(file, filenum);
         }
-        else{
-          document.querySelector('.textEnter' + filenum.toString()).value = reader.result;
+        else {
+          if (window.location.href.includes("modify"))
+          {
+            document.querySelector('.textEnter' + filenum.toString()).value = reader.result;
+            enhanceTextInput(event, document.querySelector('.textEnter' + filenum.toString()));
+          }
+          else
+          {
+            document.querySelector('.textEnter').value = reader.result;
+            enhanceTextInput(event, document.querySelector('.textEnter'));
+          }
         }
         //console.log(document.querySelector('.textEnter' + filenum.toString()).value);
         resolve();
@@ -550,6 +602,7 @@ if (uploadButton) {
       return;
     }
 
+
     for (let i = 0; i < files.length; i++) {
 
       if (!files[i]) {
@@ -578,6 +631,7 @@ if (uploadButton) {
         continue;
     }
     console.log(fileName);
+
     processFile(files[i], filenum).then(() => {})
     .catch(() => {
         document.querySelector('.footerdesc').style.display = "flex";
@@ -628,7 +682,9 @@ if (newtab) {
     newdiv.className = 'tabWindow' + originalTab.toString();
     newdiv.innerHTML = `
       <p class="tabSeq">Tab${originalTab}</p>
-      <span class="material-symbols-outlined" id='crossbutton'>close</span>`;
+      <p id="lengthInfo" class="lengthInfo">0/10000 character(s)</p>
+      <span class="material-symbols-outlined" id='crossbutton'>close</span>
+      `;
     newtext.className = 'textEnter' + originalTab.toString();
     newtext.id = 'codeInput';
     newtext.placeholder = 'add your subprogram here...'

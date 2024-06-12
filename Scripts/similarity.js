@@ -58,6 +58,9 @@ function enhanceTextInput(event, element) {
       "'": "''",
       "<": "<>",
     };
+
+    nearestlengthInfo = element.parentElement.querySelector('.lengthInfo');
+    console.log(nearestlengthInfo);
   
     if (keyPairs[event.key]) {
       event.preventDefault();
@@ -68,6 +71,21 @@ function enhanceTextInput(event, element) {
         keyPairs[event.key] +
         value.substring(selectionEnd);
       element.selectionStart = element.selectionEnd = selectionStart + 1;
+    }
+    blockLength = element.value.length;
+    if (blockLength > 10000) {
+      document.querySelector('.footerdesc').style.display = "flex";
+      document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
+      document.querySelector('.footerdesc').innerHTML = "Can only input 10000 characters!";
+      setTimeout(() => {
+          document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
+      }, 2000);
+      document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
+      element.value = element.value.substring(0, 10000);
+      nearestlengthInfo.innerHTML = "10000/10000 character(s)";
+    }
+    else {
+      nearestlengthInfo.innerHTML = blockLength + "/10000 character(s)";
     }
 }
 
@@ -94,11 +112,16 @@ function createSuccessMsg(str){
 }
 
 const textarea = document.querySelector(".textarea");
-textarea.addEventListener("keydown", (event) => {
-    if (event.target.matches('textarea')) {
-        enhanceTextInput(event, event.target);
-    }
-})
+    textarea.addEventListener("keydown", (event) => {
+        if (event.target.matches('textarea')) {
+            enhanceTextInput(event, event.target);
+        }
+    });
+    textarea.addEventListener("input", (event) => {
+        if (event.target.matches('textarea')) {
+            enhanceTextInput(event, event.target);
+        }
+    });
 
 let uploadButton = document.querySelectorAll(".buttonUpload");
 const availableExtensions = ["txt", "py", "js", "html", "css", "c", "cpp", "java","h"];
@@ -126,6 +149,7 @@ uploadButton.forEach((button) => {
 
         reader.onload = () => {
             event.target.parentElement.parentElement.querySelector('textarea').value = reader.result;
+            enhanceTextInput(event, event.target.parentElement.parentElement.querySelector('textarea'));
             fileInput.value = "";
         }
 

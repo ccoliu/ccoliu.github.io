@@ -201,6 +201,25 @@ p.frontInfo {
     margin-bottom: 10px;
 }
 
+.tabWindow1 .material-symbols-outlined {
+    visibility: hidden;
+}
+
+div.content p.lengthInfo {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+    margin-left: 7.5em;
+}
+
+div div p.lengthInfo {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+    margin: 0;
+    margin-left: 0 !important;
+    padding: 0;
+}
+
+
 .Inputarea textarea:focus, .textEnter:focus {
     outline: none;
 }
@@ -807,6 +826,9 @@ div.loading, div.loading2 {
     p.ServerStatus {
         margin-left: 20vw;
     }
+    div.content p.lengthInfo {
+        margin-left: 5em;
+    }
 }
 
 @media screen and (max-width: 600px) {
@@ -831,5 +853,8 @@ div.loading, div.loading2 {
     }
     p.ServerStatusRes {
         font-size: 16px;
+    }
+    div.content p.lengthInfo {
+        margin-left: 3em;
     }
 }

@@ -486,6 +486,14 @@ div.loading {
     flex-direction: row;
 }
 
+p.lengthInfo {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+    margin: 0;
+    margin-left: 0 !important;
+    padding: 0;
+}
+
 @media screen and (max-width: 1600px){
     p.ServerStatus {
         margin-left: 30vw;
