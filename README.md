@@ -6,7 +6,7 @@
     Looking for coding data sets to fine-tune our model.
 
 ## How to use
-    1. Open up the [Github web](ccoliu.github.io).
+    1. Open up the [Github web](https://ccoliu.github.io).
     2. Unblock the server when using Generate/Modify/Similarity check
        (The server is in campus, so don't worry about safety issues.)
     3. Try running to see the results.
