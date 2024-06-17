@@ -46,7 +46,7 @@ function processSearch() {
     loadingToggle("on");
 
     //searching for database
-    fetch(CURRENTWEB + "communitySearch", {
+    fetch(GITWEB + "communitySearch", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
