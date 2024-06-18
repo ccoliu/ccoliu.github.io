@@ -477,8 +477,10 @@ class dataBaseTools:
 
         filter = {'_id': ObjectId(communityData.inserted_id)}
 
-        self.updateDocument("fineTune", "communityRate", filter, "rate", rate)
-        self.updateDocument("fineTune", "communityRate", filter, "comment", comment)
+        self.updateDocument("fineTune", "communityRate", communityData.inserted_id, "rate", rate)
+        self.updateDocument(
+            "fineTune", "communityRate", communityData.inserted_id, "comment", comment
+        )
 
         print(f"Document inserted.")
 

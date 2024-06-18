@@ -1,9 +1,7 @@
-
 // window.onload = function() {
 //   serverText = document.querySelector('.server');
 //   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
 // }
-
 const submitbtn = document.querySelector('.submitbtn');
 const search = document.querySelector('.inputsearch');
 const searchresult = document.querySelector('.resultfound');
@@ -46,7 +44,7 @@ function processSearch() {
     loadingToggle("on");
 
     //searching for database
-    fetch(GITWEB + "communitySearch", {
+    fetch(GITWEB+"communitySearch", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

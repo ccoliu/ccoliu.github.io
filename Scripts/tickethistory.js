@@ -1,4 +1,3 @@
-
 const yesBtn = document.querySelector('.yesbtn');
 let yesBtnClicked = false;
 
@@ -16,18 +15,29 @@ function sendCode(dataChunk) {
     let rate = dataChunk.rate;
     let comment = dataChunk.comment;
     let id = dataChunk.id;
+
     setTimeout(() => {
-        fetch(GITWEB + 'retrieve_comment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({rate, comment, id}),
-    })
+        fetch(GITWEB+"retrieve_comment", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rate, comment, id }),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Success:', data);
+            window.location.reload();
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     }, 3500);
-    setTimeout(() => {
-        window.location.reload();
-    }, 3500)
 }
 
 window.onload = () => {
