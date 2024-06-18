@@ -206,6 +206,7 @@ submitbtn.addEventListener("click", () => {
         document.querySelector('.AImsg').style.display = "block";
         document.querySelector('.textOutput').style.display = "block";
         document.querySelector('.textOutput').value = data['result'];
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })
     })
     .catch((error) => {
         console.error("Error:", error);

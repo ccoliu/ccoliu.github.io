@@ -143,6 +143,10 @@ function clearFields() {
     document.querySelector('.buttonUpload').style.filter = "brightness(1)";
     document.querySelector('.buttonUpload').style.cursor = "pointer";
   }
+  if (document.querySelector('.JobInfo'))
+  {
+    document.querySelector('.JobInfo').style.display = "none";
+  }
   buttonDisabled = false;
   uploadDisabled = false;
   document.querySelectorAll('.lengthInfo').forEach(element => {
@@ -378,6 +382,7 @@ function sendDataToAnalyzeServer(code) {
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
         document.querySelector('.footerdesc').innerHTML = "Analyze Successful.";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         setTimeout(() => {
             document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
@@ -439,6 +444,8 @@ function sendDataToGenerateServer(code, lang) {
             document.querySelector('.footerdesc').style.display = "flex";
             document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
             document.querySelector('.footerdesc').innerHTML = "Generate Successful.";
+            document.querySelector('.JobInfo').style.display = "flex";
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             setTimeout(() => {
                 document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
             }, 2000);
@@ -834,6 +841,7 @@ if (executebtn) {
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#5ae366";
         document.querySelector('.footerdesc').innerHTML = "Execute Successful.";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
         setTimeout(() => {
             document.querySelector('.footerdesc').style.animation = "heightoff 0.75s forwards";
         }, 2000);
