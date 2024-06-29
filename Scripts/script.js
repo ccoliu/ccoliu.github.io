@@ -37,7 +37,7 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
       console.log(error);
-      ServerStatusRes.innerHTML = "Must unblock server";
+      ServerStatusRes.innerHTML = "Blocked/Offline";
       ServerStatusRes.style.color = "red";
   });
   }
@@ -55,7 +55,7 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
       console.log(error);
-      ServerStatusRes.innerHTML = "Must unblock server";
+      ServerStatusRes.innerHTML = "Blocked/Offline";
       ServerStatusRes.style.color = "red";
     });
   }
@@ -220,7 +220,7 @@ function processCodeInput() {
       }, 2000);
       document.querySelector('.footerdesc').style.animation = "heightaddon 0.75s forwards";
     }
-    else if (ServerStatusRes.innerHTML == "Must unblock server") {
+    else if (ServerStatusRes.innerHTML == "Blocked/Offline") {
         document.querySelector('.footerdesc').style.display = "flex";
         document.querySelector('.footerdesc').style.backgroundColor = "#f66868";
         document.querySelector('.footerdesc').innerHTML = "Server is blocked! Click Server Status for more information.";
@@ -264,11 +264,11 @@ function enhanceTextInput(event, element) {
     "'": "''",
     "<": "<>",
   };
-  let nearestlengthInfo;
+  let nearestlengthInfo = null;
   if (window.location.href.includes("modify")) {
     nearestlengthInfo = element.parentElement.querySelector('.tabWindow' + element.className[element.className.length - 1]).querySelector('.lengthInfo');
   }
-  else
+  else if (document.querySelector('.lengthInfo'))
   {
     nearestlengthInfo = element.parentElement.querySelector('.lengthInfo');
   }
@@ -295,7 +295,7 @@ function enhanceTextInput(event, element) {
     element.value = element.value.substring(0, 10000);
     nearestlengthInfo.innerHTML = "10000/10000 character(s)";
   }
-  else {
+  else if (nearestlengthInfo) {
     nearestlengthInfo.innerHTML = blockLength + "/10000 character(s)";
   }
 }

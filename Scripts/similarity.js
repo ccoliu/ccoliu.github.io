@@ -37,7 +37,7 @@ if (ServerStatus && ServerStatusRes) {
     })
     .catch(error => {
         console.log(error);
-        ServerStatusRes.innerHTML = "Must unblock server";
+        ServerStatusRes.innerHTML = "Blocked/Offline";
         ServerStatusRes.style.color = "red";
     });
 }
