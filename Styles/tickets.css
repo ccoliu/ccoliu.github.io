@@ -279,6 +279,35 @@ p.footerText {
     }
 }
 
+.pageButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-left: 40px;
+    margin-right: auto;
+    gap: 10px;
+}
+
+.pageButton * {
+    font: 200 16px/1.5 "Lexend Deca", sans-serif;
+    color: #cccccc;
+}
+
+.pageInfo {
+    border: 1px solid #ababab;
+    border-radius: 10px;
+    background-color: #111111;
+    width: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.prevPage, .nextPage {
+    cursor: pointer;
+}
+
 @media screen and (max-width: 1100px) {
     .templateTicketContainer {
         margin-left: 50px;

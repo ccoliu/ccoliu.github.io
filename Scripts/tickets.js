@@ -1,92 +1,134 @@
 
 let associatedTicketSeq = new Array(11);
+let numberseq = localStorage.getItem('numberseq') - 1;
+let currentPage = 1;
+let totalPage = Math.floor(numberseq / 10) + (numberseq % 10 > 0 ? 1 : 0);
+
+function uploadTicketloop(numberseqInt) {
+    for (let i = 1; i <= 10; i++)
+        {
+            if (numberseqInt > 0)
+            {
+                let ticketButton = document.querySelector('.ticket' + i);
+                ticketButton.style.display = 'block';
+
+                associatedTicketSeq[i] = numberseqInt;
+    
+                let ticket = localStorage.getItem('ticket' + numberseqInt); //numberseq, codeType, processTime
+                let record = localStorage.getItem('record' + numberseqInt); //response
+                let id = localStorage.getItem('id' + numberseqInt);
+                console.log('ticket' + numberseqInt);
+                let ticketAttr = ticket.split(',');
+    
+                let ticketTitle = document.querySelector('.ticket' + i + ' .ticketTitle');
+                let ticketSeq = document.querySelector('.ticket' + i + ' .ticketseq');
+                let ticketDesc = document.querySelector('.ticket' + i + ' .ticketDescription');
+                let ticketTime = document.querySelector('.ticket' + i + ' .ticketCreateTime');
+    
+                let timestamp = parseInt(ticketAttr[2]);
+                let date = new Date(timestamp);
+                let year = date.getFullYear();
+                let month = date.getMonth() + 1;
+                let day = date.getDate();
+                let hour = date.getHours();
+                let minute = date.getMinutes();
+                let weekday = date.getDay();
+    
+                let weekdayStr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                
+                console.log(id);
+                console.log(ticket);
+                console.log(ticket[0]);
+                console.log(ticketAttr[0]);
+                console.log(ticketAttr[1]);
+                console.log(ticketAttr[2]);
+                
+                let ticketnum = parseInt(ticketAttr[0]);
+                if (ticketnum < 10)
+                {
+                    ticketSeq.innerHTML = "#00" + ticketnum;
+                }
+                else if (ticketnum < 100)
+                {
+                    ticketSeq.innerHTML = "#0" + ticketnum;
+                }
+                else
+                {
+                    ticketSeq.innerHTML = "#" + ticketnum;
+                }
+                
+                if (record.length > 250)
+                {
+                    ticketDesc.innerHTML = record.substring(0, 250) + '...';
+                }
+                else
+                {
+                    ticketDesc.innerHTML = record;
+                }
+    
+                ticketTitle.innerHTML = ticketAttr[1];
+    
+                ticketTime.innerHTML = year % 2000 + '/' + month + '/' + day + ' ' + weekdayStr[weekday] + ' ' + (hour >= 10 ? hour : '0' + hour) + ':' + (minute >= 10 ? minute : '0' + minute);
+                
+                numberseqInt--;
+            }
+            else
+            {
+                let ticket = document.querySelector('.ticket' + i);
+                ticket.style.display = 'none';
+            }
+        }
+}
 
 function uploadTicket() {
-    let avaliableTicket = 0;
-    let numberseq = localStorage.getItem('numberseq');
+    const PageInfo = document.querySelector('.pageInfo');
+
     console.log('numberseq: ' + numberseq);
-    let numberseqInt = numberseq - 1;
-    for (let i = 1; i <= 10; i++)
-    {
-        if (numberseqInt > 0)
-        {
-            avaliableTicket++;
+    let numberseqInt = numberseq;
 
-            associatedTicketSeq[i] = numberseqInt;
+    PageInfo.innerHTML =  currentPage + " / " + totalPage;
 
-            let ticket = localStorage.getItem('ticket' + numberseqInt); //numberseq, codeType, processTime
-            let record = localStorage.getItem('record' + numberseqInt); //response
-            let id = localStorage.getItem('id' + numberseqInt);
-            console.log('ticket' + numberseqInt);
-            let ticketAttr = ticket.split(',');
-
-            let ticketTitle = document.querySelector('.ticket' + i + ' .ticketTitle');
-            let ticketSeq = document.querySelector('.ticket' + i + ' .ticketseq');
-            let ticketDesc = document.querySelector('.ticket' + i + ' .ticketDescription');
-            let ticketTime = document.querySelector('.ticket' + i + ' .ticketCreateTime');
-
-            let timestamp = parseInt(ticketAttr[2]);
-            let date = new Date(timestamp);
-            let year = date.getFullYear();
-            let month = date.getMonth() + 1;
-            let day = date.getDate();
-            let hour = date.getHours();
-            let minute = date.getMinutes();
-            let weekday = date.getDay();
-
-            let weekdayStr = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            
-            console.log(id);
-            console.log(ticket);
-            console.log(ticket[0]);
-            console.log(ticketAttr[0]);
-            console.log(ticketAttr[1]);
-            console.log(ticketAttr[2]);
-            
-            let ticketnum = parseInt(ticketAttr[0]);
-            if (ticketnum < 10)
-            {
-                ticketSeq.innerHTML = "#00" + ticketnum;
-            }
-            else if (ticketnum < 100)
-            {
-                ticketSeq.innerHTML = "#0" + ticketnum;
-            }
-            else
-            {
-                ticketSeq.innerHTML = "#" + ticketnum;
-            }
-            
-            if (record.length > 250)
-            {
-                ticketDesc.innerHTML = record.substring(0, 250) + '...';
-            }
-            else
-            {
-                ticketDesc.innerHTML = record;
-            }
-
-            ticketTitle.innerHTML = ticketAttr[1];
-
-            ticketTime.innerHTML = year % 2000 + '/' + month + '/' + day + ' ' + weekdayStr[weekday] + ' ' + (hour >= 10 ? hour : '0' + hour) + ':' + (minute >= 10 ? minute : '0' + minute);
-            
-            numberseqInt--;
-        }
-        else
-        {
-            let ticket = document.querySelector('.ticket' + i);
-            ticket.remove();
-        }
-    }
-    return avaliableTicket;
+    uploadTicketloop(numberseqInt);
 }
+
+
 
 window.addEventListener('load', function() {
     console.log('ticket.js loaded');
-    let Tickets = uploadTicket();
-    document.querySelector('.TicketInfo').innerHTML = "Available Tickets: " + Tickets;
+    uploadTicket();
+    document.querySelector('.TicketInfo').innerHTML = "Available Tickets: " + numberseq;
 });
 
+const prevPage = document.querySelector('.prevPage');
+const nextPage = document.querySelector('.nextPage');
+
+prevPage.addEventListener('click', () => {
+    if (currentPage > 1)
+    {
+        currentPage--;
+        let numberseqInt = numberseq - ((currentPage - 1) * 10);
+        console.log(numberseqInt);
+        uploadTicketloop(numberseqInt);
+
+        const PageInfo = document.querySelector('.pageInfo');
+        PageInfo.innerHTML =  currentPage + " / " + totalPage;
+        window.scrollTo(0, 0);
+    }
+});
+
+nextPage.addEventListener('click', () => {
+    if (currentPage < totalPage)
+    {
+        currentPage++;
+        let numberseqInt = numberseq - ((currentPage - 1) * 10);
+        console.log(numberseqInt);
+        uploadTicketloop(numberseqInt);
+
+        const PageInfo = document.querySelector('.pageInfo');
+        PageInfo.innerHTML =  currentPage + " / " + totalPage;
+        window.scrollTo(0, 0);
+    }
+});
 
 let ticket1 = document.querySelector('.ticket1');
 let ticket2 = document.querySelector('.ticket2');

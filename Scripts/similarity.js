@@ -48,6 +48,25 @@ if (ServerStatusRes) {
     });
 }
 
+const sidebar = document.querySelector('.sidebar');
+const content = document.querySelector('.content');
+const originBodyOverflowY = document.body.style.overflowY;
+
+sidebar.addEventListener('mouseenter', () => {
+    // 添加內容區域的暗化效果
+    content.classList.add('content-darkened');
+    document.body.style.overflowY = 'hidden'; // 鎖定網頁滾動
+    if (textOutput) document.getElementById("textOutput").style.overflowY = "hidden";
+});
+
+sidebar.addEventListener('mouseleave', () => {
+    // 移除內容區域的暗化效果
+    content.classList.remove('content-darkened');
+    document.body.style.overflowY = originBodyOverflowY; // 解鎖網頁滾動
+    if (textOutput && originBodyOverflowY) textOutput.style.overflowY = "auto";
+    sidebar.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 function enhanceTextInput(event, element) {
     const keyPairs = {
       Tab: "\t",
