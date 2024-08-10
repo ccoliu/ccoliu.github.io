@@ -985,8 +985,10 @@ div.loading, div.loading2 {
 }
 
 /* Styling for the information page content */
-.page p {
-    font-size: 30px; /* 增大字体大小 */
+.page p 
+{
+    font-family: 'Caveat', cursive;
+    font-size: 45px; /* 增大字体大小 */
     color: #25295b; /* 设置字体颜色为白色 */
-    margin: 10px 0 0 0;
+    margin: 0px 0 0 0;
 }
