@@ -29,8 +29,6 @@
             <h3>Supporters</h3>
             <li><a class="cc" href="https://github.com/ccoliu" target="_blank">ccoliu</a></li>
             <li><a class="whps" href="https://github.com/whps970083" target="_blank">DanielHsiao</a></li>
-            <!-- <h3>Settings</h3>
-            <li><a class="server">#ServerStatus</a></li> -->
             <div class="sidebar-footer">
                 <a href="https://openai.com/product" target="_blank"><span><img class="openaiicon" src="../icons/OpenAIWhite.png" /></span>Powered by <br>OpenAI</br></a>
             </div>
@@ -90,25 +88,13 @@
             <img class="loadinggif" src="../icons/Rolling-0.7s-177px.gif" />
         </div>
         <p class="JobInfo">Job list has generated, please edit, abort or add new jobs to match your preference.</p>
-        <div class="JobAssignment">
-            <!-- <div class="JobAssign">
-                <div class="Jobtitle">
-                    <textarea class="AssignTitle">Task: Generate function</textarea>
-                </div>
-                <div class="Jobbtn">
-                    <a class="abortbtn">Abort</a>
-                </div>
-            </div> -->
-            <!-- <div class="JobAdd">
-                <span class="material-symbols-outlined">add</span>
-                <a class="AddJob">Add New Job...</a>
-            </div> -->
-        </div>
+        <div class="JobAssignment"></div>
         <div class="Execbtn">
             <a id="runButton" class="buttonExecute">Execute<span><img class="executeIcon" src="../icons/play.png"/></span></a>
         </div>
         <div class="loading2">
             <img class="loadinggif2" src="../icons/Rolling-0.7s-177px.gif" />
+            <p id="loadingText" class="loadingText">Loading...</p>
         </div>
         <h2 class="AImsg" id="AImsg" display="none">AI response (GPT-3.5)</h2>
         <textarea cols="100" rows="20" class="textOutput" id="textOutput" display="none" readonly></textarea>
@@ -116,6 +102,94 @@
     <div class="footerdesc">
         <p class="footerdesc">#inputfooterhere</p>
     </div>
+
+    <!-- HELP按鈕 -->
+    <!-- Fixed Open Button in Bottom Right Corner with Image -->
+    <a id="openFlipbookButton" class="buttonOpenFlipbook">
+        <img src="../icons/information.png" alt="Help Icon" style="vertical-align: middle; margin-right: 5px; width: 20px; height: 20px;">
+    </a>
+
+    <!-- 懸浮視窗 -->
+    <div id="overlay"></div>
+    <div id="flipbookContainer">
+        <div class="flipbook-content">
+            <div id="page1" class="page active">
+                <img src="../icons/GenerateHelp/enter.png" alt="Image 1">
+                <p>1. Enter an idea</p>
+            </div>
+            <div id="page2" class="page">
+                <img src="../icons/GenerateHelp/workList.png" alt="Image 2">
+                <p>2. Click to generate work list</p>
+            </div>
+            <div id="page3" class="page">
+                <img src="../icons/GenerateHelp/workSheet.png" alt="Image 3">
+                <p>3. Insert or delete work</p>
+            </div>
+            <div id="page4" class="page">
+                <img src="../icons/GenerateHelp/company.png" alt="Image 3">
+                <p>4. Click to generate the code</p>
+            </div>
+            <!-- Add more pages as needed -->
+        </div>
+        <button id="prevPageButton" class="pageButton">NEXT</button>
+        <button id="nextPageButton" class="pageButton">PREV</button>
+    </div>
+    <!-- jQuery和turn.js库 -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../Scripts/script.js"></script>
+    <script>
+        document.getElementById('openFlipbookButton').addEventListener('click', function() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('flipbookContainer').style.display = 'block';
+            document.body.classList.add('darkened');
+            changePage(1);
+        });
+       
+        // 点击overlay或非悬浮窗口区域关闭flipbook
+        document.getElementById('overlay').addEventListener('click', closeFlipbook);
+
+        function closeFlipbook() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('flipbookContainer').style.display = 'none';
+            document.body.classList.remove('darkened');
+            
+        }
+
+        let currentPage = 1;
+        const totalPages = document.querySelectorAll('.page').length;
+
+        document.getElementById('prevPageButton').addEventListener('click', function() {
+            if (currentPage > 1) {
+                changePage(currentPage - 1);
+            }
+        });
+
+        document.getElementById('nextPageButton').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                changePage(currentPage + 1);
+            }
+        });
+
+        function changePage(pageNumber) {
+            const current = document.getElementById(`page${currentPage}`);
+            const next = document.getElementById(`page${pageNumber}`);
+
+            current.classList.remove('active');
+            next.classList.add('active');
+
+            if (pageNumber > currentPage) {
+                current.classList.add('previous');
+            } else {
+                next.classList.remove('previous');
+            }
+
+            currentPage = pageNumber;
+        }
+
+        // 阻止点击flipbookContainer时关闭窗口
+        document.getElementById('flipbookContainer').addEventListener('click', function(event) {
+            event.stopPropagation();
+        });
+    </script>
 </body>
 </html>
