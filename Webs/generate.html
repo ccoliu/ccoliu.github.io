@@ -22,11 +22,11 @@
         <h2>Menu</h2>
         <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="modify.html">Modify</a></li>
+            <li><a href="modify.html" >Modify</a></li>
             <li><a href="generate.html">Generate</a></li>
+            <li><a class="longword" href="similaritycheck.html">Similarity<br>Check</a></li>
             <li><a href="tickets.html">Tickets</a></li>
             <li><a href="community.html">Community</a></li>
-            <li><a class="longword" href="similaritycheck.html">Similarity Check</a></li>
         </ul>
         <ul>
             <h3>Supporters</h3>
@@ -137,62 +137,8 @@
         <button id="prevPageButton" class="pageButton">PREV</button>
         <button id="nextPageButton" class="pageButton">NEXT</button>
     </div>
-    <!-- jQuery和turn.js库 -->
+    <!-- jQuery and informationHover -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../Scripts/script.js"></script>
-    <script>
-        document.getElementById('openFlipbookButton').addEventListener('click', function() {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('flipbookContainer').style.display = 'block';
-            document.body.classList.add('darkened');
-            changePage(1);
-        });
-       
-        // 点击overlay或非悬浮窗口区域关闭flipbook
-        document.getElementById('overlay').addEventListener('click', closeFlipbook);
-
-        function closeFlipbook() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('flipbookContainer').style.display = 'none';
-            document.body.classList.remove('darkened');
-            
-        }
-
-        let currentPage = 1;
-        const totalPages = document.querySelectorAll('.page').length;
-
-        document.getElementById('prevPageButton').addEventListener('click', function() {
-            if (currentPage > 1) {
-                changePage(currentPage - 1);
-            }
-        });
-
-        document.getElementById('nextPageButton').addEventListener('click', function() {
-            if (currentPage < totalPages) {
-                changePage(currentPage + 1);
-            }
-        });
-
-        function changePage(pageNumber) {
-            const current = document.getElementById(`page${currentPage}`);
-            const next = document.getElementById(`page${pageNumber}`);
-
-            current.classList.remove('active');
-            next.classList.add('active');
-
-            if (pageNumber > currentPage) {
-                current.classList.add('previous');
-            } else {
-                next.classList.remove('previous');
-            }
-
-            currentPage = pageNumber;
-        }
-
-        // 阻止点击flipbookContainer时关闭窗口
-        document.getElementById('flipbookContainer').addEventListener('click', function(event) {
-            event.stopPropagation();
-        });
-    </script>
+    <script src="../Scripts/informationHover.js"></script>
 </body>
 </html>
