@@ -1,18 +1,27 @@
 document.getElementById('openFlipbookButton').addEventListener('click', function() {
+    adjustFlipbookScale();
     document.getElementById('overlay').style.display = 'block';
     document.getElementById('flipbookContainer').style.display = 'block';
     document.body.classList.add('darkened');
     changePage(1);
 });
 
-// 点击overlay或非悬浮窗口区域关闭flipbook
+window.addEventListener('resize', adjustFlipbookScale);
+
+function adjustFlipbookScale() {
+    const container = document.getElementById('flipbookContainer');
+    const scaleX = window.innerWidth / 1200;  // 基准宽度600px
+    const scaleY = window.innerHeight / 600;  // 基准高度400px
+    const scale = Math.min(scaleX, scaleY);  // 保持比例一致
+    container.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
 document.getElementById('overlay').addEventListener('click', closeFlipbook);
 
 function closeFlipbook() {
     document.getElementById('overlay').style.display = 'none';
     document.getElementById('flipbookContainer').style.display = 'none';
     document.body.classList.remove('darkened');
-    
 }
 
 let currentPage = 1;
