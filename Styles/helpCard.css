@@ -19,12 +19,12 @@
     transform: translate(-50%, -50%);
     width: 600px;
     height: 400px;
-    background-color: #6C7A89;  /* 灰色背景 */
+    background-color: #6C7A89;  /* Gray background */
     z-index: 1001;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     overflow: hidden;
-    padding: 10px;  /* 减少内边距 */
+    padding: 10px;  /* Reduce padding */
     animation: slideInFromRight 0.8s ease forwards;
 }
 
@@ -35,18 +35,18 @@
     height: 100%;
     overflow: hidden;
     display: flex;
-    flex-direction: column; /* 垂直排列图片和文字 */
+    flex-direction: column; /* Arrange images and text vertically */
     align-items: center;
     justify-content: center;
-    text-align: center;  /* 文字居中 */
+    text-align: center;  /* Center text */
 }
 
 /* Styling for images within pages to ensure they scale with the flipbook container */
 .page img {
     max-width: 100%;
-    max-height: 85%;  /* 提高图片的最大高度 */
+    max-height: 85%;  /* Increase the maximum height of the image */
     object-fit: contain;
-    margin-bottom: 5px;  /* 减少图片和文字之间的间距 */
+    margin-bottom: 5px;  /* Reduce the spacing between the image and text */
 }
 
 .page {
@@ -115,22 +115,22 @@
 }
 
 .tooltipText {
-    font-size: 18px;  /* 增大字体 */
+    font-size: 18px;  /* Increase font size */
     white-space: nowrap;
     opacity: 0;
     position: absolute;
     right: calc(100% + 10px);
     display: flex;
-    align-items: center;  /* 垂直居中对齐 */
-    top: 50%;  /* 使文字在按钮中垂直居中 */
-    transform: translateY(-50%);  /* 确保居中 */
+    align-items: center;  /* Vertically center align */
+    top: 50%;  /* Vertically center the text within the button */
+    transform: translateY(-50%);  /* Ensure centering */
 }
 
 .tooltipText span {
     display: inline-block;
     opacity: 0;
-    transform: translateY(-20px); /* 初始状态：向上偏移并隐藏 */
-    margin-right: 2px;  /* 增加字母间距 */
+    transform: translateY(-20px); /* Initial state: shifted up and hidden */
+    margin-right: 2px;  /* Increase letter spacing */
 }
 
 @keyframes flyIn {
@@ -143,58 +143,58 @@
         transform: translateY(0);
     }
 }
+
 /* Styling for the information page content */
-.page p 
-{
-    font-family: 'Caveat', cursive;
-    font-size: 45px; /* 增大字体大小 */
-    font-weight: 700; /* 设置为粗体 */
-    color: #354649 ; /* 设置字体颜色 */
-    margin: 0px 0 0 0;
+.page p {
+    font-family: 'Roboto Slab', serif;
+    font-size: 35px; /* Increase font size */
+    font-weight: 200; /* Set to bold */
+    color: #354649; /* Set font color */
+    margin:2px 0 0 0;
 }
 
 .pushImageEffect {
-    position: absolute;  /* 使其相对于 flipbookContainer 进行定位 */
+    position: fixed;  /* Position relative to the flipbookContainer */
     top: 50%;
-    right: -200px;  /* 初始位置在视窗外，但更靠近 flipbookContainer */
-    width: 200px;  /* 增加图片的宽度 */
-    height: 200px; /* 增加图片的高度 */
-    background-image: url('../icons/GenerateHelp/push.png');  /* 章鱼图片的路径 */
+    right: -200px;  /* Initial position outside the viewport, closer to flipbookContainer */
+    width: 200px;  /* Increase image width */
+    height: 200px; /* Increase image height */
+    background-image: url('../icons/GenerateHelp/push.png');  /* Path to octopus image */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    transform: translateY(-50%);  /* 垂直居中 */
-    z-index: 1002; /* 确保在flipbookContainer之上 */
+    transform: translateY(-50%);  /* Vertically center */
+    z-index: 1002; /* Ensure it is above flipbookContainer */
     animation: pushImage 1.5s ease forwards;
-    pointer-events: none; /* 禁止交互 */
+    pointer-events: none; /* Disable interactions */
 }
 
 @keyframes slideInFromRight {
     from {
-        transform: translate(100%, -50%); /* 从右侧滑入 */
+        transform: translate(100%, -50%); /* Slide in from the right */
         opacity: 0;
     }
     to {
-        transform: translate(-50%, -50%); /* 到达中央位置 */
+        transform: translate(-50%, -50%); /* Arrive at the center position */
         opacity: 1;
     }
 }
 
 #flipbookContainer {
-    /* 添加动画效果 */
+    /* Add animation effect */
     animation: slideInFromRight 0.8s cubic-bezier(0.5, 0, 1, 1) forwards;
 }
 
 @keyframes pushImage {
     0% {
-        right: -250px;  /* 图片从屏幕外推入，初始位置更靠近flipbookContainer */
+        right: -250px;  /* Image pushes in from outside the viewport, starting closer to flipbookContainer */
         opacity: 1;
     }
     50% {
-        right: -50px;  /* 图片移动到接触 flipbookContainer 的位置 */
+        right: -50px;  /* Image moves to contact the flipbookContainer */
         opacity: 1;
     }
     100% {
-        opacity: 0;  /* 图片淡出 */
+        opacity: 0;  /* Image fades out */
     }
 }
