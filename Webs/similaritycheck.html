@@ -7,9 +7,12 @@
     <link rel="icon" href="../icons/logo2.png" type="image/png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../Styles/style.css" />
     <link rel="stylesheet" type="text/css" href="../Styles/similarity.css" />
     <link rel="stylesheet" type="text/css" href="../Styles/sidebar.css" />
+    <link rel="stylesheet" type="text/css" href="../Styles/sidebar.css" />
     <link href='https://fonts.googleapis.com/css?family=Lexend Deca' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg" id="bg">
     <div class="background"></div>
@@ -101,5 +104,35 @@ return 0;
         <p class="footerdesc">#inputfooterhere</p>
     </div>
     <script src="../Scripts/similarity.js"></script>
+    <!-- HELP按鈕 -->
+    <!-- Fixed Open Button in Bottom Right Corner with Image -->
+    <a id="openFlipbookButton" class="buttonOpenFlipbook">
+        <img src="../icons/information.png" alt="Help Icon" style="vertical-align: middle; margin-right: 5px; width: 20px; height: 20px;">
+    </a>
+
+    <!-- 懸浮視窗 -->
+    <div id="overlay"></div>
+    <div id="flipbookContainer">
+        <div class="flipbook-content">
+            <div id="page1" class="page active">
+                <img src="../icons/GenerateHelp/compare.png" alt="Image 1">
+                <p>1. Enter both field: Compare</p>
+            </div>
+            <div id="page2" class="page">
+                <img src="../icons/GenerateHelp/AIDetection.png" alt="Image 2">
+                <p>2. Enter left field: AI detection</p>
+            </div>
+            <div id="page3" class="page">
+                <img src="../icons/GenerateHelp/execute.png" alt="Image 3">
+                <p>3. Execute to get result</p>
+            </div>
+            <!-- Add more pages as needed -->
+        </div>
+        <button id="prevPageButton" class="pageButton">PREV</button>
+        <button id="nextPageButton" class="pageButton">NEXT</button>
+    </div>
+    <!-- jQuery and informationHover -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../Scripts/informationHover.js"></script>   
 </body>
 </html>

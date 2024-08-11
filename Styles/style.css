@@ -890,7 +890,7 @@ div.loading, div.loading2 {
     transform: translate(-50%, -50%);
     width: 600px;
     height: 400px;
-    background-color: #808080;  /* 灰色背景 */
+    background-color: #6C7A89;  /* 灰色背景 */
     z-index: 1001;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
@@ -941,26 +941,26 @@ div.loading, div.loading2 {
 /* Previous and Next page buttons */
 .pageButton {
     position: absolute;
-    bottom: 10px;
-    padding: 10px 20px;
-    background-color: #614caf;
-    color: white;
+    bottom: 15px;
+    padding: 10px 10px;
+    background-color: #A3C6C4;
+    color: #354649;
     border: none;
-    border-radius: 5px;
+    border-radius: 15px;
     cursor: pointer;
     z-index: 1002;
 }
 
 #prevPageButton {
-    left: 10px;
+    left: 5px;
 }
 
 #nextPageButton {
-    right: 10px;
+    right: 5px;
 }
 
 .pageButton:hover {
-    background-color: #45a091;
+    background-color: #E0E7E9;
 }
 
 /* Fixed button in the bottom-right corner */
@@ -989,6 +989,7 @@ div.loading, div.loading2 {
 {
     font-family: 'Caveat', cursive;
     font-size: 45px; /* 增大字体大小 */
-    color: #25295b; /* 设置字体颜色为白色 */
+    font-weight: 700; /* 设置为粗体 */
+    color: #354649 ; /* 设置字体颜色 */
     margin: 0px 0 0 0;
 }
