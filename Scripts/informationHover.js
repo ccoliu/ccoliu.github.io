@@ -1,10 +1,25 @@
 document.getElementById('openFlipbookButton').addEventListener('click', function() {
+    const flipbookContainer = document.getElementById('flipbookContainer');
+    
+    // 创建一个新的div来显示图片
+    const pushImage = document.createElement('div');
+    pushImage.classList.add('pushImageEffect');
+    
+    // 将图片插入到 flipbookContainer 旁边
+    flipbookContainer.parentNode.insertBefore(pushImage, flipbookContainer.nextSibling);
+
+    // 当图片淡出动画结束后，移除该图片元素
+    pushImage.addEventListener('animationend', function() {
+        pushImage.remove();
+    });
+
+    // 显示和调整flipbook
     adjustFlipbookScale();
     document.getElementById('overlay').style.display = 'block';
-    document.getElementById('flipbookContainer').style.display = 'block';
+    flipbookContainer.style.display = 'block';
     document.body.classList.add('darkened');
 
-    // Reset the flipbook to the first page every time it's opened
+    // 重置翻页并设置到第一页
     resetFlipbook();
     changePage(1);
 });

@@ -7,10 +7,12 @@
     <link rel="icon" href="../icons/logo2.png" type="image/png">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../Styles/helpCard.css" />
     <link rel="stylesheet" type="text/css" href="../Styles/community.css" />
     <link rel="stylesheet" type="text/css" href="../Styles/sidebar.css" />
     <link href='https://fonts.googleapis.com/css?family=Lexend Deca' rel='stylesheet'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg" id="bg">
     <div class="background"></div>
@@ -61,5 +63,27 @@
     </div>
     <script src="../Scripts/script.js"></script>
     <script src="../Scripts/community.js"></script>
+    <!-- HELP按鈕 -->
+    <!-- Fixed Open Button in Bottom Right Corner with Image -->
+    <a id="openFlipbookButton" class="buttonOpenFlipbook">
+        <img src="../icons/information.png" alt="Help Icon" style="vertical-align: middle; margin-right: 5px; width: 20px; height: 20px;">
+        <span class="tooltipText"></span> 
+    </a>
+
+    <!-- 懸浮視窗 -->
+    <div id="overlay"></div>
+    <div id="flipbookContainer">
+        <div class="flipbook-content">
+            <div id="page1" class="page active">
+                <img src="../icons/GenerateHelp/ticket.png" alt="Image 1">
+                <p>Get history from our database</p>
+            </div>
+        </div>
+        <button id="prevPageButton" class="pageButton" disabled style="display: none;">PREV</button>
+        <button id="nextPageButton" class="pageButton" disabled style="display: none;">NEXT</button>        
+    </div>
+    <!-- jQuery and informationHover -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../Scripts/informationHover.js"></script>
 </body>
 </html>
