@@ -69,7 +69,7 @@
 /* 鼠標懸停時的效果 */
 .sidebar:hover h2 {
     transform: none; /* 取消旋轉 */
-    margin-top: 50px; /* 重置上邊距 */
+    margin-top: calc(20vh - 30%); /* 动态计算margin-top，使标题居中并在可视范围内 */
 }
 
 .sidebar ul li a:hover {

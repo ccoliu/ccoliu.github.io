@@ -97,7 +97,6 @@
         </div>
         <div class="loading2">
             <img class="loadinggif2" src="../icons/Rolling-0.7s-177px.gif" />
-            <p id="loadingText" class="loadingText">Loading...</p>
         </div>
         <h2 class="AImsg" id="AImsg" display="none">AI response (GPT-3.5)</h2>
         <textarea cols="100" rows="20" class="textOutput" id="textOutput" display="none" readonly></textarea>
@@ -105,11 +104,12 @@
     <div class="footerdesc">
         <p class="footerdesc">#inputfooterhere</p>
     </div>
-
+    <script src="../Scripts/script.js"></script>
     <!-- HELP按鈕 -->
     <!-- Fixed Open Button in Bottom Right Corner with Image -->
     <a id="openFlipbookButton" class="buttonOpenFlipbook">
         <img src="../icons/information.png" alt="Help Icon" style="vertical-align: middle; margin-right: 5px; width: 20px; height: 20px;">
+        <span class="tooltipText"></span>  
     </a>
 
     <!-- 懸浮視窗 -->

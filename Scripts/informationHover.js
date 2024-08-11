@@ -81,5 +81,26 @@ function changePage(pageNumber) {
 
 // Prevent closing the flipbook when clicking inside the flipbook container
 document.getElementById('flipbookContainer').addEventListener('click', function(event) {
-    event.stopPropagation();
+    event.stopPropagation();    
+});
+
+document.getElementById('openFlipbookButton').addEventListener('mouseover', function() {
+    const tooltipText = document.querySelector('.tooltipText');
+    tooltipText.innerHTML = ''; // 清空原始内容
+    const text = "Need Help ?";
+
+    text.split('').forEach((letter, index) => {
+        const span = document.createElement('span');
+        span.textContent = letter === ' ' ? '\u00A0' : letter;  // 使用不间断空格替换空格
+        span.style.animation = `flyIn 0.5s ease forwards ${index * 0.04}s`; // 设置动画，逐字出现
+        tooltipText.appendChild(span);
+    });
+
+    tooltipText.style.opacity = 1; // 确保tooltip可见
+});
+
+document.getElementById('openFlipbookButton').addEventListener('mouseout', function() {
+    const tooltipText = document.querySelector('.tooltipText');
+    tooltipText.style.opacity = 0; // 隐藏tooltip
+    tooltipText.innerHTML = ''; // 清空文字
 });
