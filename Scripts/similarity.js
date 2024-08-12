@@ -1,25 +1,8 @@
 //////////////IP SETTINGS/////////////////////
-const GITWEB = "https://140.118.101.66:61911/"
-const LOCALWEB = "http://127.0.0.1:5000/"
-let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
+// Simply comment the following line to switch between local and camp server
+//const GITWEB = "https://140.118.101.66:61911/"
+const GITWEB = "https://127.0.0.1:61911/"
 /////////////////////////////////////////////
-
-// window.onload = function() {
-//   serverText = document.querySelector('.server');
-//   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
-// }
-
-// let serverText = document.querySelector('.server');
-// serverText.addEventListener('click', () => {
-//   if (CURRENTWEB == LOCALWEB) {
-//     CURRENTWEB = GITWEB;
-//   } else {
-//     CURRENTWEB = LOCALWEB;
-//   }
-//   localStorage.setItem("server", CURRENTWEB);
-//   window.location.reload();
-// });
-
 
 const ServerStatus = document.querySelector('.ServerStatus');
 const ServerStatusRes = document.querySelector('.ServerStatusRes');

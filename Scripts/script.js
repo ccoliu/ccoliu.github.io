@@ -2,12 +2,12 @@
 //////////////IP SETTINGS/////////////////////
 //https://140.118.101.66:56494/ -> Generate Server
 //https://140.118.101.66:61911/ -> Analyze Server
-const GITWEB = "https://140.118.101.66:61911/"
-const LOCALWEB = "https://140.118.101.66:61911/"
-const LOCALGENERATE = "https://140.118.101.66:56494/"
+const GLOBALREST = "https://140.118.101.66:61911/"
 const GLOBALGENERATE = "https://140.118.101.66:56494/"
+const LOCALREST = "https://127.0.0.1:61911/"
+const LOCALGENERATE = "https://127.0.0.1:56494/"
 currentGenerateServerIP = LOCALGENERATE;
-let CURRENTWEB = localStorage.getItem("server") ? localStorage.getItem("server") : LOCALWEB;
+currentRestServerIP = LOCALREST;
 /////////////////////////////////////////////
 let originalTab = 1;
 let exectab = 1;
@@ -15,16 +15,11 @@ let temp = "";
 let buttonDisabled = false;
 let uploadDisabled = false;
 
-// window.onload = function() {
-//   serverText = document.querySelector('.server');
-//   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
-// }
-
 const ServerStatus = document.querySelector('.ServerStatus');
 const ServerStatusRes = document.querySelector('.ServerStatusRes');
 if (ServerStatus && ServerStatusRes) {
   if (window.location.href.includes("modify")) {
-    fetch(LOCALWEB)
+    fetch(currentRestServerIP)
     .then (response => {
       if (!response.ok) {
         ServerStatusRes.innerHTML = "Offline";
@@ -325,7 +320,7 @@ function JobAdd(data) {
                     <textarea class="AssignTitle">${Object.values(data)[0][i]}</textarea>
                 </div>
                 <div class="Jobbtn">
-                    <a class="abortbtn">Abort</a>
+                    <a class="abortbtn">Delete</a>
                 </div>`;
     document.querySelector('.JobAssignment').appendChild(newdiv);
     analysisapply();
@@ -354,7 +349,7 @@ function sendDataToAnalyzeServer(code) {
     });
   }
   console.log(recordTexts);
-  fetch(LOCALWEB + "process_code", {
+  fetch(currentRestServerIP + "process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -666,21 +661,6 @@ if (uploadButton) {
   });
 }
 
-
-// let serverText = document.querySelector('.server');
-
-// serverText.addEventListener('click', () => {
-//   if (CURRENTWEB == LOCALWEB) {
-//     CURRENTWEB = GITWEB;
-//     currentGenerateServerIP = GLOBALGENERATE;
-//   } else {
-//     CURRENTWEB = LOCALWEB;
-//     currentGenerateServerIP = LOCALWEB;
-//   }
-//   localStorage.setItem("server", CURRENTWEB);
-//   window.location.reload();
-// });
-
 if (newtab) {
   newtab.addEventListener('click', () => {
     originalTab++;
@@ -746,7 +726,7 @@ if (document.querySelector('.JobAssignment')) {
                       <textarea class="AssignTitle" placeholder="Add new job assignment here..."></textarea>
                   </div>
                   <div class="Jobbtn">
-                      <a class="abortbtn">Abort</a>
+                      <a class="abortbtn">Delete</a>
         </div>`;
       document.querySelector('.JobAssignment').appendChild(newdiv);
       createNewJobBtn();

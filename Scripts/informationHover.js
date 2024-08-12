@@ -1,25 +1,25 @@
 document.getElementById('openFlipbookButton').addEventListener('click', function() {
     const flipbookContainer = document.getElementById('flipbookContainer');
     
-    // 创建一个新的div来显示图片
+    // Create a new div to display the image
     const pushImage = document.createElement('div');
     pushImage.classList.add('pushImageEffect');
     
-    // 将图片插入到 flipbookContainer 旁边
+    // Insert the image next to the flipbookContainer
     flipbookContainer.parentNode.insertBefore(pushImage, flipbookContainer.nextSibling);
 
-    // 当图片淡出动画结束后，移除该图片元素
+    // Remove the image element after the fade-out animation ends
     pushImage.addEventListener('animationend', function() {
         pushImage.remove();
     });
 
-    // 显示和调整flipbook
+    // Show and adjust the flipbook
     adjustFlipbookScale();
     document.getElementById('overlay').style.display = 'block';
     flipbookContainer.style.display = 'block';
     document.body.classList.add('darkened');
 
-    // 重置翻页并设置到第一页
+    // Reset the flipbook and set it to the first page
     resetFlipbook();
     changePage(1);
 });
@@ -101,21 +101,21 @@ document.getElementById('flipbookContainer').addEventListener('click', function(
 
 document.getElementById('openFlipbookButton').addEventListener('mouseover', function() {
     const tooltipText = document.querySelector('.tooltipText');
-    tooltipText.innerHTML = ''; // 清空原始内容
+    tooltipText.innerHTML = ''; // Clear original content
     const text = "Need Help ?";
 
     text.split('').forEach((letter, index) => {
         const span = document.createElement('span');
-        span.textContent = letter === ' ' ? '\u00A0' : letter;  // 使用不间断空格替换空格
-        span.style.animation = `flyIn 0.5s ease forwards ${index * 0.04}s`; // 设置动画，逐字出现
+        span.textContent = letter === ' ' ? '\u00A0' : letter;  // Replace space with non-breaking space
+        span.style.animation = `flyIn 0.5s ease forwards ${index * 0.04}s`; // Set animation for each letter to appear gradually
         tooltipText.appendChild(span);
     });
 
-    tooltipText.style.opacity = 1; // 确保tooltip可见
+    tooltipText.style.opacity = 1; // Ensure the tooltip is visible
 });
 
 document.getElementById('openFlipbookButton').addEventListener('mouseout', function() {
     const tooltipText = document.querySelector('.tooltipText');
-    tooltipText.style.opacity = 0; // 隐藏tooltip
-    tooltipText.innerHTML = ''; // 清空文字
+    tooltipText.style.opacity = 0; // Hide the tooltip
+    tooltipText.innerHTML = ''; // Clear the text
 });

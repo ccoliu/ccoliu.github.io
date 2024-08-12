@@ -573,4 +573,4 @@ elif SERVER_TYPE == "https":
     if __name__ == "__main__":
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(certfile=cert_path, keyfile=key_path)
-        app.run(host='0.0.0.0', port=5001, ssl_context=context)
+        app.run(host='0.0.0.0', port=56494, ssl_context=context)
