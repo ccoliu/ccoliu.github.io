@@ -58,13 +58,29 @@ if (ServerStatus && ServerStatusRes) {
 
 if (ServerStatusRes) {
   ServerStatusRes.addEventListener('click', () => {
-    if (window.location.href.includes("modify"))
-      {
-        window.open(LOCALWEB, '_blank');
-      }
-    else {
-      window.open(currentGenerateServerIP, '_blank');
+    let targetURL;
+    if (window.location.href.includes("modify")) {
+      targetURL = currentRestServerIP;
+    } else {
+      targetURL = currentGenerateServerIP;
     }
+
+    // 使用 fetch 檢查目標頁面是否存在
+    fetch(targetURL)
+      .then(response => {
+        if (response.status === 404) {
+          // 如果返回 404，轉跳到自訂的 404 HTML 頁面
+          window.location.href = '../Webs/404.html';
+        } else {
+          // 如果頁面存在，進行跳轉
+          window.location.href = targetURL;
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching the URL:', error);
+        // 如果出現錯誤，也轉跳到自訂的 404 HTML 頁面
+        window.location.href = '../Webs/404.html';
+      });
   });
 }
 

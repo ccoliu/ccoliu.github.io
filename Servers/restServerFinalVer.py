@@ -15,7 +15,7 @@ def resource_path(relative_path):
 
 # Import necessary libraries
 from openai import OpenAI  # OpenAI API
-from flask import Flask, request, jsonify  # Flask interface
+from flask import Flask, request, jsonify, redirect  # Flask interface
 from flask_cors import CORS
 
 import ssl  # Local https key
@@ -276,10 +276,20 @@ def modifyDependency(inputString):
 
 
 # Display the server's web page use for debugging.
+# @app.route("/", methods=["GET"])
+# def index():
+#     helloWorld = "Welcome! This is the Code Assistance's Modify Server!"
+#     return helloWorld
+
+
 @app.route("/", methods=["GET"])
 def index():
-    helloWorld = "Welcome! This is the Code Assistance's Modify Server!"
-    return helloWorld
+    # 取得發出請求的來源 URL
+    referrer = request.referrer
+    if referrer:
+        return redirect(referrer)
+    else:
+        return "No referrer found, this is the default page."
 
 
 def processEachTab(code, results, index, dependedArray):

@@ -14,7 +14,7 @@ def resource_path(relative_path):
 
 
 # For Flask server
-from flask import Flask, request, jsonify  # Flask interface
+from flask import Flask, request, jsonify, redirect  # Flask interface
 from flask_cors import CORS
 
 # Import necessary libraries
@@ -505,10 +505,20 @@ mainProblem = ""
 
 
 # Define the routes, this one is default route to display the server is running.
+# @app.route("/", methods=["GET"])
+# def index():
+#     helloWorld = "Welcome! This is the Code Assistance's Generate Server!"
+#     return helloWorld
+
+
 @app.route("/", methods=["GET"])
 def index():
-    helloWorld = "Welcome! This is the Code Assistance's Generate Server!"
-    return helloWorld
+    # 取得發出請求的來源 URL
+    referrer = request.referrer
+    if referrer:
+        return redirect(referrer)
+    else:
+        return "No referrer found, this is the default page."
 
 
 # This route is for the frontend analysis the code and generate the worksheet for the team to solve the problem.
