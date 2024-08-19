@@ -14,7 +14,7 @@ def resource_path(relative_path):
 
 
 # For Flask server
-from flask import Flask, request, jsonify, redirect  # Flask interface
+from flask import Flask, request, jsonify, redirect, Response  # Flask interface
 from flask_cors import CORS
 
 # Import necessary libraries
@@ -454,14 +454,21 @@ def jobWorker(mainTarget, role, job, inputProgress, barrier):
     barrier.wait()
 
 
+# Variables for progress bar
+
+progressBar_current = 0
+progressBar_total = 0
+
+
 # The main function to start the processing all of the jobs.
 def startProcessing(mainTarget, roles, jobArray, layerIndex):
     # The shared variable to store the current progress of the project.
-    global currentProgress
+    global currentProgress, progressBar_current, progressBar_total
 
     # The thread pool to store all the threads in this layer.
     threads = []
-    total_jobs = len(layerIndex)
+    progressBar_total = len(jobArray)
+    progressBar_current = 0
 
     # Set the layer index to the set to avoid the duplicate layer.
     for layer in set(layerIndex):
@@ -491,6 +498,8 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
 
             threads.append(thread)
             thread.start()
+
+        progressBar_current += len(jobLayers)
 
         for thread in threads:
             thread.join()
@@ -573,6 +582,41 @@ def execute_steps():
         return jsonify({"result": finalOutputCode, "id": str(dataId)})
     except Exception as e:
         return jsonify({"error": str(e)})
+
+
+# SSE Test Zone
+
+
+@app.route('/stream')
+def stream():
+    def event_stream():
+        global progressBar_current, progressBar_total
+        try:
+            while progressBar_current < progressBar_total or progressBar_total == 0:
+                progress_message = f"{progressBar_current},{progressBar_total}\n"
+                yield f"data: {progress_message}\n\n"
+                print('Progress:', progress_message)
+                time.sleep(1)
+
+            progress_message = f"{progressBar_total},{progressBar_total}\n"
+            yield f"data: {progress_message}\n\n"
+            print('Final Progress:', progress_message)
+
+            # 確保最後一條消息發送出去
+            time.sleep(0.5)
+
+            # 發送後端處理完成的訊息
+            return
+        except GeneratorExit:
+            print("Client disconnected gracefully.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        finally:
+            progressBar_total = 0
+            progressBar_current = 0
+
+    return Response(event_stream(), content_type='text/event-stream')
 
 
 # Condtion to pick which server to use.

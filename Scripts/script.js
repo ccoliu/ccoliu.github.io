@@ -78,11 +78,18 @@ if (ServerStatusRes) {
       })
       .catch(error => {
         console.error('Error fetching the URL:', error);
-        // 如果出現錯誤，也轉跳到自訂的 404 HTML 頁面
-        window.location.href = '../Webs/404.html';
+        // 如果是 SSL 錯誤，不跳轉，讓瀏覽器進行處理
+        if (error.message.includes('SSL')) {
+          console.warn('SSL certificate issue detected. Please use the browser’s advanced options to proceed.');
+          // 這裡可以選擇不做任何跳轉，讓用戶自己選擇
+        } else {
+          // 如果是其他錯誤，才跳轉到 404 頁面
+          window.location.href = '../Webs/404.html';
+        }
       });
   });
 }
+
 
 
 
@@ -914,3 +921,36 @@ if (buttonrightarrow) {
     textOutput.value = responses[currentTab - 1];
   });
 }
+
+//SSE Test Code
+
+document.querySelector(".buttonExecute").addEventListener("click", function() {
+  // 显示弹出框
+  var popup = document.getElementById("progressPopup");
+  popup.style.display = "block";
+
+  // 初始化 EventSource
+  const eventSource = new EventSource(currentGenerateServerIP + 'stream');
+
+  eventSource.onmessage = function(event) {
+      const [current, total] = event.data.split(',').map(Number);
+      const percentage = Math.floor((current / total) * 100); // 計算百分比
+
+      // 更新进度条宽度
+      const progressBar = document.getElementById('progress-bar');
+      updateProgress(percentage);
+
+      // 更新进度文本
+      document.getElementById("progressText").innerText = `Progress: ${current}/${total} (${percentage}%)`;
+  };
+
+  eventSource.onerror = function() {
+      document.getElementById("progressText").innerText = "Error receiving progress updates.";
+      // 可以在这里添加错误处理的逻辑
+  };
+
+  document.getElementById("closePopup").addEventListener("click", function() {
+      popup.style.display = "none";
+      eventSource.close();
+  });
+});
