@@ -925,10 +925,6 @@ if (buttonrightarrow) {
 //SSE Test Code
 
 document.querySelector(".buttonExecute").addEventListener("click", function() {
-  // 显示弹出框
-  var popup = document.getElementById("progressPopup");
-  popup.style.display = "block";
-
   // 初始化 EventSource
   const eventSource = new EventSource(currentGenerateServerIP + 'stream');
 
@@ -936,21 +932,10 @@ document.querySelector(".buttonExecute").addEventListener("click", function() {
       const [current, total] = event.data.split(',').map(Number);
       const percentage = Math.floor((current / total) * 100); // 計算百分比
 
-      // 更新进度条宽度
-      const progressBar = document.getElementById('progress-bar');
       updateProgress(percentage);
-
-      // 更新进度文本
-      document.getElementById("progressText").innerText = `Progress: ${current}/${total} (${percentage}%)`;
   };
 
   eventSource.onerror = function() {
       document.getElementById("progressText").innerText = "Error receiving progress updates.";
-      // 可以在这里添加错误处理的逻辑
   };
-
-  document.getElementById("closePopup").addEventListener("click", function() {
-      popup.style.display = "none";
-      eventSource.close();
-  });
 });
