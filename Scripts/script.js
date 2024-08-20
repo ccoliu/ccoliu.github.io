@@ -922,20 +922,38 @@ if (buttonrightarrow) {
   });
 }
 
-//SSE Test Code
-
 document.querySelector(".buttonExecute").addEventListener("click", function() {
-  // 初始化 EventSource
+  // Create a new EventSource to receive progress updates.
   const eventSource = new EventSource(currentGenerateServerIP + 'stream');
 
-  eventSource.onmessage = function(event) {
-      const [current, total] = event.data.split(',').map(Number);
-      const percentage = Math.floor((current / total) * 100); // 計算百分比
+  // Track if connection has been closed
+  let connectionClosed = false;
 
+  // If the server sends a message, decode the message and update the progress bar.
+  eventSource.onmessage = function(event) {
+      if (connectionClosed) return;
+
+      // Decode the message since the server sends a string in the format "current,total".
+      const [current, total] = event.data.split(',').map(Number);
+      // Calculate the percentage of the progress.
+      const percentage = Math.floor((current / total) * 100);
+      // Update the progress bar with the new percentage.
       updateProgress(percentage);
+
+      // If the progress is 100%, close the connection after the progress bar is updated.
+      if (percentage === 100) {
+          connectionClosed = true; // Mark connection as closed
+          eventSource.close(); // Close the EventSource connection
+          updateProgress(0); // Reset the progress bar
+          console.log("Progress completed, connection closed.");
+      }
   };
 
   eventSource.onerror = function() {
-      document.getElementById("progressText").innerText = "Error receiving progress updates.";
+      if (!connectionClosed) {
+          // If there is an error, the progress should be reset.
+          updateProgress(0);
+          eventSource.close(); // Ensure the connection is closed on error
+      }
   };
 });

@@ -96,6 +96,32 @@
                 }
             }, { once: true });
         }
+
+        // 測試函式，模擬進度條的運行
+        function testProgressBar() {
+            const testSteps = [10, 15, 33, 60, 80, 50, 100];
+            let stepIndex = 0;
+
+            const progressInterval = setInterval(() => {
+                if (stepIndex < testSteps.length) {
+                    updateProgress(testSteps[stepIndex]);
+                    stepIndex++;
+                } else {
+                    clearInterval(progressInterval);
+
+                    // 測試完成後重置進度條
+                    setTimeout(() => {
+                        const progressBar = document.getElementById('progress-bar');
+                        progressBar.style.width = '0%';
+                    }, 1000); // 一秒後重置
+                }
+            }, 3000); // 每三秒更新一次
+        }
+
+        // 在頁面載入完成後自動測試進度條
+        document.addEventListener('DOMContentLoaded', () => {
+            testProgressBar();
+        });
     </script>
 </body>
 </html>

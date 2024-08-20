@@ -584,34 +584,37 @@ def execute_steps():
         return jsonify({"error": str(e)})
 
 
-# SSE Test Zone
-
-
+# SSE Streaming route
+# This route is for the frontend to get the progress of the project.
 @app.route('/stream')
 def stream():
     def event_stream():
+        # To get the global variable of cuurent progress and total progress.
         global progressBar_current, progressBar_total
+
         try:
+            # Loop until the progress bar is full.
             while progressBar_current < progressBar_total or progressBar_total == 0:
                 progress_message = f"{progressBar_current},{progressBar_total}\n"
                 yield f"data: {progress_message}\n\n"
                 print('Progress:', progress_message)
-                time.sleep(1)
+                # Sleep for 2 seconds then continue the loop.
+                time.sleep(2)
 
+            # Since the last message won't be sent, we need to send the final message.
             progress_message = f"{progressBar_total},{progressBar_total}\n"
             yield f"data: {progress_message}\n\n"
             print('Final Progress:', progress_message)
 
-            # 確保最後一條消息發送出去
-            time.sleep(0.5)
-
-            # 發送後端處理完成的訊息
+            # Make sure the last message is send before the return.
+            time.sleep(1.5)
             return
         except GeneratorExit:
             print("Client disconnected gracefully.")
         except Exception as e:
             print(f"An error occurred: {e}")
 
+        # The progress bar is done, so we need to reset the progress bar.
         finally:
             progressBar_total = 0
             progressBar_current = 0
@@ -620,6 +623,7 @@ def stream():
 
 
 # Condtion to pick which server to use.
+# When Server is only for testing, use http, otherwise use https.
 if SERVER_TYPE == "http":
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5001)

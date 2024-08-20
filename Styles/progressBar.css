@@ -1,14 +1,3 @@
-body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #1a1a1a;
-    font-family: 'Arial', sans-serif;
-}
-
 #progress-container {
     width: 80%;
     background: linear-gradient(90deg, #0a0a0a, #1f1f1f);
@@ -26,7 +15,7 @@ body {
     box-shadow: 0 0 15px #0072ff, 0 0 20px #00c6ff, inset 0 2px 4px rgba(0, 0, 0, 0.5);
     position: relative;
     overflow: hidden;
-    transition: width 1s ease; /* 使用 transition 实现平滑过渡 */
+    transition: width 1s ease;
 }
 
 #progress-bar::before {
