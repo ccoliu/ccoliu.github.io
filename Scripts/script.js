@@ -821,7 +821,8 @@ if (executebtn) {
       return;
     }
     console.log(steps);
-    document.querySelector('.loadinggif2').style.display = "flex";
+    // Mod 20240820 test
+    document.querySelector('.loadinggif2').style.display = "none";
     fetch(currentGenerateServerIP + "execute_steps", {
       method: "POST",
       headers: {
@@ -923,37 +924,43 @@ if (buttonrightarrow) {
 }
 
 document.querySelector(".buttonExecute").addEventListener("click", function() {
-  // Create a new EventSource to receive progress updates.
+  // 获取进度条容器
+  const progressContainer = document.getElementById("progress-container");
+
+  // 显示进度条容器
+  progressContainer.classList.add('show');
+
+  // 创建一个新的 EventSource 来接收进度更新
   const eventSource = new EventSource(currentGenerateServerIP + 'stream');
 
-  // Track if connection has been closed
   let connectionClosed = false;
 
-  // If the server sends a message, decode the message and update the progress bar.
   eventSource.onmessage = function(event) {
       if (connectionClosed) return;
 
-      // Decode the message since the server sends a string in the format "current,total".
       const [current, total] = event.data.split(',').map(Number);
-      // Calculate the percentage of the progress.
       const percentage = Math.floor((current / total) * 100);
-      // Update the progress bar with the new percentage.
       updateProgress(percentage);
 
-      // If the progress is 100%, close the connection after the progress bar is updated.
       if (percentage === 100) {
-          connectionClosed = true; // Mark connection as closed
-          eventSource.close(); // Close the EventSource connection
-          updateProgress(0); // Reset the progress bar
+          setTimeout(() => updateProgress(0), 4000); // Back to 0% after 4 seconds
+          connectionClosed = true;
+          eventSource.close(); 
           console.log("Progress completed, connection closed.");
       }
   };
 
   eventSource.onerror = function() {
       if (!connectionClosed) {
-          // If there is an error, the progress should be reset.
           updateProgress(0);
-          eventSource.close(); // Ensure the connection is closed on error
+          eventSource.close();
+          progressContainer.classList.remove('show'); 
       }
   };
 });
+
+function updateProgress(percentage) {
+    const progressBar = document.getElementById("progress-bar");
+    progressBar.style.width = percentage + "%";
+}
+
