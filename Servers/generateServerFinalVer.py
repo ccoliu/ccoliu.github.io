@@ -2,6 +2,7 @@ import os
 import sys
 
 
+# Function to get the resource path for the files for packaging.
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
@@ -467,7 +468,7 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
 
     # The thread pool to store all the threads in this layer.
     threads = []
-    progressBar_total = len(jobArray)
+    progressBar_total = len(jobArray) + 1
     progressBar_current = 0
 
     # Set the layer index to the set to avoid the duplicate layer.
@@ -556,7 +557,7 @@ def gen_code():
 @app.route("/execute_steps", methods=["POST"])
 def execute_steps():
     try:
-        global mainProblem, currentProgress
+        global mainProblem, currentProgress, progressBar_current, progressBar_total
         data = request.get_json()
         # Should deal with the arrays that send back.
         newJobs = data.get('steps', [])
@@ -571,8 +572,11 @@ def execute_steps():
         # Start the processing of the jobs.
         finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
         # This must be done before sending the final output to the frontend.
+        # Remember this is a job too.
         finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
+        progressBar_current += 1
 
+        time.sleep(1)
         summary = describeCode(finalOutputCode)
 
         dataId = dbTools.insertGenerateData(

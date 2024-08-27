@@ -3,7 +3,8 @@
 //https://140.118.101.66:56494/ -> Generate Server
 //https://140.118.101.66:61911/ -> Analyze Server
 const GLOBALREST = "https://140.118.101.66:61911/"
-const GLOBALGENERATE = "https://140.118.101.66:56494/"
+//const GLOBALGENERATE = "https://140.118.101.66:56494/"
+const GLOBALGENERATE = "https://192.168.0.241:56494/"
 const LOCALREST = "https://127.0.0.1:61911/"
 const LOCALGENERATE = "https://127.0.0.1:56494/"
 currentGenerateServerIP = LOCALGENERATE;
@@ -55,41 +56,27 @@ if (ServerStatus && ServerStatusRes) {
     });
   }
 }
+//----------------------------------------------
+const isMaintenance = false;
 
 if (ServerStatusRes) {
   ServerStatusRes.addEventListener('click', () => {
-    let targetURL;
-    if (window.location.href.includes("modify")) {
-      targetURL = currentRestServerIP;
-    } else {
-      targetURL = currentGenerateServerIP;
+    if (isMaintenance === true)
+    {
+      window.location.href = '../Webs/404.html';
     }
-
-    // 使用 fetch 檢查目標頁面是否存在
-    fetch(targetURL)
-      .then(response => {
-        if (response.status === 404) {
-          // 如果返回 404，轉跳到自訂的 404 HTML 頁面
-          window.location.href = '../Webs/404.html';
-        } else {
-          // 如果頁面存在，進行跳轉
-          window.location.href = targetURL;
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching the URL:', error);
-        // 如果是 SSL 錯誤，不跳轉，讓瀏覽器進行處理
-        if (error.message.includes('SSL')) {
-          console.warn('SSL certificate issue detected. Please use the browser’s advanced options to proceed.');
-          // 這裡可以選擇不做任何跳轉，讓用戶自己選擇
-        } else {
-          // 如果是其他錯誤，才跳轉到 404 頁面
-          window.location.href = '../Webs/404.html';
-        }
-      });
+    else
+    {
+      if (window.location.href.includes("generate")) {
+        window.location.href = currentGenerateServerIP;
+      }
+      else {
+        window.location.href = currentRestServerIP;
+      }
+    }
   });
 }
-
+//----------------------------------------------
 
 
 
@@ -923,29 +910,43 @@ if (buttonrightarrow) {
   });
 }
 
+// Function to update the progress bar
 document.querySelector(".buttonExecute").addEventListener("click", function() {
-  // 获取进度条容器
+  // Get the progress bar container
   const progressContainer = document.getElementById("progress-container");
-
-  // 显示进度条容器
+  // Display the progress bar
   progressContainer.classList.add('show');
 
-  // 创建一个新的 EventSource 来接收进度更新
+  // Create a new EventSource
   const eventSource = new EventSource(currentGenerateServerIP + 'stream');
-
+  // Flag to check if the connection is closed
   let connectionClosed = false;
+  // Flag contorl the start progress of the progress bar
+  let startVison = false;
 
   eventSource.onmessage = function(event) {
       if (connectionClosed) return;
 
+      // Start the progress bar
+      if (!startVison) {
+          startVison = true;
+          updateProgress(10);
+      }
+
+      // Decode the message
       const [current, total] = event.data.split(',').map(Number);
+      // Calculate the percentage
       const percentage = Math.floor((current / total) * 100);
+      // Update the progress bar
       updateProgress(percentage);
 
+      // Close the connection when the progress is 100%
       if (percentage === 100) {
-          setTimeout(() => updateProgress(0), 4000); // Back to 0% after 4 seconds
+          setTimeout(() => updateProgress(0), 1000); // Back to 0% after 4 seconds
           connectionClosed = true;
-          eventSource.close(); 
+          startVison = false;
+          eventSource.close();
+          // Wirte the msg to the console 
           console.log("Progress completed, connection closed.");
       }
   };
@@ -958,9 +959,3 @@ document.querySelector(".buttonExecute").addEventListener("click", function() {
       }
   };
 });
-
-function updateProgress(percentage) {
-    const progressBar = document.getElementById("progress-bar");
-    progressBar.style.width = percentage + "%";
-}
-
