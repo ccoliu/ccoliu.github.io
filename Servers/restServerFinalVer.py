@@ -23,7 +23,6 @@ from bson import json_util  # For MongoDB may use the json_util
 import threading
 
 # Import self defined classes
-from trainingClass import TrainingTool
 from dataBase import dataBaseTools
 
 # Set up SSL key for Flask to use https.
@@ -38,7 +37,6 @@ app = Flask(__name__)
 CORS(app)
 
 # Create instances of self defined classes
-fineTuneTools = TrainingTool()
 dbTools = dataBaseTools()
 
 # Read API keys from key file.
