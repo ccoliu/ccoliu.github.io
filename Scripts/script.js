@@ -57,7 +57,7 @@ if (ServerStatus && ServerStatusRes) {
   }
 }
 //----------------------------------------------
-const isMaintenance = true;
+const isMaintenance = false;
 
 if (ServerStatusRes) {
   ServerStatusRes.addEventListener('click', () => {
