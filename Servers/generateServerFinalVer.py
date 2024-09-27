@@ -45,8 +45,8 @@ client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 # Set up SSL key for Flask to use https.
-cert_path = resource_path('C:/Users/frgnd/OneDrive/Documents/CS Project/ccoliu.github.io/certificate.crt')
-key_path = resource_path('C:/Users/frgnd/OneDrive/Documents/CS Project/ccoliu.github.io/private_key.key')
+cert_path = resource_path('certificate.crt')
+key_path = resource_path('private_key.key')
 
 # Set the server type to https or http
 SERVER_TYPE = "http"
