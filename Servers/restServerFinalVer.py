@@ -27,11 +27,11 @@ from trainingClass import TrainingTool
 from dataBase import dataBaseTools
 
 # Set up SSL key for Flask to use https.
-cert_path = resource_path('C:/Users/whps9/ccoliu.github.io/certificate.crt')
-key_path = resource_path('C:/Users/whps9/ccoliu.github.io/private_key.key')
+cert_path = resource_path('C:/Users/frgnd/OneDrive/Documents/CS Project/ccoliu.github.io/certificate.crt')
+key_path = resource_path('C:/Users/frgnd/OneDrive/Documents/CS Project/ccoliu.github.io/private_key.key')
 
 # Set the server type to https or http
-SERVER_TYPE = "https"
+SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)

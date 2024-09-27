@@ -1,7 +1,7 @@
 //////////////IP SETTINGS/////////////////////
 // Simply comment the following line to switch between local and camp server
 //const GITWEB = "https://140.118.101.66:61911/"
-const GITWEB = "https://127.0.0.1:61911/"
+const GITWEB = "http://127.0.0.1:5000/"
 /////////////////////////////////////////////
 
 const ServerStatus = document.querySelector('.ServerStatus');

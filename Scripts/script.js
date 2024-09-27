@@ -4,11 +4,11 @@
 //https://140.118.101.66:61911/ -> Analyze Server
 const GLOBALREST = "https://140.118.101.66:61911/"
 //const GLOBALGENERATE = "https://140.118.101.66:56494/"
-const GLOBALGENERATE = "https://192.168.0.241:56494/"
+const GLOBALGENERATE = "https://140.118.101.66:56494/"
 const LOCALREST = "https://127.0.0.1:61911/"
 const LOCALGENERATE = "https://127.0.0.1:56494/"
-currentGenerateServerIP = LOCALGENERATE;
-currentRestServerIP = LOCALREST;
+currentGenerateServerIP = GLOBALGENERATE;
+currentRestServerIP = GLOBALREST;
 /////////////////////////////////////////////
 let originalTab = 1;
 let exectab = 1;
@@ -57,7 +57,7 @@ if (ServerStatus && ServerStatusRes) {
   }
 }
 //----------------------------------------------
-const isMaintenance = true;
+const isMaintenance = false;
 
 if (ServerStatusRes) {
   ServerStatusRes.addEventListener('click', () => {
