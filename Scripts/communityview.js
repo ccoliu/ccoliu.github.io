@@ -32,7 +32,7 @@ function sendCode(dataChunk) {
     let comment = dataChunk.comment;
     let id = dataChunk.id;
     setTimeout(() => {
-        fetch(GITWEB+"viewer_comment", {
+        fetch(GLOBALREST+"viewer_comment", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ window.onload = () => {
     else {
         console.log(locationsplit);
     }
-    fetch(GITWEB+"viewData", {
+    fetch(GLOBALREST+"viewData", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

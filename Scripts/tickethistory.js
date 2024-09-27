@@ -17,7 +17,7 @@ function sendCode(dataChunk) {
     let id = dataChunk.id;
 
     setTimeout(() => {
-        fetch(GITWEB+"retrieve_comment", {
+        fetch(GLOBALREST+"retrieve_comment", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
