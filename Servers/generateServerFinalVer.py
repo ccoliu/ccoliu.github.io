@@ -1,5 +1,6 @@
 import os
 import sys
+import configparser  # For reading the config file (ini file)
 
 
 # Function to get the resource path for the files for packaging.
@@ -30,6 +31,22 @@ from dataBase import dataBaseTools
 
 dbTools = dataBaseTools()
 
+# Set the server type to https or http
+SERVER_TYPE = "https"
+
+# Get current path
+current_path = os.path.dirname(os.path.realpath(__file__))
+# Get the ini file path
+config_file_path = os.path.join(current_path, "Config.ini")
+# Get the config tool to manage the config file
+configTool = configparser.ConfigParser()
+
+if not os.path.exists(config_file_path):
+    raise FileNotFoundError(f"Config file not found at: {config_file_path}")
+else:
+    configTool.read(config_file_path)
+    SERVER_TYPE = configTool["ServerSettings"]["ConnectionType"]
+
 # Read API keys from key file using resource_path function
 key_file_path = resource_path("key.txt")
 with open(key_file_path, "r") as file:
@@ -48,8 +65,6 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 cert_path = resource_path('certificate.crt')
 key_path = resource_path('private_key.key')
 
-# Set the server type to https or http
-SERVER_TYPE = "http"
 
 # Create a Flask app
 app = Flask(__name__)
