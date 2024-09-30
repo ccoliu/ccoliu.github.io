@@ -1,9 +1,26 @@
-import os
+# ---------------------------------------------------
+# Author:Daniel Hsiao (Github: whps970083), ccoliu
+# Date: 2024/10/01
+# Version: <V10.0.0.0>
+# ---------------------------------------------------
+
+import os  # System imports
 import sys
 import configparser  # For reading the config file (ini file)
+from flask import Flask, request, jsonify, redirect, Response  # For Flask server
+from flask_cors import CORS  # For Flask server
+from openai import OpenAI  # OpenAI API
+import os
+import time
+import threading
+import random
+import ssl  # Local https key
+
+# Self-defined imports
+from dataBase import dataBaseTools
 
 
-# Function to get the resource path for the files for packaging.
+# Function to get the file path after packaging
 def resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
@@ -15,37 +32,26 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# For Flask server
-from flask import Flask, request, jsonify, redirect, Response  # Flask interface
-from flask_cors import CORS
-
-# Import necessary libraries
-from openai import OpenAI  # OpenAI API
-import os
-import time
-import threading
-import random
-import ssl  # Local https key
-
-from dataBase import dataBaseTools
-
 dbTools = dataBaseTools()
 
-# Set the server type to https or http
+# Initialize the connection type to https
 SERVER_TYPE = "https"
 
-# Get current path
+# Get current file path
 current_path = os.path.dirname(os.path.realpath(__file__))
 # Get the ini file path
 config_file_path = os.path.join(current_path, "Config.ini")
 # Get the config tool to manage the config file
 configTool = configparser.ConfigParser()
 
+# Check if the config file exists
 if not os.path.exists(config_file_path):
     raise FileNotFoundError(f"Config file not found at: {config_file_path}")
 else:
     configTool.read(config_file_path)
+    # Get the connection type from the config file
     SERVER_TYPE = configTool["ServerSettings"]["ConnectionType"]
+
 
 # Read API keys from key file using resource_path function
 key_file_path = resource_path("key.txt")
