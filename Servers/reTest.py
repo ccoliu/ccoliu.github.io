@@ -5,34 +5,16 @@ import configparser  # For reading the config file (ini file)
 from flask import Flask, request, jsonify, redirect, Response  # For Flask server
 from flask_cors import CORS  # For Flask server
 from openai import OpenAI  # OpenAI API
-import os
 import time
 import threading
 import random
-import ssl  # Local https key
 
 # Self-defined imports
 from dataBase import dataBaseTools
 
+import FormatEnforcer
 
-def is_valid_worksheet_format(input_string):
-    # 將輸入按行分割，並移除每行的前後空白字符，過濾掉空行
-    lines = [line.strip() for line in input_string.strip().split('\n') if line.strip()]
-
-    # 檢查開頭和 Main problem 部分
-    if not re.match(r'^\s*Worksheet\s*$', lines[0]):  # 忽略開頭空格
-        return False
-    if not re.match(r'^\s*Main problem:\s*', lines[1]):  # 忽略 Main problem 後的空格
-        return False
-
-    # 檢查中間的 Member message: 是否正確，忽略空格
-    for line in lines[2:]:
-        if not re.match(
-            r'^\s*Member message:\s*Help me\s+', line
-        ):  # 忽略 Member message: 和 Help me 之間的空格
-            return False
-
-    return True  # 所有檢查通過，返回 True
+testEnforcer = FormatEnforcer.Enforcer()
 
 
 # Function to get the file path after packaging
@@ -104,24 +86,11 @@ def createWorkSheet(request, language):
     return workSheet.choices[0].message.content
 
 
-def strictlyFollowFormat(inputFunction, *args, **kwargs):
-    flag = False  # 設定一個標誌，用來判斷是否已經通過格式檢查
-    timesCount = 0  # 計數器，用來記錄嘗試次數
-    while not flag:  # 當格式尚未通過檢查時，持續迴圈
-        result = inputFunction(*args, **kwargs)  # 呼叫傳入的函數並取得結果
-        # 檢查格式是否有效
-        if is_valid_worksheet_format(result):
-            flag = True  # 若格式有效，將標誌設為 True 結束迴圈
-        else:
-            timesCount += 1  # 格式無效時，計數器加1
-            if timesCount > 8:  # 若嘗試次數超過8次，強制結束迴圈
-                flag = True
-
-    return result  # 返回最終結果（無論格式是否有效）
-
-
 print(
-    strictlyFollowFormat(
-        createWorkSheet, "Create a program that can calculate the sum of two numbers.", "C++"
+    testEnforcer.strictlyFollowFormat(
+        createWorkSheet,
+        testEnforcer.is_valid_worksheet_format,
+        "Create a program that can move a player around using console",
+        "C++",
     )
 )
