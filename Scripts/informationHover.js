@@ -139,7 +139,7 @@ let idleTooltipVisible = false; // To track if the idle tooltip is currently vis
 
 function startIdleTimer() {
     clearTimeout(idleTimer); // Reset timer whenever there's activity
-    idleTimer = setTimeout(showIdleTooltip, 15000); // Show "Need Help?" after 35 seconds of inactivity
+    idleTimer = setTimeout(showIdleTooltip, 5000); // Set the timer to show the idle tooltip after 5 seconds
 }
 
 // Function to show idle "Need Help?" tooltip
