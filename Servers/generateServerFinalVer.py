@@ -1,5 +1,5 @@
 # ---------------------------------------------------
-# Author:Daniel Hsiao (Github: whps970083), ccoliu
+# Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
 # Date: 2024/10/01
 # Version: <V10.0.0.0>
 # ---------------------------------------------------
@@ -32,9 +32,10 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+# Initialize Tools
 dbTools = dataBaseTools()
 
-# Initialize the connection type to https
+# Initialize some variables
 SERVER_TYPE = "https"
 
 # Get current file path
@@ -535,13 +536,6 @@ currentProgress = ""
 mainProblem = ""
 
 
-# Define the routes, this one is default route to display the server is running.
-# @app.route("/", methods=["GET"])
-# def index():
-#     helloWorld = "Welcome! This is the Code Assistance's Generate Server!"
-#     return helloWorld
-
-
 @app.route("/", methods=["GET"])
 def index():
     # 取得發出請求的來源 URL
@@ -549,7 +543,7 @@ def index():
     if referrer:
         return redirect(referrer)
     else:
-        return "No referrer found, this is the default page."
+        return "Unblock generate mode successfully! Now you can reutrn to the previous page and start to generate the code."
 
 
 # This route is for the frontend analysis the code and generate the worksheet for the team to solve the problem.

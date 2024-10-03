@@ -99,7 +99,8 @@ document.getElementById('flipbookContainer').addEventListener('click', function(
     event.stopPropagation();    
 });
 
-document.getElementById('openFlipbookButton').addEventListener('mouseover', function() {
+// Tooltip display function
+function showTooltip() {
     const tooltipText = document.querySelector('.tooltipText');
     tooltipText.innerHTML = ''; // Clear original content
     const text = "Need Help ?";
@@ -112,10 +113,58 @@ document.getElementById('openFlipbookButton').addEventListener('mouseover', func
     });
 
     tooltipText.style.opacity = 1; // Ensure the tooltip is visible
-});
+}
 
-document.getElementById('openFlipbookButton').addEventListener('mouseout', function() {
+// Tooltip hide function
+function hideTooltip() {
     const tooltipText = document.querySelector('.tooltipText');
     tooltipText.style.opacity = 0; // Hide the tooltip
     tooltipText.innerHTML = ''; // Clear the text
+}
+
+// Mouse hover for "Need Help?" effect
+document.getElementById('openFlipbookButton').addEventListener('mouseover', function() {
+    hideIdleTooltip(); // Hide the idle tooltip if visible
+    showTooltip();
 });
+
+document.getElementById('openFlipbookButton').addEventListener('mouseout', function() {
+    hideTooltip();
+    startIdleTimer(); // Reset idle timer when mouse leaves the button
+});
+
+// Idle detection for showing tooltip after 35 seconds of inactivity
+let idleTimer;
+let idleTooltipVisible = false; // To track if the idle tooltip is currently visible
+
+function startIdleTimer() {
+    clearTimeout(idleTimer); // Reset timer whenever there's activity
+    idleTimer = setTimeout(showIdleTooltip, 15000); // Show "Need Help?" after 35 seconds of inactivity
+}
+
+// Function to show idle "Need Help?" tooltip
+function showIdleTooltip() {
+    if (!idleTooltipVisible) {
+        showTooltip();
+        idleTooltipVisible = true;
+    }
+}
+
+// Function to hide idle tooltip
+function hideIdleTooltip() {
+    if (idleTooltipVisible) {
+        hideTooltip();
+        idleTooltipVisible = false;
+    }
+}
+
+// Register events to detect user activity
+['mousemove', 'keydown', 'scroll', 'click'].forEach(event => {
+    window.addEventListener(event, () => {
+        hideIdleTooltip(); // Hide idle tooltip if user interacts
+        startIdleTimer(); // Reset idle timer
+    });
+});
+
+// Start the idle timer when the page loads
+startIdleTimer();

@@ -201,17 +201,16 @@
 
 /* Images and videos scale proportionally within the flipbook container */
 .page img, .page video {
-    width: 100%; /* 宽度等于父容器的宽度 */
-    height: calc(100% - 60px); /* 高度等于容器高度减去按钮的高度，假设按钮高度是60px */
-    object-fit: contain; /* 保持比例缩放 */
-    background-color: #6C7A89; /* 图片未覆盖的区域会显示这个背景颜色 */
+    width: 100%; 
+    height: calc(100% - 60px); 
+    object-fit: contain; 
+    background-color: #6C7A89; 
 }
-
 
 /* Styling for the video within a page */
 .page video {
-    width: 100%; /* 宽度等于父容器的宽度 */
-    height: calc(100% - 60px); /* 高度等于容器高度减去按钮的高度，假设按钮高度是60px */
-    object-fit: contain; /* 保持比例缩放 */
-    background-color: #6C7A89; /* 图片未覆盖的区域会显示这个背景颜色 */
+    width: 100%; 
+    height: calc(100% - 60px); 
+    object-fit: contain; 
+    background-color: #6C7A89;
 }
