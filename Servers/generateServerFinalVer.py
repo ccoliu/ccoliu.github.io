@@ -4,6 +4,9 @@
 # Version: <V10.0.0.0>
 # ---------------------------------------------------
 
+# Description log:
+# Current is developing the regularization function of transfer message between the team members. 20241004
+
 import os  # System imports
 import sys
 import configparser  # For reading the config file (ini file)
@@ -163,9 +166,9 @@ def createWorkSheet(request, language):
             },
             {
                 "role": "user",
-                "content": "Please use the following format to create a worksheet for the team to solve the problem.\n"
+                "content": "Please strictly follow the format below to create a worksheet for the team to solve the problem.\n"
                 + WORKSHEET_FORMAT
-                + "How many members are needed to complete this project, as well as the messages of each member, is up to you, but the output format must comply with the above.\n"
+                + "How many members are needed to complete this project, as well as the messages of each member, is up to you, It is **required** that the output strictly follows the above format, and any deviations are unacceptable."
                 + "The main target (request) is:\n"
                 + request
                 + "\n"
