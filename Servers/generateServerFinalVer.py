@@ -90,20 +90,17 @@ PRESENTER = "You are the last person who is responsible for presenting the progr
 REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
 
 # Define some output format below.
-WORKSHEET_FORMAT = '''Worksheet\n
-Main problem: (understand what the user want to do and put it here)\n
-(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more than one depends on the complexity of the function.)\n]
-(1st member)
-Member message:  Help me ......\n
-(2nd member)
-Member message:  Help me ......\n
-(3rd member)
-Member message:  Help me ......\n
-(... up to you)\n
-(The second last one member should be a tester who can find out what may be wrong with the code and fixed it.)
-Member message: Test the program to see if it reach the main problem, if not, fix it and return the new code.\n
-(The last one memeber should always be the one who can finish and combine all the tasks.)
-Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.\n
+WORKSHEET_FORMAT = '''Worksheet
+Main problem: (understand what the user want to do and put it here)
+(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more 
+Member message: Help me ......
+Member message: Help me ......
+Member message: Help me ......
+(... up to you, and don't list the index of the member)
+(The last two messages are fixed and cannot be changed)
+Member message: Help me Test the program to see if it reach the main problem, if not, fix it and return the new code.
+Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.
+(Don't add any extra information, and don't change the format)
 '''
 
 MESSAGE_FORMAT = '''

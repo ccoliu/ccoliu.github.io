@@ -1,9 +1,9 @@
-# ---------------------------------------------------
-# Author:Daniel Hsiao (Github: https://github.com/whps970083)
-# Date: 2024/10/04
-# Version: <V10.0.0.0>
-# Description: This is a format enforcer tool that can be used to enforce the format of the output of the GPT-3 model.
-# ---------------------------------------------------
+'''
+Filename: c:\Users\whps9\ccoliu.github.io\Servers\FormatEnforcer.py
+Path: c:\Users\whps9\ccoliu.github.io\Servers
+Created Date: Friday, October 4th 2024, 2:32:28 am
+Author: whps970083
+'''
 
 import re
 import os
