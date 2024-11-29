@@ -1,10 +1,3 @@
-'''
-Filename: c:\Users\whps9\ccoliu.github.io\Servers\FormatEnforcer.py
-Path: c:\Users\whps9\ccoliu.github.io\Servers
-Created Date: Friday, October 4th 2024, 2:32:28 am
-Author: whps970083
-'''
-
 import re
 import os
 import sys
@@ -26,7 +19,7 @@ def resource_path(relative_path):
 class Enforcer:
     def __init__(self):
         try:
-            print("You may use the enforcer tools now!")
+            print("Normalization Enforcer is ready.")
         except Exception as e:
             print(e)
 
@@ -39,8 +32,10 @@ class Enforcer:
     def strictlyFollowFormat(self, inputFunction, validationFunction, *args, **kwargs):
         flag = False  # 設定一個標誌，用來判斷是否已經通過格式檢查
         timesCount = 0  # 計數器，用來記錄嘗試次數
+
         while not flag:  # 當格式尚未通過檢查時，持續迴圈
             result = inputFunction(*args, **kwargs)  # 呼叫傳入的生成結果函數並取得結果
+
             # 使用傳入的檢查函數來檢查格式是否有效
             if validationFunction(result):
                 flag = True  # 若格式有效，將標誌設為 True 結束迴圈
@@ -55,6 +50,16 @@ class Enforcer:
 
     # 檢查WorkSheet是否有效
     def is_valid_worksheet_format(self, input_string):
+        # Format: Worksheet
+        '''Worksheet
+        Main problem: Create a program that can move a player around using console
+
+        Member message: Help me create a class to represent the player and define its properties (position, direction, etc.)
+        Member message: Help me write functions to handle player movement (up, down, left, right) and update the player's position accordingly
+        Member message: Help me implement a function to display the player's current position on the console
+        Member message: Help me write functions to handle player movement (up, down, left, right) and update the player's position accordingly
+        '''
+
         # 將輸入按行分割，並移除每行的前後空白字符，過濾掉空行
         lines = [line.strip() for line in input_string.strip().split('\n') if line.strip()]
 
@@ -72,3 +77,58 @@ class Enforcer:
                 return False
 
         return True  # 所有檢查通過，返回 True
+
+    # Check if GenerateOutput Result is valid
+    def is_valid_generate_output_format(self, input_string):
+        # Format: GenerateOutput
+        '''
+        Main target:
+        (Always describe the primary problem or task clearly here.)
+
+        Language use:
+        (Specify the programming language to be used, such as Python, C++, etc.)
+
+        Final output:
+        (Provide the completed source code here. In other words, it's the program pool's content.)
+
+        Other comment:
+        (Add any additional notes, context, or requirements here that can help the user understand the code better.)
+        '''
+        # Define the required headers and their order
+        required_headers = ["Main target:", "Language use:", "Final output:", "Other comment:"]
+
+        # Remove extra newlines and spaces, condense the input into a single line
+        condensed_input = re.sub(r'\s+', ' ', input_string.strip())
+
+        # Create a regex pattern to check if the headers appear in the correct order
+        header_pattern = '.*'.join(map(re.escape, required_headers))
+        if not re.search(header_pattern, condensed_input):
+            return False
+
+        # Split the input into lines and remove empty lines
+        lines = [line.strip() for line in input_string.strip().split('\n') if line.strip()]
+        current_header_index = 0
+
+        for i, line in enumerate(lines):
+            # Match the format of a header
+            match = re.match(r'^([A-Za-z ]+:)\s*$', line)
+            if match:
+                header = match.group(1).strip()
+
+                # Check if the header matches the expected header in the required order
+                if header == required_headers[current_header_index]:
+                    # Check if the next header directly follows this header
+                    if (
+                        current_header_index < len(required_headers) - 1
+                    ):  # If it's not the last header
+                        next_expected_header = required_headers[current_header_index + 1]
+                        if i + 1 < len(lines) and re.match(
+                            r'^\s*' + re.escape(next_expected_header) + r'\s*$', lines[i + 1]
+                        ):
+                            return False  # Two consecutive headers without content
+                    current_header_index += 1
+                    if current_header_index > len(required_headers) - 1:
+                        break
+
+        # Ensure all headers are matched
+        return current_header_index == len(required_headers)

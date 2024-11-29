@@ -111,10 +111,17 @@ Current job output(Add your completed work here.):\n
 '''
 
 FRONTED_OUTPUT_FORMAT = '''
-Main target:(Always put the main problem here)\n
-Language used:(Always put the language used here)\n
-Final output:\n
-(Completed source code. Put the Program pool's content here.)
+Main target:
+(Always describe the primary problem or task clearly here.)
+
+Language use:
+(Specify the programming language to be used, such as Python, C++, etc.)
+
+Final output:
+(Provide the completed source code here. In other word it's the progeram pool's content.)
+
+Other comment:
+(Add any additional notes, context, or requirements here that can help user to understand the code better.)
 '''
 
 GROUPED_FORMAT = '''GROUPS_START\n

@@ -599,6 +599,16 @@ class dataBaseTools:
         for item in result:
             return item.get("language")
 
+    def getMongoDBVersion(self):
+        try:
+            server_info = self.client.server_info()
+            version = server_info.get("version", "Unknown version")
+            print(f"MongoDB version: {version}")
+            return version
+        except Exception as e:
+            print(f"Error retrieving MongoDB version: {e}")
+            return None
+
 
 # TODO:
 # 1. Generate server data base structure modify the data base structure to fit the server.

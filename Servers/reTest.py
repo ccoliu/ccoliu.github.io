@@ -59,6 +59,23 @@ Member message: Help me combine all the finished tasked and adjust the variable 
 BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
 
 
+FRONTED_OUTPUT_FORMAT = '''
+Main target:
+(Always describe the primary problem or task clearly here.)
+
+Language use:
+(Specify the programming language to be used, such as Python, C++, etc.)
+
+Final output:
+(Provide the completed source code here. In other word it's the progeram pool's content.)
+
+Other comment:
+(Add any additional notes, context, or requirements here that can help user to understand the code better.)
+'''
+FORMAT_TOKEN = "You should return in the following format:\n"
+PRESENTER = "You are the last person who is responsible for presenting the program (complete soruce code) by a specific format."
+
+
 # Use to creating the worksheet for the team to solve the problem.
 def createWorkSheet(request, language):
     workSheet = client_model_1.chat.completions.create(
@@ -86,11 +103,78 @@ def createWorkSheet(request, language):
     return workSheet.choices[0].message.content
 
 
-print(
-    testEnforcer.strictlyFollowFormat(
-        createWorkSheet,
-        testEnforcer.is_valid_worksheet_format,
-        "Create a program that can move a player around using console",
-        "C++",
+# This function will format the final output to the frontend.
+def finalOutputDisplayer(currentProgess, mainTarget):
+    finalOutput = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": PRESENTER,
+            },
+            {
+                "role": "user",
+                "content": "Here is the main target\n"
+                + mainTarget
+                + '\n'
+                + "Here is the final result:\n"
+                + currentProgess
+                + '\n'
+                + FORMAT_TOKEN
+                + FRONTED_OUTPUT_FORMAT,
+            },
+        ],
     )
-)
+
+    finalOutput = finalOutput.choices[0].message.content
+
+    return finalOutput
+
+
+# print(
+#     testEnforcer.strictlyFollowFormat(
+#         createWorkSheet,
+#         testEnforcer.is_valid_worksheet_format,
+#         "Create a program that can move a player around using console",
+#         "C++",
+#     )
+# )
+
+
+# TEST GenerateOutput Format
+TEST = '''Main problem:
+Develop a program that calculates the factorial of a given number using recursion.
+
+Program pool:
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+print("Factorial of 5:", factorial(5))
+
+Current job:
+Finalize the program by adding proper error handling and user input validation.
+
+Current job output:
+def factorial(n):
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("Input must be a non-negative integer.")
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+try:
+    num = int(input("Enter a number: "))
+    print(f"Factorial of {num}: {factorial(num)}")
+except ValueError as e:
+    print("Error:", e)
+'''
+# print(
+#     testEnforcer.strictlyFollowFormat(
+#         finalOutputDisplayer,
+#         testEnforcer.is_valid_generate_output_format,
+#         TEST,
+#         "Develop a program that calculates the factorial of a given number using recursion",
+#     )
+# )
