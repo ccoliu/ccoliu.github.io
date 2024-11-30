@@ -178,3 +178,86 @@ except ValueError as e:
 #         "Develop a program that calculates the factorial of a given number using recursion",
 #     )
 # )
+
+MESSAGE_FORMAT = '''
+Main problem:
+(Always put the main problem here)
+Program pool:
+(Add your completed work to the program pool.)
+Current job:
+(Put your work goals here.)
+Current job output:
+(Add your completed work here.)
+'''
+
+
+# This is the main API of the Ai Engineer, every little job is done by this function.
+def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
+    global currentProgress
+    aiOutput = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": systemRole,
+            },
+            {
+                "role": "user",
+                "content": "Here is the target of the project\n"
+                + mainTarget
+                + '\n'
+                + "Here is the current progress:\n"
+                + inputProgress
+                + '\n'
+                + jobContent
+                + '\n'
+                + FORMAT_TOKEN
+                + MESSAGE_FORMAT,
+            },
+        ],
+    )
+
+    # Use to debug the output
+    # print(aiOutput.choices[0].message.content)
+
+    return aiOutput.choices[0].message.content
+
+
+mainTarget = "Develop a program that calculates the factorial of a given number using recursion."
+systemRole = (
+    "You are a software engineer responsible for implementing a specific part of the project."
+)
+jobContent = "Finalize the program by adding proper error handling and user input validation."
+inputProgress = '''
+Main problem:
+Develop a program that calculates the factorial of a given number using recursion.
+
+Program pool:
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+
+print("Factorial of 5:", factorial(5))
+
+Current job:
+Finalize the program by adding proper error handling and user input validation.
+
+Current job output:
+def factorial(n):
+    if not isinstance(n, int) or n < 0:
+        raise ValueError("Input must be a non-negative integer.")
+    if n == 0 or n == 1:
+        return 1
+    return n * factorial(n - 1)
+    '''
+print(
+    testEnforcer.strictlyFollowFormat(
+        employeeWork,
+        testEnforcer.is_valid_message_format,
+        mainTarget,
+        systemRole,
+        jobContent,
+        inputProgress,
+    )
+)

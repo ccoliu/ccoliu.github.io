@@ -132,3 +132,49 @@ class Enforcer:
 
         # Ensure all headers are matched
         return current_header_index == len(required_headers)
+
+    def is_valid_message_format(self, input_string):
+        # Define the required headers and their order
+        required_headers = ["Main problem:", "Program pool:", "Current job:", "Current job output:"]
+
+        # Remove extra newlines and spaces, condense the input into a single line
+        condensed_input = re.sub(r'\s+', ' ', input_string.strip())
+
+        # Create a regex pattern to check if the headers appear in the correct order
+        header_pattern = '.*'.join(map(re.escape, required_headers))
+        if not re.search(header_pattern, condensed_input):
+            return False
+
+        # Split the input into lines and remove empty lines
+        lines = [line.strip() for line in input_string.strip().split('\n') if line.strip()]
+        current_header_index = 0
+        last_header_line = -1  # Track the line number of the last processed header
+
+        for i, line in enumerate(lines):
+            # Match the format of a header
+            match = re.match(r'^([A-Za-z ]+:)\s*', line)
+            if match:
+                header = match.group(1).strip()
+
+                # Check if the header matches the expected header in the required order
+                if header == required_headers[current_header_index]:
+                    # Ensure there is content between the last header and the current one
+                    if last_header_line != -1 and i - last_header_line == 1:
+                        return False  # No content between consecutive headers
+
+                    current_header_index += 1
+                    last_header_line = i
+
+                    # Break early if all headers have been processed
+                    if current_header_index > len(required_headers) - 1:
+                        break
+
+        # Ensure all headers are matched
+        if current_header_index != len(required_headers):
+            return False
+
+        # Ensure the last header has content after it
+        if last_header_line != -1 and last_header_line == len(lines) - 1:
+            return False  # No content after the last header
+
+        return True

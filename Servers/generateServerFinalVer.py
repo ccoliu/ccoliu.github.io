@@ -1,6 +1,7 @@
 # ---------------------------------------------------
 # Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
 # Date: 2024/10/01
+# Update: 2024/12/01
 # Version: <V10.0.0.0>
 # ---------------------------------------------------
 
@@ -21,6 +22,10 @@ import ssl  # Local https key
 
 # Self-defined imports
 from dataBase import dataBaseTools
+
+# ---------------------------------------------------
+'''System initialization and configuration'''
+# ---------------------------------------------------
 
 
 # Function to get the file path after packaging
@@ -80,16 +85,25 @@ key_path = resource_path('private_key.key')
 app = Flask(__name__)
 CORS(app)
 
-# Define some fixed ROLES for GPT.
+# ---------------------------------------------------
+'''Define some necessary roles for the team members.'''
+# ---------------------------------------------------
+
+# This is the Boss of the team, who is responsible for dividing the work and assigning them to different people.
 BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
-
+# This is the project inspector, who is responsible for inspecting the project and ensuring that it meets the main target.
 INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
-
+# This is the presenter, who is responsible for presenting the final output of the project.
 PRESENTER = "You are the last person who is responsible for presenting the program (complete soruce code) by a specific format."
-
+# This is the reverse engineer, who is responsible for understanding the source code and describing its functionality.
+# Note: This person is use to describe the code in human language and put it in the database will be used for community search.
 REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
 
-# Define some output format below.
+# ---------------------------------------------------
+'''Define some output format below.'''
+# ---------------------------------------------------
+
+# Note the enforced format is done.
 WORKSHEET_FORMAT = '''Worksheet
 Main problem: (understand what the user want to do and put it here)
 (How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more 
@@ -102,14 +116,18 @@ Member message: Help me Test the program to see if it reach the main problem, if
 Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.
 (Don't add any extra information, and don't change the format)
 '''
-
+# Note the enforced format is done.
 MESSAGE_FORMAT = '''
-Main problem:(Always put the main problem here)\n
-Program pool:(Add your completed work to the program pool.)\n
-Current job:(Put your work goals here.)\n
-Current job output(Add your completed work here.):\n
+Main problem:
+(Always put the main problem here)
+Program pool:
+(Add your completed work to the program pool.)
+Current job:
+(Put your work goals here.)
+Current job output:
+(Add your completed work here.)
 '''
-
+# Note the enforced format is done.
 FRONTED_OUTPUT_FORMAT = '''
 Main target:
 (Always describe the primary problem or task clearly here.)
@@ -134,7 +152,12 @@ Group 3: ['help me test the final program', 'help me test all the functions']
 GROUPS_END\n
 '''
 
-FORMAT_TOKEN = "You should return in the following format:\n"
+# This phrase is use to place before the specific format.
+FORMAT_TOKEN = '''You should answer in the following format:\n'''
+
+# ---------------------------------------------------
+'''Define some functions below.'''
+# ---------------------------------------------------
 
 
 # This function will read the code and decribe it in human language.
