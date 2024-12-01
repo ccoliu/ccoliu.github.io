@@ -2,7 +2,7 @@
 # Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
 # Date: 2024/10/01
 # Update: 2024/12/01
-# Version: <V10.0.0.0>
+# Version: <V10.0.1.0>
 # ---------------------------------------------------
 
 # Description log:
@@ -19,6 +19,8 @@ import time
 import threading
 import random
 import ssl  # Local https key
+import FormatEnforcer
+import logging
 
 # Self-defined imports
 from dataBase import dataBaseTools
@@ -26,6 +28,38 @@ from dataBase import dataBaseTools
 # ---------------------------------------------------
 '''System initialization and configuration'''
 # ---------------------------------------------------
+
+# 配置日志文件路径
+LOG_FILE = "server_logs.log"
+
+# 配置日志记录器
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(LOG_FILE, mode="a"),  # 写入日志文件
+        logging.StreamHandler(sys.stdout),  # 同时输出到终端
+    ],
+)
+
+
+# 重定向标准输出和错误输出到日志
+class StreamToLogger:
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+
+    def write(self, message):
+        if message.strip():
+            self.logger.log(self.level, message.strip())
+
+    def flush(self):
+        pass
+
+
+# 替换 sys.stdout 和 sys.stderr
+sys.stdout = StreamToLogger(logging.getLogger("STDOUT"), logging.INFO)
+sys.stderr = StreamToLogger(logging.getLogger("STDERR"), logging.ERROR)
 
 
 # Function to get the file path after packaging
@@ -42,6 +76,7 @@ def resource_path(relative_path):
 
 # Initialize Tools
 dbTools = dataBaseTools()
+message_inforcer = FormatEnforcer.Enforcer()
 
 # Initialize some variables
 SERVER_TYPE = "https"
@@ -51,15 +86,15 @@ current_path = os.path.dirname(os.path.realpath(__file__))
 # Get the ini file path
 config_file_path = os.path.join(current_path, "Config.ini")
 # Get the config tool to manage the config file
-configTool = configparser.ConfigParser()
+config_tool = configparser.ConfigParser()
 
 # Check if the config file exists
 if not os.path.exists(config_file_path):
     raise FileNotFoundError(f"Config file not found at: {config_file_path}")
 else:
-    configTool.read(config_file_path)
+    config_tool.read(config_file_path)
     # Get the connection type from the config file
-    SERVER_TYPE = configTool["ServerSettings"]["ConnectionType"]
+    SERVER_TYPE = config_tool["ServerSettings"]["ConnectionType"]
 
 
 # Read API keys from key file using resource_path function
@@ -106,7 +141,7 @@ REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the so
 # Note the enforced format is done.
 WORKSHEET_FORMAT = '''Worksheet
 Main problem: (understand what the user want to do and put it here)
-(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more 
+(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more)
 Member message: Help me ......
 Member message: Help me ......
 Member message: Help me ......
@@ -121,12 +156,22 @@ MESSAGE_FORMAT = '''
 Main problem:
 (Always put the main problem here)
 Program pool:
-(Add your completed work to the program pool.)
+(Add your completed work to the here.)
 Current job:
 (Put your work goals here.)
 Current job output:
 (Add your completed work here.)
 '''
+
+MESSAGE_FORMAT_V2 = '''
+Main problem:
+(Put the project main target here to understand what the user want to do.)
+Current job:
+(Put your work goals here.)
+Current job output:
+(Add your completed work here.)
+'''
+
 # Note the enforced format is done.
 FRONTED_OUTPUT_FORMAT = '''
 Main target:
@@ -136,7 +181,7 @@ Language use:
 (Specify the programming language to be used, such as Python, C++, etc.)
 
 Final output:
-(Provide the completed source code here. In other word it's the progeram pool's content.)
+(Provide the completed source code here)
 
 Other comment:
 (Add any additional notes, context, or requirements here that can help user to understand the code better.)
@@ -153,11 +198,36 @@ GROUPS_END\n
 '''
 
 # This phrase is use to place before the specific format.
-FORMAT_TOKEN = '''You should answer in the following format:\n'''
+FORMAT_TOKEN = '''You should return in the following format:\n'''
 
 # ---------------------------------------------------
 '''Define some functions below.'''
 # ---------------------------------------------------
+
+
+# This function will pick out the specific zone from the input string.
+def pickOutSpecificZone(input_string, zone_name):
+    # Split the input string into lines
+    lines = input_string.split('\n')
+
+    # Initialize a variable to hold the content of the specified zone
+    zone_content = ""
+    in_zone = False
+
+    # Iterate through each line to find the specified zone
+    for line in lines:
+        # Check if the line starts with the specified zone
+        if line.startswith(zone_name + ":"):
+            in_zone = True
+            zone_content += line.split(zone_name + ":")[1].strip() + "\n"
+        elif in_zone:
+            # Check if the line is a new header
+            if ":" in line and not line.strip().startswith(zone_name + ":"):
+                break
+            # Append the line to the zone content
+            zone_content += line.strip() + "\n"
+
+    return zone_content.strip()
 
 
 # This function will read the code and decribe it in human language.
@@ -215,7 +285,7 @@ def createWorkSheet(request, language):
 # Use for inspecter to check the progress of the project and lead it to correctness.
 def inspecterCheck(mainProblem, jobMatrix):
     global currentProgress
-    print("Inspecter is inspecting: ", currentProgress)
+    # print("Inspecter is inspecting: ", currentProgress)
     # Turn the job array into string.
     jobMatrixText = ' '.join(jobMatrix)
 
@@ -244,7 +314,7 @@ def inspecterCheck(mainProblem, jobMatrix):
     )
 
     # Use to debug the output
-    print(inspectResult.choices[0].message.content)
+    # print(inspectResult.choices[0].message.content)
 
     currentProgress = inspectResult.choices[0].message.content
 
@@ -271,6 +341,7 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
 # This is the main API of the Ai Engineer, every little job is done by this function.
 def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
     global currentProgress
+
     aiOutput = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -283,7 +354,7 @@ def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
                 "content": "Here is the target of the project\n"
                 + mainTarget
                 + '\n'
-                + "Here is the current progress:\n"
+                + "Here is the last member's output:\n"
                 + inputProgress
                 + '\n'
                 + jobContent
@@ -294,10 +365,91 @@ def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
         ],
     )
 
-    # Use to debug the output
-    # print(aiOutput.choices[0].message.content)
-
     return aiOutput.choices[0].message.content
+
+
+# This is the main API of the Ai Engineer, every little job is done by this function.
+def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
+    ai_output = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": systemRole,
+            },
+            {
+                "role": "user",
+                "content": "Here is the main target of the project\n"
+                + mainTarget
+                + '\n'
+                + "Here is the last member's progress for you to refer:\n"
+                + inputProgress
+                + '\n'
+                + "Here is the job that you need to do:\n"
+                + jobContent
+                + '\n'
+                + FORMAT_TOKEN
+                + MESSAGE_FORMAT_V2,
+            },
+        ],
+    )
+
+    ai_response = ai_output.choices[0].message.content
+    current_program_pool = message_inforcer.extract_section_content(inputProgress, "Program pool")
+    current_job_output = message_inforcer.extract_section_content(ai_response, "Current job output")
+
+    if current_program_pool == "Warning: No content was found.":
+        current_program_pool = ""
+
+    combined_output_request = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "Help me combine the content of two strings without any adjustment.",
+            },
+            {
+                "role": "user",
+                "content": "Help me combine the following two strings:\n"
+                + current_program_pool
+                + '\n'
+                + current_job_output
+                + '\n'
+                + "Simply combine them together without any adjustment.",
+            },
+        ],
+    )
+
+    combined_output = combined_output_request.choices[0].message.content
+    final_output = message_inforcer.insert_section(ai_response, "Program pool", combined_output)
+
+    return final_output
+
+
+def tidyUpProgramPool(mainTarget, programPool):
+
+    ai_output = client_model_1.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are responsible for tidying up the program pool. Ensure the source code meets the main target without any duplicate code.",
+            },
+            {
+                "role": "user",
+                "content": "Here is the main target of the project:\n"
+                + mainTarget
+                + '\n'
+                + "Here is the program pool that contains all the code that has been done:\n"
+                + programPool
+                + '\n'
+                + "Please tidy up the program pool to ensure it meets the main target and keep all the functions in the program pool."
+                + "Only retrun the source code, don't add any extra information.",
+            },
+        ],
+    )
+
+    return ai_output.choices[0].message.content
 
 
 # This function will analyze the job content and assign the group of each job.
@@ -311,7 +463,7 @@ def groupingAllJobs(jobArray, mainTarget):
         messages=[
             {
                 "role": "system",
-                "content": "You are a Job classifier.",
+                "content": "You are a Job classifier, you can unsderstand if the job is independent or dependent, and you can group the jobs that can be executed at the same time.",
             },
             {
                 "role": "user",
@@ -501,7 +653,9 @@ def preprocessGroupString(inputGroupString):
 def jobWorker(mainTarget, role, job, inputProgress, barrier):
     global currentProgress
     # Call the single engineer to do the job.
-    currentProgress = employeeWork(mainTarget, role, job, inputProgress)
+    # MOD 20241201 Daniel Now use the enhancedEmployeeWork to do the job.
+    currentProgress = enhancedEmployeeWork(mainTarget, role, job, inputProgress)
+    # currentProgress = employeeWork(mainTarget, role, job, inputProgress)
 
     # Wait for all the threads to finish the job.
     barrier.wait()
@@ -557,7 +711,8 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
         for thread in threads:
             thread.join()
 
-        inspecterCheck(mainTarget, jobArray)
+        # MOD 20241201 Daniel Now dont implement the inspecter, just return the current progress.
+        # inspecterCheck(mainTarget, jobArray)
     # After all the task is done, the final output will be the current progress.
     return currentProgress
 
@@ -590,6 +745,7 @@ def gen_code():
 
         workSheet = createWorkSheet(userInput, lang)
         mainProblem = getWorkSheetContent(workSheet, roles, dividedJobs, mainProblem)
+        mainProblem += "Using the language: " + lang
         dividedJobs = convertJobToFrontFormat(dividedJobs)
 
         originalTasks = dividedJobs
@@ -618,6 +774,11 @@ def execute_steps():
         finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
         # This must be done before sending the final output to the frontend.
         # Remember this is a job too.
+        # print("Final Output:", finalOutputCode)
+        # ADD 20241201 Daniel Now use the tidyUpProgramPool to tidy up the program pool.
+        # Get the Program pool first.
+        final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
+        finalOutputCode = tidyUpProgramPool(mainProblem, final_prog_pool)
         finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
         progressBar_current += 1
 
