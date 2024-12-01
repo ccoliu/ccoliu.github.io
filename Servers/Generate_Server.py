@@ -667,6 +667,9 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
         # Output the current info's
         print(f'Jobs in layer {layer}: {jobLayers}')
 
+        for jobIndex in jobLayers:
+            print(f"Job {jobIndex} content: {jobArray[jobIndex - 1]}")
+
         # Build a Barrier object to synchronize the threads
         layer_barrier = threading.Barrier(len(jobLayers))
 
