@@ -5,8 +5,9 @@
 # Version: <V10.0.1.0>
 # ---------------------------------------------------
 
-# Description log:
-# Current is developing the regularization function of transfer message between the team members. 20241004
+# ---------------------------------------------------
+'''Import the necessary libraries and modules'''
+# ---------------------------------------------------
 
 import os  # System imports
 import sys
@@ -19,52 +20,24 @@ import time
 import threading
 import random
 import ssl  # Local https key
-import FormatEnforcer
 import logging
+from datetime import datetime
 
-# Self-defined imports
+# ---------------------------------------------------
+'''Import the self-defined tools and functions'''
+# ---------------------------------------------------
+
+import FormatEnforcer
 from dataBase import dataBaseTools
 
 # ---------------------------------------------------
 '''System initialization and configuration'''
 # ---------------------------------------------------
 
-# 配置日志文件路径
-LOG_FILE = "server_logs.log"
-
-# 配置日志记录器
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE, mode="a"),  # 写入日志文件
-        logging.StreamHandler(sys.stdout),  # 同时输出到终端
-    ],
-)
-
-
-# 重定向标准输出和错误输出到日志
-class StreamToLogger:
-    def __init__(self, logger, level):
-        self.logger = logger
-        self.level = level
-
-    def write(self, message):
-        if message.strip():
-            self.logger.log(self.level, message.strip())
-
-    def flush(self):
-        pass
-
-
-# 替换 sys.stdout 和 sys.stderr
-sys.stdout = StreamToLogger(logging.getLogger("STDOUT"), logging.INFO)
-sys.stderr = StreamToLogger(logging.getLogger("STDERR"), logging.ERROR)
-
 
 # Function to get the file path after packaging
 def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
+    # Get absolute path to resource, works for dev and for PyInstaller
     try:
         # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
@@ -74,9 +47,70 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
+# Get the current path of the server
+current_path = resource_path("")
+
+# Create a Log folder if it does not exist
+log_folder_path = os.path.abspath(current_path + "/Log")
+if not os.path.exists(log_folder_path):
+    os.makedirs(log_folder_path)  # Create the log folder
+    print(f"Log folder created: {log_folder_path}")
+
+
+# Dynamic log handler to switch log files daily
+class DynamicLogHandler:
+    def __init__(self, log_folder):
+        self.log_folder = log_folder
+        self.current_date = datetime.now().strftime("%Y-%m-%d")
+        self.log_file_name = f"{self.current_date}_gen_server_logs.log"
+        self.log_file_path = os.path.join(self.log_folder, self.log_file_name)
+        self.setup_logger()
+
+    def setup_logger(self):
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            handlers=[
+                logging.FileHandler(self.log_file_path, mode="a"),  # Write to log file
+                logging.StreamHandler(sys.stdout),  # Print to console
+            ],
+        )
+        print(f"Log file created: {self.log_file_path}")
+
+    def check_date_and_rotate_log(self):
+        new_date = datetime.now().strftime("%Y-%m-%d")
+        if new_date != self.current_date:  # If the date has changed
+            self.current_date = new_date
+            self.log_file_name = f"{self.current_date}_server_logs.log"
+            self.log_file_path = os.path.join(self.log_folder, self.log_file_name)
+            self.setup_logger()
+
+
 # Initialize Tools
 dbTools = dataBaseTools()
 message_inforcer = FormatEnforcer.Enforcer()
+log_handler = DynamicLogHandler(log_folder_path)
+
+
+# Custom stream handler to log stdout and stderr to the log file
+class StreamToLogger:
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+
+    def write(self, message):
+        if message.strip():
+            log_handler.check_date_and_rotate_log()  # Check date and rotate log file
+            self.logger.log(self.level, message.strip())
+
+    def flush(self):
+        pass
+
+
+# Redirect stdout and stderr to the logger
+sys.stdout = StreamToLogger(logging.getLogger("STDOUT"), logging.INFO)
+sys.stderr = StreamToLogger(logging.getLogger("STDERR"), logging.ERROR)
+
 
 # Initialize some variables
 SERVER_TYPE = "https"

@@ -8,5 +8,5 @@ dbURI.txt
 server.crt
 server.key
 server.pfx
-server_logs.log
+/Log
 .vscode/*
