@@ -62,55 +62,78 @@ class DynamicLogHandler:
     def __init__(self, log_folder):
         self.log_folder = log_folder
         self.current_date = datetime.now().strftime("%Y-%m-%d")
-        self.log_file_name = f"{self.current_date}_gen_server_logs.log"
-        self.log_file_path = os.path.join(self.log_folder, self.log_file_name)
-        self.setup_logger()
+        self.setup_general_logger()
+        self.setup_web_logger()
 
-    def setup_logger(self):
-        logging.basicConfig(
-            level=logging.INFO,
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-            handlers=[
-                logging.FileHandler(self.log_file_path, mode="a"),  # Write to log file
-                logging.StreamHandler(sys.stdout),  # Print to console
-            ],
+    def setup_general_logger(self):
+        """Set up the logger for general stdout logs."""
+        self.general_log_file = os.path.join(
+            self.log_folder, f"{self.current_date}_gen_server_logs.log"
         )
-        print(f"Log file created: {self.log_file_path}")
+        self.general_logger = logging.getLogger("general")
+        self.general_logger.setLevel(logging.INFO)
+        self.general_logger.handlers = []  # Clear previous handlers
 
-    def check_date_and_rotate_log(self):
+        # File handler for logging to a file
+        general_file_handler = logging.FileHandler(self.general_log_file, mode="a")
+        general_file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
+        self.general_logger.addHandler(general_file_handler)
+
+        # Stream handler for logging to console
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+        self.general_logger.addHandler(console_handler)
+
+    def setup_web_logger(self):
+        """Set up the logger for werkzeug (web-related) logs."""
+        self.web_log_file = os.path.join(
+            self.log_folder, f"{self.current_date}_gen_server_web_logs.log"
+        )
+        werkzeug_logger = logging.getLogger("werkzeug")
+        werkzeug_logger.setLevel(logging.INFO)
+        werkzeug_logger.handlers = []  # Clear previous handlers
+        web_file_handler = logging.FileHandler(self.web_log_file, mode="a")
+        web_file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
+        werkzeug_logger.addHandler(web_file_handler)
+
+    def check_date_and_rotate_logs(self):
+        """Check the date and rotate log files if the date has changed."""
         new_date = datetime.now().strftime("%Y-%m-%d")
-        if new_date != self.current_date:  # If the date has changed
+        if new_date != self.current_date:
             self.current_date = new_date
-            self.log_file_name = f"{self.current_date}_server_logs.log"
-            self.log_file_path = os.path.join(self.log_folder, self.log_file_name)
-            self.setup_logger()
+            self.setup_general_logger()
+            self.setup_web_logger()
 
 
-# Initialize Tools
-dbTools = dataBaseTools()
-message_inforcer = FormatEnforcer.Enforcer()
+# Initialize the dynamic log handler
 log_handler = DynamicLogHandler(log_folder_path)
 
 
-# Custom stream handler to log stdout and stderr to the log file
+# Custom stream handler to log only stdout to the general log file and console
 class StreamToLogger:
-    def __init__(self, logger, level):
+    def __init__(self, logger):
         self.logger = logger
-        self.level = level
 
     def write(self, message):
         if message.strip():
-            log_handler.check_date_and_rotate_log()  # Check date and rotate log file
-            self.logger.log(self.level, message.strip())
+            log_handler.check_date_and_rotate_logs()  # Check and rotate logs if needed
+            self.logger.info(message.strip())
 
     def flush(self):
         pass
 
 
-# Redirect stdout and stderr to the logger
-sys.stdout = StreamToLogger(logging.getLogger("STDOUT"), logging.INFO)
-sys.stderr = StreamToLogger(logging.getLogger("STDERR"), logging.ERROR)
+# Redirect stdout to both console and general logger
+sys.stdout = StreamToLogger(log_handler.general_logger)
 
+
+# Initialize Tools
+dbTools = dataBaseTools()
+message_inforcer = FormatEnforcer.Enforcer()
 
 # Initialize some variables
 SERVER_TYPE = "https"
@@ -160,8 +183,6 @@ CORS(app)
 
 # This is the Boss of the team, who is responsible for dividing the work and assigning them to different people.
 BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
-# This is the project inspector, who is responsible for inspecting the project and ensuring that it meets the main target.
-INSEPECTER = "You are a project inspector, you will have the main goal (or target) and the current progress of the project, you will inspect in any time and find out if there is any problem may lead to an error, if you find any, you will fix it and return the correct output, if there is no problem, you will simply return the current progress (only check on the job that had been done, don't care about the tasks that will be done at the future)."
 # This is the presenter, who is responsible for presenting the final output of the project.
 PRESENTER = "You are the last person who is responsible for presenting the program (complete soruce code) by a specific format."
 # This is the reverse engineer, who is responsible for understanding the source code and describing its functionality.
@@ -239,31 +260,6 @@ FORMAT_TOKEN = '''You should return in the following format:\n'''
 # ---------------------------------------------------
 
 
-# This function will pick out the specific zone from the input string.
-def pickOutSpecificZone(input_string, zone_name):
-    # Split the input string into lines
-    lines = input_string.split('\n')
-
-    # Initialize a variable to hold the content of the specified zone
-    zone_content = ""
-    in_zone = False
-
-    # Iterate through each line to find the specified zone
-    for line in lines:
-        # Check if the line starts with the specified zone
-        if line.startswith(zone_name + ":"):
-            in_zone = True
-            zone_content += line.split(zone_name + ":")[1].strip() + "\n"
-        elif in_zone:
-            # Check if the line is a new header
-            if ":" in line and not line.strip().startswith(zone_name + ":"):
-                break
-            # Append the line to the zone content
-            zone_content += line.strip() + "\n"
-
-    return zone_content.strip()
-
-
 # This function will read the code and decribe it in human language.
 def describeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
@@ -314,45 +310,6 @@ def createWorkSheet(request, language):
     # print(workSheet.choices[0].message.content)
 
     return workSheet.choices[0].message.content
-
-
-# Use for inspecter to check the progress of the project and lead it to correctness.
-def inspecterCheck(mainProblem, jobMatrix):
-    global currentProgress
-    # print("Inspecter is inspecting: ", currentProgress)
-    # Turn the job array into string.
-    jobMatrixText = ' '.join(jobMatrix)
-
-    inspectResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": INSEPECTER,
-            },
-            {
-                "role": "user",
-                "content": "Here is the main target\n"
-                + mainProblem
-                + '\n'
-                + "Here is all the job that sould be done.\n"
-                + jobMatrixText
-                + "Here is the current progress:\n"
-                + currentProgress
-                + '\n'
-                + "You should respond in the following format:\n"
-                + MESSAGE_FORMAT
-                + "If you find any probelm, please fix it and put the correct answer in the program pool and decribe what you had done in the current job, if you find no problem simply respond the 'current progress' content that you recieved. You should always ignore the job that will be done in the future, only check the job that had been done.\n",
-            },
-        ],
-    )
-
-    # Use to debug the output
-    # print(inspectResult.choices[0].message.content)
-
-    currentProgress = inspectResult.choices[0].message.content
-
-    return
 
 
 # Use for getting the specific content from the worksheet.
@@ -549,17 +506,6 @@ def finalOutputDisplayer(currentProgess, mainTarget):
     return finalOutput
 
 
-# This function is the inspecter that will randomly check the progress of the project and adjust the error if there is any.
-def inspecter():
-    global threadStopFlag, workSheet, mainProblem, currentProgress
-    while not threadStopFlag:
-        time.sleep(random.randint(5, 10))
-        currentProgress = inspecterCheck(currentProgress, mainProblem, workSheet)
-        print("Inspecter inspecting: ", currentProgress)
-        if threadStopFlag:
-            break
-
-
 # Convert the tasks to the format that can be displayed on the frontend 'Job: ...... '
 def convertJobToFrontFormat(inputJobArray):
     outputJobArray = []
@@ -745,8 +691,6 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
         for thread in threads:
             thread.join()
 
-        # MOD 20241201 Daniel Now dont implement the inspecter, just return the current progress.
-        # inspecterCheck(mainTarget, jobArray)
     # After all the task is done, the final output will be the current progress.
     return currentProgress
 
@@ -757,7 +701,6 @@ mainProblem = ""
 
 @app.route("/", methods=["GET"])
 def index():
-    # 取得發出請求的來源 URL
     referrer = request.referrer
     if referrer:
         return redirect(referrer)
@@ -806,9 +749,6 @@ def execute_steps():
 
         # Start the processing of the jobs.
         finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
-        # This must be done before sending the final output to the frontend.
-        # Remember this is a job too.
-        # print("Final Output:", finalOutputCode)
         # ADD 20241201 Daniel Now use the tidyUpProgramPool to tidy up the program pool.
         # Get the Program pool first.
         final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
@@ -841,14 +781,14 @@ def stream():
             while progressBar_current < progressBar_total or progressBar_total == 0:
                 progress_message = f"{progressBar_current},{progressBar_total}\n"
                 yield f"data: {progress_message}\n\n"
-                print('Progress:', progress_message)
+                # print('Progress:', progress_message)
                 # Sleep for 2 seconds then continue the loop.
                 time.sleep(2)
 
             # Since the last message won't be sent, we need to send the final message.
             progress_message = f"{progressBar_total},{progressBar_total}\n"
             yield f"data: {progress_message}\n\n"
-            print('Final Progress:', progress_message)
+            # print('Final Progress:', progress_message)
 
             # Make sure the last message is send before the return.
             time.sleep(1.5)
@@ -866,8 +806,7 @@ def stream():
     return Response(event_stream(), content_type='text/event-stream')
 
 
-# Condtion to pick which server to use.
-# When Server is only for testing, use http, otherwise use https.
+# Switch the server connection type
 if SERVER_TYPE == "http":
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5001)
