@@ -1,3 +1,8 @@
+//////////////IP SETTINGS/////////////////////
+//const SERVERIP = "https://140.118.101.66:61911/"
+const SERVERIP = "https://127.0.0.1:61911/"
+/////////////////////////////////////////////
+
 const yesBtn = document.querySelector('.yesbtn');
 let yesBtnClicked = false;
 
@@ -32,7 +37,7 @@ function sendCode(dataChunk) {
     let comment = dataChunk.comment;
     let id = dataChunk.id;
     setTimeout(() => {
-        fetch(GLOBALREST+"viewer_comment", {
+        fetch(SERVERIP+"viewer_comment", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -57,7 +62,7 @@ window.onload = () => {
     else {
         console.log(locationsplit);
     }
-    fetch(GLOBALREST+"viewData", {
+    fetch(SERVERIP+"viewData", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

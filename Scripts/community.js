@@ -1,3 +1,8 @@
+//////////////IP SETTINGS/////////////////////
+//const SERVERIP = "https://140.118.101.66:61911/"
+const SERVERIP = "https://127.0.0.1:61911/"
+/////////////////////////////////////////////
+
 // window.onload = function() {
 //   serverText = document.querySelector('.server');
 //   serverText.innerHTML = "Server: " + (CURRENTWEB == LOCALWEB ? "Local" : "Camp");
@@ -44,7 +49,7 @@ function processSearch() {
     loadingToggle("on");
 
     //searching for database
-    fetch(GLOBALREST+"communitySearch", {
+    fetch(SERVERIP+"communitySearch", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

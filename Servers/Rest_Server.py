@@ -63,7 +63,7 @@ class DynamicLogHandler:
     def setup_general_logger(self):
         """Set up the logger for general stdout logs."""
         self.general_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_gen_server_logs.log"
+            self.log_folder, f"{self.current_date}_rest_server_logs.log"
         )
         self.general_logger = logging.getLogger("general")
         self.general_logger.setLevel(logging.INFO)
@@ -84,7 +84,7 @@ class DynamicLogHandler:
     def setup_web_logger(self):
         """Set up the logger for werkzeug (web-related) logs."""
         self.web_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_gen_server_web_logs.log"
+            self.log_folder, f"{self.current_date}_rest_server_web_logs.log"
         )
         werkzeug_logger = logging.getLogger("werkzeug")
         werkzeug_logger.setLevel(logging.INFO)
@@ -139,7 +139,7 @@ cert_path = resource_path('certificate.crt')
 key_path = resource_path('private_key.key')
 
 # Set the server type to https or http
-SERVER_TYPE = "http"
+SERVER_TYPE = "https"
 
 # Create a Flask app
 app = Flask(__name__)

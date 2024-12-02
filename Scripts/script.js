@@ -1,4 +1,3 @@
-
 //////////////IP SETTINGS/////////////////////
 //https://140.118.101.66:56494/ -> Generate Server
 //https://140.118.101.66:61911/ -> Analyze Server
@@ -8,7 +7,7 @@ const GLOBALGENERATE = "https://140.118.101.66:56494/"
 const LOCALREST = "https://127.0.0.1:61911/"
 const LOCALGENERATE = "https://127.0.0.1:56494/"
 currentGenerateServerIP = LOCALGENERATE;
-currentRestServerIP = GLOBALREST;
+currentRestServerIP = LOCALREST;
 /////////////////////////////////////////////
 let originalTab = 1;
 let exectab = 1;

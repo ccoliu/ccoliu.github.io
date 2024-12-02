@@ -1,13 +1,12 @@
 //////////////IP SETTINGS/////////////////////
-// Simply comment the following line to switch between local and camp server
-const GLOBALREST = "https://140.118.101.66:61911/"
-//const GLOBALREST = "http://127.0.0.1:5000/"
+//const SERVERIP = "https://140.118.101.66:61911/"
+const SERVERIP = "https://127.0.0.1:61911/"
 /////////////////////////////////////////////
 
 const ServerStatus = document.querySelector('.ServerStatus');
 const ServerStatusRes = document.querySelector('.ServerStatusRes');
 if (ServerStatus && ServerStatusRes) {
-    fetch(GLOBALREST)
+    fetch(SERVERIP)
     .then (response => {
         if (!response.ok) {
           ServerStatusRes.innerHTML = "Offline";
@@ -194,7 +193,7 @@ submitbtn.addEventListener("click", () => {
     document.querySelector('.loadinggif').style.display = "flex";
 
  
-    fetch(GLOBALREST + "similarity", {
+    fetch(SERVERIP + "similarity", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
