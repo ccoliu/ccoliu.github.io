@@ -1,5 +1,34 @@
+# ---------------------------------------------------
+# Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
+# Date: 2024/10/01
+# Update: 2024/12/02
+# Version: <V10.0.1.0>
+# ---------------------------------------------------
+
+# ---------------------------------------------------
+'''Import the necessary libraries and modules'''
+# ---------------------------------------------------
 import os
 import sys
+from openai import OpenAI  # OpenAI API
+from flask import Flask, request, jsonify, redirect  # Flask interface
+from flask_cors import CORS
+import ssl  # Local https key
+from bson import json_util  # For MongoDB may use the json_util
+import threading
+import logging
+from datetime import datetime
+
+# ---------------------------------------------------
+'''Import the self-defined tools and functions'''
+# ---------------------------------------------------
+
+import FormatEnforcer
+from dataBase import dataBaseTools
+
+# ---------------------------------------------------
+'''System initialization and configuration'''
+# ---------------------------------------------------
 
 
 def resource_path(relative_path):
@@ -13,17 +42,97 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# Import necessary libraries
-from openai import OpenAI  # OpenAI API
-from flask import Flask, request, jsonify, redirect  # Flask interface
-from flask_cors import CORS
+# Get the current path of the server
+current_path = resource_path("")
 
-import ssl  # Local https key
-from bson import json_util  # For MongoDB may use the json_util
-import threading
+# Create a Log folder if it does not exist
+log_folder_path = os.path.abspath(current_path + "/Log")
+if not os.path.exists(log_folder_path):
+    os.makedirs(log_folder_path)  # Create the log folder
+    print(f"Log folder created: {log_folder_path}")
 
-# Import self defined classes
-from dataBase import dataBaseTools
+
+# Dynamic log handler to switch log files daily
+class DynamicLogHandler:
+    def __init__(self, log_folder):
+        self.log_folder = log_folder
+        self.current_date = datetime.now().strftime("%Y-%m-%d")
+        self.setup_general_logger()
+        self.setup_web_logger()
+
+    def setup_general_logger(self):
+        """Set up the logger for general stdout logs."""
+        self.general_log_file = os.path.join(
+            self.log_folder, f"{self.current_date}_gen_server_logs.log"
+        )
+        self.general_logger = logging.getLogger("general")
+        self.general_logger.setLevel(logging.INFO)
+        self.general_logger.handlers = []  # Clear previous handlers
+
+        # File handler for logging to a file
+        general_file_handler = logging.FileHandler(self.general_log_file, mode="a")
+        general_file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
+        self.general_logger.addHandler(general_file_handler)
+
+        # Stream handler for logging to console
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+        self.general_logger.addHandler(console_handler)
+
+    def setup_web_logger(self):
+        """Set up the logger for werkzeug (web-related) logs."""
+        self.web_log_file = os.path.join(
+            self.log_folder, f"{self.current_date}_gen_server_web_logs.log"
+        )
+        werkzeug_logger = logging.getLogger("werkzeug")
+        werkzeug_logger.setLevel(logging.INFO)
+        werkzeug_logger.handlers = []  # Clear previous handlers
+        web_file_handler = logging.FileHandler(self.web_log_file, mode="a")
+        web_file_handler.setFormatter(
+            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+        )
+        werkzeug_logger.addHandler(web_file_handler)
+
+    def check_date_and_rotate_logs(self):
+        """Check the date and rotate log files if the date has changed."""
+        new_date = datetime.now().strftime("%Y-%m-%d")
+        if new_date != self.current_date:
+            self.current_date = new_date
+            self.setup_general_logger()
+            self.setup_web_logger()
+
+
+# Initialize the dynamic log handler
+log_handler = DynamicLogHandler(log_folder_path)
+
+
+# Custom stream handler to log only stdout to the general log file and console
+class StreamToLogger:
+    def __init__(self, logger):
+        self.logger = logger
+
+    def write(self, message):
+        if message.strip():
+            log_handler.check_date_and_rotate_logs()  # Check and rotate logs if needed
+            self.logger.info(message.strip())
+
+    def flush(self):
+        pass
+
+
+# Redirect stdout to both console and general logger
+sys.stdout = StreamToLogger(log_handler.general_logger)
+
+
+# Initialize Tools
+dbTools = dataBaseTools()
+message_inforcer = FormatEnforcer.Enforcer()
+
+# ---------------------------------------------------
+'''Define the server and API keys'''
+# ---------------------------------------------------
 
 # Set up SSL key for Flask to use https.
 cert_path = resource_path('certificate.crt')
@@ -35,9 +144,6 @@ SERVER_TYPE = "http"
 # Create a Flask app
 app = Flask(__name__)
 CORS(app)
-
-# Create instances of self defined classes
-dbTools = dataBaseTools()
 
 # Read API keys from key file.
 key_file_path = resource_path("key.txt")
@@ -53,6 +159,9 @@ client_model_1 = OpenAI(api_key=api_key_model_1)  # Gpt-3.5-turbo-A
 client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
+# ---------------------------------------------------
+'''Define the system roles and instructions'''
+# ---------------------------------------------------
 
 # Define system roles and their instructions.
 ANALYST = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'."
@@ -282,7 +391,6 @@ def modifyDependency(inputString):
 
 @app.route("/", methods=["GET"])
 def index():
-    # 取得發出請求的來源 URL
     referrer = request.referrer
     if referrer:
         return redirect(referrer)
