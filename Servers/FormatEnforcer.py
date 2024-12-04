@@ -140,7 +140,17 @@ class Normalize:
 
         return True
 
-    # Ckeck if the current message's program pool is valid (Should take the current result and put it in the program pool)
+    def is_valid_bullet_list_format(self, input_string):
+        # Allow "No issues" as a valid input
+        if input_string.strip() == "No issues":
+            return True
+
+        counter = 1
+        content = self.extract_section_content(input_string, "Problem" + str(counter) + ":")
+
+        while content != "Warning: No content was found.":
+            counter += 1
+            content = self.extract_section_content(input_string, "Problem" + str(counter) + ":")
 
 
 class Enforcer(Normalize):

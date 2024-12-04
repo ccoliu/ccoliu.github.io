@@ -127,7 +127,7 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 
 
 # Initialize Tools
-dbTools = dataBaseTools()
+database_tools = dataBaseTools()
 message_inforcer = FormatEnforcer.Enforcer()
 
 # ---------------------------------------------------
@@ -196,16 +196,21 @@ Jugement Reason: (Reasons using bullet points)\n
 '''
 
 BULLIT_LIST_FORMAT = '''
-Problem 1: ......
-Problem 2: ......
-Problem 3: ......
-(How many problems actually depend on your analysis)
-(If there is no problem, just return "No issues")
+Problem 1: 
+(......)
+Problem 2:
+(......)
+Problem 3:
+(......)
+etc.
+(If there is no problem, just return "No issues" without any other content.)
 '''
 
 
 # This function will read the source code and return a list of potential problems.
-def analyzeCode(inputCode):
+def analyzeCode(input_code):
+
+    # Use the GPT-3.5-turbo-A model to analyze the code.
     analyzeResult = client_model_1.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -215,17 +220,13 @@ def analyzeCode(inputCode):
             },
             {
                 "role": "user",
-                "content": "Here is the source code\n"
-                + inputCode
-                + "Please help me find the potential problems in the code in the following format.\n"
+                "content": "Here is the user's source code\n"
+                + input_code
+                + "Please help me find the potential problems in the code and return in the following format:\n"
                 + BULLIT_LIST_FORMAT,
             },
         ],
     )
-
-    # Print the problem list, use for debugging.
-    # print("This is the problem list: \n")
-    # print(analyzeResult.choices[0].message.content)
 
     return analyzeResult.choices[0].message.content
 
@@ -404,7 +405,7 @@ def processEachTab(code, results, index, dependedArray):
         optimizedCode = optimizeCode(code, problems)
         summary = describeCode(optimizedCode)
 
-        dataId = dbTools.insertModifyDocument(
+        dataId = database_tools.insertModifyDocument(
             "fineTune", "codoctopus", code, optimizedCode, summary
         )
 
@@ -468,13 +469,13 @@ def similarity():
         # If there are two input codes, compare them
         if secondInput != "":
             analyzeResult = getSimilarity(firstInput, secondInput)
-            dbTools.insertsimilarityCheck(
+            database_tools.insertsimilarityCheck(
                 "fineTune", "similarityCheck", firstInput, secondInput, analyzeResult
             )
         else:
             aiCode = aiWriteCode(firstInput)
             analyzeResult = aiCodeChecker(firstInput, aiCode)
-            dbTools.insertsimilarityCheck(
+            database_tools.insertsimilarityCheck(
                 "fineTune", "similarityCheck", firstInput, aiCode, analyzeResult
             )
 
@@ -494,8 +495,8 @@ def retreive_code():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        dbTools.updateDocument("fineTune", "codoctopus", id, "rate", rate)
-        dbTools.updateDocument("fineTune", "codoctopus", id, "comment", comment)
+        database_tools.updateDocument("fineTune", "codoctopus", id, "rate", rate)
+        database_tools.updateDocument("fineTune", "codoctopus", id, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
@@ -511,7 +512,7 @@ def search():
         # Get the keyword from the frontend
 
         searchResult = [[]]
-        searchResult = dbTools.communitySearch("fineTune", "codoctopus", data)
+        searchResult = database_tools.communitySearch("fineTune", "codoctopus", data)
 
         # return list of searched arrays
 
@@ -528,16 +529,16 @@ def view():
         lang = None
 
         # Get the keyword from the frontend
-        mode = dbTools.getMode("fineTune", "codoctopus", id)
+        mode = database_tools.getMode("fineTune", "codoctopus", id)
         if mode == "modify code":
-            origin = dbTools.getOriginMessage("fineTune", "codoctopus", id)
-            output = dbTools.getGptOutput("fineTune", "codoctopus", id)
-            summary = dbTools.getSummary("fineTune", "codoctopus", id)
+            origin = database_tools.getOriginMessage("fineTune", "codoctopus", id)
+            output = database_tools.getGptOutput("fineTune", "codoctopus", id)
+            summary = database_tools.getSummary("fineTune", "codoctopus", id)
         elif mode == "generate code":
-            lang = dbTools.getLang("fineTune", "codoctopus", id)
-            origin = dbTools.getOriginMessage("fineTune", "codoctopus", id)
-            output = dbTools.getGptOutput("fineTune", "codoctopus", id)
-            summary = dbTools.getSummary("fineTune", "codoctopus", id)
+            lang = database_tools.getLang("fineTune", "codoctopus", id)
+            origin = database_tools.getOriginMessage("fineTune", "codoctopus", id)
+            output = database_tools.getGptOutput("fineTune", "codoctopus", id)
+            summary = database_tools.getSummary("fineTune", "codoctopus", id)
 
         if lang == None:
             lang = "undefined"
@@ -566,7 +567,7 @@ def viewer_comment():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        dbTools.updateCommentToCommnity(id, rate, comment)
+        database_tools.updateCommentToCommnity(id, rate, comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
@@ -600,7 +601,7 @@ def replaceOptimizedCode(results, dependentArray, default_string="Can't identify
         if 'optimizedCode' in result:
             if index < len(dependentArray):
                 result['optimizedCode'] = dependentArray[index]
-                dbTools.updateDocument(
+                database_tools.updateDocument(
                     "fineTune", "codoctopus", result['id'], "optimizedCode", result['optimizedCode']
                 )
         else:
