@@ -141,16 +141,21 @@ class Normalize:
         return True
 
     def is_valid_bullet_list_format(self, input_string):
-        # Allow "No issues" as a valid input
-        if input_string.strip() == "No issues":
-            return True
+        # 定義正則表達式模式
+        bullet_list_pattern = r"""
+            ^(?:                             # 開始匹配
+                No\sissues$                  # 第一種情況: "No issues"
+                |                           # 或
+                (?:                         # 啟動多行模式
+                    Problem\s\d+:           # 匹配 Problem + 數字 + 冒號
+                    \s*\(.*?\)              # 匹配括號內的內容（允許空白或任意內容）
+                    \s*                     # 允許任意空白
+                )+                          # 至少一組問題
+            )$                              # 確保整個字符串都符合
+        """
 
-        counter = 1
-        content = self.extract_section_content(input_string, "Problem" + str(counter) + ":")
-
-        while content != "Warning: No content was found.":
-            counter += 1
-            content = self.extract_section_content(input_string, "Problem" + str(counter) + ":")
+        # 使用正則表達式檢查格式
+        return bool(re.match(bullet_list_pattern, input_string.strip(), re.VERBOSE | re.MULTILINE))
 
 
 class Enforcer(Normalize):

@@ -753,10 +753,22 @@ def execute_steps():
         # Start the processing of the jobs.
         finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
         # ADD 20241201 Daniel Now use the tidyUpProgramPool to tidy up the program pool.
+
         # Get the Program pool first.
         final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
         finalOutputCode = tidyUpProgramPool(mainProblem, final_prog_pool)
-        finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
+
+        # Let AI to gerate the final output content.
+        # finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
+        # Force the final output code to follow the format.
+        finalOutputCode = message_inforcer.strictlyFollowFormat(
+            finalOutputDisplayer,
+            message_inforcer.is_valid_message_format,
+            finalOutputCode,
+            mainProblem,
+        )
+
+        # Finshed the progress bar.
         progressBar_current += 1
 
         time.sleep(1)
