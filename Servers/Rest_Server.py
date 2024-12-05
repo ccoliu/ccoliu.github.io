@@ -8,6 +8,7 @@
 # ---------------------------------------------------
 '''Import the necessary libraries and modules'''
 # ---------------------------------------------------
+
 import os
 import sys
 from openai import OpenAI  # OpenAI API
@@ -18,7 +19,7 @@ from bson import json_util  # For MongoDB may use the json_util
 import threading
 import logging
 from datetime import datetime
-import configparser  # For reading the config file (ini file)
+import yaml  # Import the PyYAML library
 
 # ---------------------------------------------------
 '''Import the self-defined tools and functions'''
@@ -42,6 +43,13 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
+
+
+# Load the YAML file
+def load_yaml_config(file_path):
+    """Load configuration from a YAML file."""
+    with open(file_path, "r") as yaml_file:
+        return yaml.safe_load(yaml_file)
 
 
 # Get the current path of the server
@@ -131,7 +139,7 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 # Initialize Tools
 database_tools = dataBaseTools()
 message_enforcer = FormatEnforcer.Enforcer()
-similarity_checker = PlagiarismChecker()
+similarity_helper = PlagiarismChecker()
 
 # ---------------------------------------------------
 '''Define the server and API keys'''
@@ -144,23 +152,18 @@ key_path = resource_path('private_key.key')
 # Set the server type to https or http
 SERVER_TYPE = "https"
 # Set the default GPT model to use
-GPT_MODEL = "gpt-3.5-turbo"
+gpt_model = "gpt-3.5-turbo"
 
 # Get current file path
-current_path = os.path.dirname(os.path.realpath(__file__))
-# Get the ini file path
-config_file_path = os.path.join(current_path, "Config.ini")
-# Get the config tool to manage the config file
-config_tool = configparser.ConfigParser()
+# current_path = os.path.dirname(os.path.realpath(__file__))
 
-# Check if the config file exists
-if not os.path.exists(config_file_path):
-    raise FileNotFoundError(f"Config file not found at: {config_file_path}")
-else:
-    config_tool.read(config_file_path)
-    # Get the connection type from the config file
-    SERVER_TYPE = config_tool["ServerSettings"]["ConnectionType"]
-    GPT_MODEL = config_tool["ServerSettings"]["GptModel"]
+# Load the configuration from the YAML file
+config_file_path = resource_path("Servers\\Config.yaml")
+config = load_yaml_config(config_file_path)
+
+# Extract server configuration from the loaded YAML
+SERVER_TYPE = config["ServerSettings"]["ConnectionType"]
+gpt_model = config["ServerSettings"]["GptModel"]
 
 # Create a Flask app
 app = Flask(__name__)
@@ -184,118 +187,41 @@ client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 '''Define the system roles and instructions'''
 # ---------------------------------------------------
 
-# Define system roles and their instructions.
-ANALYST = "You are a program issue analyst, adept at identifying potential problems by observing code. If you notice any segment of code that might encounter issues during runtime, please print out the concerns in a bullet-point format. If you find no issues, simply print out the phrase 'No issues'."
+# Get system roles from the configuration file
+code_analyst = config["Roles"]["ANALYST"]
+code_master = config["Roles"]["CODE_MASTER"]
+reverse_discriber = config["Roles"]["REVERSE_DESCRIBER"]
+similarity_checker_peer = config["Roles"]["SIMILARITY_CHECKER"]
+similarity_checker_ai = config["Roles"]["AI_CHECKER"]
+code_modifier = config["Roles"]["DEPENDENT_CODE_MODIFIER"]
 
-CODE_MASTER = "You are a coding master, skilled at helping others modify their source code to ensure it runs correctly. If you receive only the source code, you will directly make corrections. If you receive both the source code and a list of potential issues, you will compare each item against the source code and analyze whether these issues may occur. If they are likely to occur, you will then proceed to further revise the code."
+# Get the system instructions from the configuration file
+format_modified_code = config["Formats"]["ASK_FOR_CODE"]
+format_similarity_peer = config["Formats"]["COPY_FROM_PEER_FORMAT"]
+format_similarity_ai = config["Formats"]["COPY_FROM_AI_FORMAT"]
+format_problem_list = config["Formats"]["PROBLEM_BULLET_LIST_FORMAT"]
 
-REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
-
-SIMILARITY_CHECKER = "You are a similarity checker, you will compare two source code, and return the similarity between them."
-
-AI_CHECKER = "You are an AI code similarity checker.\n\n"
-
-DEPENDENT_CODE_MODIFIER = "You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code."
-
-# Define some format for the AI to follow.
-ASK_FOR_CODE = '''
-Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code.\n
-You should return in the following format:\n
-Using language: 
-(Language the program use)
-Main program: 
-(The program code)
-Things that had been modified:
-- (The things that had been modified)
-- (The things that had been modified)
-etc.
-'''
-
-# Two code comapre plagiarism format
-COPY_FROM_PEER_FORMAT = '''
-Probability of Plagiarism:\n 
-(Percentage (%) that the LHS code copy from RHS code)
-
-Analysis:\n
-(With analysis in the following newlines.)
-
-Final Judgement:\n 
-(Plagiarism/Not Plagiarism)
-
-Jugement Reason:\n 
-(Reasons using bullet points)
-'''
-
-# AI plagiarism format
-COPY_FROM_AI_FORMAT = '''
-Probability of AI code:\n 
-(Percentage % that the source may be inspired by AI-generated code)
-
-Analysis:\n
-(With analysis in the following newlines.)
-
-Final Judgement:\n 
-(Plagiarism/Written by human)
-
-Jugement Reason:\n 
-(Reasons you make the Final Judgement using bullet points)
-'''
-
-# Define the format for the problem list.
-PROBLEM_BULLIT_LIST_FORMAT = '''
-Problem 1: 
-(......)
-Problem 2:
-(......)
-Problem 3:
-(......)
-etc.
-(If there is no problem, just return "No issues" without any other content.)
-'''
-
-JUDGEMENT_ACCORDANCE = '''
-Please make your judgment based on the following rules:
-1. The Code's Purpose: If the purpose is not complex or there are only a few possible ways to implement it, it may not be plagiarism.
-2. Coding Style: Evaluate the writing style of the code.
-3. Logical Flow: Analyze the operational logic of the code.
-4. Code Structure: Assess the overall architecture of the code.
-
-Combine these factors with the Levenshtein distance for your judgment.
-Levenshtein distance accounts for approximately 30% /of the final decision.
-The above factors (1-4) account for approximately 70%.
-Based on the combined evaluation, determine whether the code is likely plagiarized.
-
-Note:
-If there is a decisive factor, such as a Levenshtein distance of 100 guaranteeing plagiarism, or if you find that the algorithms of the two codes are completely different etc.You can make a direct decision.
-'''
-
-
-JUDGEMENT_ACCORDANCE_AI = '''
-Please make your judgment based on the following rules:
-1. Is the source code coding style too perfect? Maybe all the spaces are perfect, the indentation is perfect, or the code is too clean.(40%)
-2. Is the source code logic too perfect? Maybe the code is too logical, or the code is too structured.(30%)
-3. Is the implementation of the source code to meet the purpose is the way you will do it?(30%)
-
-Make your judgment based on the above rules and proportion.
-'''
+# Similarity check instructions
+judgement_accordance = config["Judgements"]["ACCORDANCE"]
+judgement_accordance_ai = config["Judgements"]["ACCORDANCE_AI"]
 
 
 # This function will read the source code and return a list of potential problems.
 def analyze_user_code(input_code):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": ANALYST,
+                "content": code_analyst,
             },
             {
                 "role": "user",
                 "content": "Here is the user's source code\n"
                 + input_code
                 + "Please help me find the potential problems in the code and return in the following format:\n"
-                + PROBLEM_BULLIT_LIST_FORMAT,
+                + format_problem_list,
             },
         ],
     )
@@ -307,11 +233,11 @@ def analyze_user_code(input_code):
 def optimize_code(inputCode, problemList):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": CODE_MASTER,
+                "content": code_master,
             },
             {
                 "role": "user",
@@ -321,7 +247,7 @@ def optimize_code(inputCode, problemList):
                 + "Here are the problems that may occur\n"
                 + problemList
                 + "\n"
-                + ASK_FOR_CODE,
+                + format_modified_code,
             },
         ],
     )
@@ -333,11 +259,11 @@ def optimize_code(inputCode, problemList):
 def summarize_code_in_sentence(inputCode):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": REVERSE_DISCRIBER,
+                "content": reverse_discriber,
             },
             {
                 "role": "user",
@@ -355,28 +281,31 @@ def summarize_code_in_sentence(inputCode):
 def copy_from_peer_check(lhs_code, rhs_code):
 
     # Calculate the Levenshtein similarity score between the two codes
-    lev_score = similarity_checker.compare_levenshtein(lhs_code, rhs_code)
+    lev_score = similarity_helper.compare_levenshtein(lhs_code, rhs_code)
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": SIMILARITY_CHECKER,
+                "content": similarity_checker_peer,
             },
             {
                 "role": "user",
                 "content": (
                     "Here is the first code (LHS):\n"
-                    f"{lhs_code}\n\n"
-                    "Here is the second code (RHS):\n"
-                    f"{rhs_code}\n\n"
+                    + lhs_code
+                    + "\n"
+                    + "Here is the second code (RHS):\n"
+                    + rhs_code
+                    + "\n"
                     "Here is the Levenshtein similarity score between the two codes:\n"
-                    f"{lev_score}\n\n"
-                    + JUDGEMENT_ACCORDANCE
+                    + lev_score
+                    + "\n"
+                    + judgement_accordance
                     + "\n"
                     + "Return the result in the following format:\n"
-                    f"{COPY_FROM_PEER_FORMAT}"
+                    f"{format_similarity_peer}"
                 ),
             },
         ],
@@ -388,20 +317,20 @@ def copy_from_peer_check(lhs_code, rhs_code):
 def copy_from_ai_check(input_code):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": AI_CHECKER,
+                "content": similarity_checker_ai,
             },
             {
                 "role": "user",
                 "content": (
                     "You are an AI code similarity checker.\n\n"
                     "Here is the source code:\n"
-                    f"{input_code}\n\n" + JUDGEMENT_ACCORDANCE_AI + "\n"
+                    f"{input_code}\n\n" + judgement_accordance_ai + "\n"
                     "Finally, return your analysis in the following format:\n"
-                    f"{COPY_FROM_AI_FORMAT}"
+                    f"{format_similarity_ai}"
                 ),
             },
         ],
@@ -414,7 +343,7 @@ def copy_from_ai_check(input_code):
 def ai_write_code(inputCode):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
@@ -437,11 +366,11 @@ def ai_write_code(inputCode):
 def modify_consider_dependency(inputString):
 
     gpt_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": DEPENDENT_CODE_MODIFIER,
+                "content": code_modifier,
             },
             {
                 "role": "user",

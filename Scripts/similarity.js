@@ -26,7 +26,7 @@ if (ServerStatus && ServerStatusRes) {
   
 if (ServerStatusRes) {
     ServerStatusRes.addEventListener('click', () => {
-        window.open(GLOBALREST, '_blank');
+        window.open(SERVERIP, '_blank');
     });
 }
 
