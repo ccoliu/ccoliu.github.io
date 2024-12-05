@@ -26,6 +26,7 @@ import configparser  # For reading the config file (ini file)
 
 import FormatEnforcer
 from dataBase import dataBaseTools
+from PlagiarismChecker import PlagiarismChecker
 
 # ---------------------------------------------------
 '''System initialization and configuration'''
@@ -130,6 +131,7 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 # Initialize Tools
 database_tools = dataBaseTools()
 message_enforcer = FormatEnforcer.Enforcer()
+similarity_checker = PlagiarismChecker()
 
 # ---------------------------------------------------
 '''Define the server and API keys'''
@@ -189,9 +191,9 @@ CODE_MASTER = "You are a coding master, skilled at helping others modify their s
 
 REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
 
-SIMILARITY_CHECKER = "You are a similarity checker, you will compare the original code and the modified code(if exists), and return the similarity between them, If only one code is provided, you need to check whether the code is made by AI or human."
+SIMILARITY_CHECKER = "You are a similarity checker, you will compare two source code, and return the similarity between them."
 
-AI_CHECKER = "You will reviced two code one is written by AI and the other is written by human, you need to analyze the code to determine if the human code copied the AI."
+AI_CHECKER = "You are an AI code similarity checker.\n\n"
 
 DEPENDENT_CODE_MODIFIER = "You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code."
 
@@ -213,10 +215,13 @@ etc.
 COPY_FROM_PEER_FORMAT = '''
 Probability of Plagiarism:\n 
 (Percentage (%) that the LHS code copy from RHS code)
+
 Analysis:\n
 (With analysis in the following newlines.)
+
 Final Judgement:\n 
 (Plagiarism/Not Plagiarism)
+
 Jugement Reason:\n 
 (Reasons using bullet points)
 '''
@@ -224,13 +229,16 @@ Jugement Reason:\n
 # AI plagiarism format
 COPY_FROM_AI_FORMAT = '''
 Probability of AI code:\n 
-(Percentage (%) that the LHS code might copy from AI (RHS) code)
+(Percentage % that the source may be inspired by AI-generated code)
+
 Analysis:\n
 (With analysis in the following newlines.)
+
 Final Judgement:\n 
 (Plagiarism/Written by human)
+
 Jugement Reason:\n 
-(Reasons using bullet points)
+(Reasons you make the Final Judgement using bullet points)
 '''
 
 # Define the format for the problem list.
@@ -243,6 +251,32 @@ Problem 3:
 (......)
 etc.
 (If there is no problem, just return "No issues" without any other content.)
+'''
+
+JUDGEMENT_ACCORDANCE = '''
+Please make your judgment based on the following rules:
+1. The Code's Purpose: If the purpose is not complex or there are only a few possible ways to implement it, it may not be plagiarism.
+2. Coding Style: Evaluate the writing style of the code.
+3. Logical Flow: Analyze the operational logic of the code.
+4. Code Structure: Assess the overall architecture of the code.
+
+Combine these factors with the Levenshtein distance for your judgment.
+Levenshtein distance accounts for approximately 30% /of the final decision.
+The above factors (1-4) account for approximately 70%.
+Based on the combined evaluation, determine whether the code is likely plagiarized.
+
+Note:
+If there is a decisive factor, such as a Levenshtein distance of 100 guaranteeing plagiarism, or if you find that the algorithms of the two codes are completely different etc.You can make a direct decision.
+'''
+
+
+JUDGEMENT_ACCORDANCE_AI = '''
+Please make your judgment based on the following rules:
+1. Is the source code coding style too perfect? Maybe all the spaces are perfect, the indentation is perfect, or the code is too clean.(40%)
+2. Is the source code logic too perfect? Maybe the code is too logical, or the code is too structured.(30%)
+3. Is the implementation of the source code to meet the purpose is the way you will do it?(30%)
+
+Make your judgment based on the above rules and proportion.
 '''
 
 
@@ -318,8 +352,10 @@ def summarize_code_in_sentence(inputCode):
     return gpt_output.choices[0].message.content
 
 
-# This function is for similarity check between two codes.
-def copy_from_peer_check(firstInputCode, secondInputCode):
+def copy_from_peer_check(lhs_code, rhs_code):
+
+    # Calculate the Levenshtein similarity score between the two codes
+    lev_score = similarity_checker.compare_levenshtein(lhs_code, rhs_code)
 
     gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
@@ -330,13 +366,18 @@ def copy_from_peer_check(firstInputCode, secondInputCode):
             },
             {
                 "role": "user",
-                "content": "Here is the LHS code\n"
-                + firstInputCode
-                + "\n"
-                + "Here is the RHS code\n"
-                + secondInputCode
-                + "\n"
-                + COPY_FROM_PEER_FORMAT,
+                "content": (
+                    "Here is the first code (LHS):\n"
+                    f"{lhs_code}\n\n"
+                    "Here is the second code (RHS):\n"
+                    f"{rhs_code}\n\n"
+                    "Here is the Levenshtein similarity score between the two codes:\n"
+                    f"{lev_score}\n\n"
+                    + JUDGEMENT_ACCORDANCE
+                    + "\n"
+                    + "Return the result in the following format:\n"
+                    f"{COPY_FROM_PEER_FORMAT}"
+                ),
             },
         ],
     )
@@ -344,8 +385,7 @@ def copy_from_peer_check(firstInputCode, secondInputCode):
     return gpt_output.choices[0].message.content
 
 
-# This fucntion is for AI code checker.
-def copy_from_ai_check(input_code, ai_code):
+def copy_from_ai_check(input_code):
 
     gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
@@ -356,18 +396,13 @@ def copy_from_ai_check(input_code, ai_code):
             },
             {
                 "role": "user",
-                "content": AI_CHECKER
-                + "\n"
-                + "Here is the human code\n"
-                + input_code
-                + "\n"
-                + "Here is the AI code\n"
-                + ai_code
-                + "\n"
-                + "Help me determine how similar human code and AI code are, based on the logic, sturcture, and coding style of the code.\n"
-                + "For example if the two code have all the same functions but the varaible name is different, you should think the human code is copied from AI code, on the other hand, if the AI code is highly structered and looked more neat, you should think the human code is written by human because human written code is usually not that neat.\n"
-                + "Please return in the following format:\n"
-                + COPY_FROM_AI_FORMAT,
+                "content": (
+                    "You are an AI code similarity checker.\n\n"
+                    "Here is the source code:\n"
+                    f"{input_code}\n\n" + JUDGEMENT_ACCORDANCE_AI + "\n"
+                    "Finally, return your analysis in the following format:\n"
+                    f"{COPY_FROM_AI_FORMAT}"
+                ),
             },
         ],
     )
@@ -566,10 +601,9 @@ def similarity():
 
             # analyzeResult = aiCodeChecker(firstInput, aiCode)
             analyzed_result = message_enforcer.strictlyFollowFormat(
-                copy_from_peer_check,
+                copy_from_ai_check,
                 message_enforcer.is_valid_ai_code_format,
                 lhs_input_code,
-                ai_code,
             )
 
             database_tools.insertsimilarityCheck(

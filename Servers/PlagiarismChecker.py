@@ -41,6 +41,7 @@ class LevenshteinAnalyzer:
         code1_clean = self.clean_code(code1)
         code2_clean = self.clean_code(code2)
         similarity = Levenshtein.ratio(code1_clean, code2_clean)
+        similarity = f"Levenshtein Result: {similarity * 100:.2f}%" + "\n"
         return similarity
 
 
@@ -56,4 +57,30 @@ class PlagiarismChecker(ASTAnalyzer, LevenshteinAnalyzer):
         output_string += f"Levenshtein Result: {lev_sim * 100:.2f}%" + "\n"
         weighted_similarity = ast_weight * ast_sim + lev_weight * lev_sim
         output_string += f"Combined Similarity: {weighted_similarity * 100:.2f}%"
+
         return output_string
+
+
+code1 = """
+```c
+// Updated code in my preferred structure and coding style
+#include <stdio.h>
+
+int main() {
+    printf("Hello, World!\n");
+    return 0;
+}
+```
+"""
+
+code2 = """
+//example code1
+#include <stdio.h>
+int main() {
+printf("Hello, World!");
+return 0;
+}"""
+
+checker = PlagiarismChecker()
+
+print(checker.compare_levenshtein(code1, code2))
