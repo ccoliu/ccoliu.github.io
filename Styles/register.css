@@ -1,0 +1,74 @@
+nav.navbar {
+    padding-left: 0;
+    margin-left: -2.7em;
+}
+
+h1 a:hover {
+    text-decoration: none;
+}
+
+.titlelink {
+    margin-left: 0;
+}
+
+.titlelink:hover {
+    text-decoration: none;
+    color: #c7c7c7;
+}
+
+.username-labl, .password-labl, .password-conf {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #c7c7c7;
+}
+
+.username-input,.password-input {
+    width: 90%;
+}
+
+.password-conf-input {
+    width: 90%;
+}
+
+.loginform {
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.logintitle {
+    font: 400 30px/1.5 "Lexend Deca", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    color: #c7c7c7;
+}
+
+.logininput {
+    margin-top: 25px;
+    margin-left: 25%;
+    background-color: rgba(54, 54, 54, 0.8);
+    border-radius: 5px;
+    padding: 20px 10px;
+}
+
+.username-warning, .password-warning, .password-conf-warning {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #ff0000;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.password-conf-warning {
+    margin-bottom: 40px;
+}
+
+.buttoncontain {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
+}
+
+
