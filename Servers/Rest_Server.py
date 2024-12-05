@@ -1,7 +1,7 @@
 # ---------------------------------------------------
 # Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
 # Date: 2024/10/01
-# Update: 2024/12/02
+# Update: 2024/12/05
 # Version: <V10.0.1.0>
 # ---------------------------------------------------
 
@@ -129,7 +129,7 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 
 # Initialize Tools
 database_tools = dataBaseTools()
-message_inforcer = FormatEnforcer.Enforcer()
+message_enforcer = FormatEnforcer.Enforcer()
 
 # ---------------------------------------------------
 '''Define the server and API keys'''
@@ -247,10 +247,9 @@ etc.
 
 
 # This function will read the source code and return a list of potential problems.
-def analyzeCode(input_code):
+def analyze_user_code(input_code):
 
-    # Use the GPT-3.5-turbo-A model to analyze the code.
-    analyzeResult = client_model_1.chat.completions.create(
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -267,12 +266,13 @@ def analyzeCode(input_code):
         ],
     )
 
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
 # This function wiil optimize the code using the source code and the problem list.
-def optimizeCode(inputCode, problemList):
-    analyzeResult = client_model_1.chat.completions.create(
+def optimize_code(inputCode, problemList):
+
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -292,14 +292,13 @@ def optimizeCode(inputCode, problemList):
         ],
     )
 
-    # print(analyzeResult.choices[0].message.content)
-
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
-# This function will read the code and decribe it in human language.
-def describeCode(inputCode):
-    analyzeResult = client_model_1.chat.completions.create(
+# This function will describe the code in one sentence. Use for code summarization stored in the database.
+def summarize_code_in_sentence(inputCode):
+
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -308,20 +307,21 @@ def describeCode(inputCode):
             },
             {
                 "role": "user",
-                "content": inputCode + "\n" + "Please summarize in 1 sentences with in 100 tokens.",
+                "content": inputCode
+                + "\n"
+                + "Please summarize what the code is doing in one sentence.(within 100 tokens)",
             },
         ],
         max_tokens=100,
     )
 
-    # print(analyzeResult.choices[0].message.content)
-
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
 # This function is for similarity check between two codes.
-def getSimilarity(firstInputCode, secondInputCode):
-    analyzeResult = client_model_1.chat.completions.create(
+def copy_from_peer_check(firstInputCode, secondInputCode):
+
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -341,13 +341,11 @@ def getSimilarity(firstInputCode, secondInputCode):
         ],
     )
 
-    # print(analyzeResult.choices[0].message.content)
-
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
 # This fucntion is for AI code checker.
-def aiCodeChecker(input_code, ai_code):
+def copy_from_ai_check(input_code, ai_code):
 
     gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
@@ -378,8 +376,9 @@ def aiCodeChecker(input_code, ai_code):
 
 
 # This function will ask AI for writing code based on the input code.
-def aiWriteCode(inputCode):
-    analyzeResult = client_model_1.chat.completions.create(
+def ai_write_code(inputCode):
+
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -391,16 +390,17 @@ def aiWriteCode(inputCode):
                 "content": "Here is the source code\n"
                 + inputCode
                 + "\n"
-                + "First you will analzye the source code and find out all the job the code can do, then you will write a code that can do the same job as the source code based on your own logic, coding style, and structure.\n"
-                + "Simply return the code you write.",
+                + "Modify the code into the structure and the coding style that you like.\n"
+                + "Simply return the code that you have written, there is no need to explain what you have done, just return the code.\n",
             },
         ],
     )
 
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
 def modifyDependency(inputString):
+
     modifiedString = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
@@ -422,11 +422,9 @@ def modifyDependency(inputString):
     return modifiedString.choices[0].message.content
 
 
-# Display the server's web page use for debugging.
-# @app.route("/", methods=["GET"])
-# def index():
-#     helloWorld = "Welcome! This is the Code Assistance's Modify Server!"
-#     return helloWorld
+# ---------------------------------------------------
+'''Define the API endpoints'''
+# ---------------------------------------------------
 
 
 @app.route("/", methods=["GET"])
@@ -440,9 +438,9 @@ def index():
 
 def processEachTab(code, results, index, dependedArray):
     try:
-        problems = analyzeCode(code)
-        optimizedCode = optimizeCode(code, problems)
-        summary = describeCode(optimizedCode)
+        problems = analyze_user_code(code)
+        optimizedCode = optimize_code(code, problems)
+        summary = summarize_code_in_sentence(optimizedCode)
 
         dataId = database_tools.insertModifyDocument(
             "fineTune", "codoctopus", code, optimizedCode, summary
@@ -502,37 +500,42 @@ def similarity():
         # Get the data string from the frontend
         data = request.get_json()
         # Get the specifec item from the data string
-        firstInput = data.get("code1", "")
-        secondInput = data.get("code2", "")
+        lhs_input_code = data.get("code1", "")
+        rhs_input_code = data.get("code2", "")
 
         # If there are two input codes, compare them
-        if secondInput != "":
+        if rhs_input_code != "":
             # MOD 20241204 Daniel enforce the format of the code
-            # analyzeResult = getSimilarity(firstInput, secondInput)
-            analyzeResult = message_inforcer.strictlyFollowFormat(
-                getSimilarity,
-                message_inforcer.is_valid_plagiarism_code_format,
-                firstInput,
-                secondInput,
+            analyzed_result = message_enforcer.strictlyFollowFormat(
+                copy_from_peer_check,
+                message_enforcer.is_valid_plagiarism_code_format,
+                lhs_input_code,
+                rhs_input_code,
             )
+
             database_tools.insertsimilarityCheck(
-                "fineTune", "similarityCheck", firstInput, secondInput, analyzeResult
+                "fineTune", "similarityCheck", lhs_input_code, rhs_input_code, analyzed_result
             )
         else:
             # MOD 20241204 Daniel enforce the format of the code
-            aiCode = aiWriteCode(firstInput)
+            ai_code = ai_write_code(lhs_input_code)
+
             # analyzeResult = aiCodeChecker(firstInput, aiCode)
-            analyzeResult = message_inforcer.strictlyFollowFormat(
-                getSimilarity, message_inforcer.is_valid_ai_code_format, firstInput, aiCode
+            analyzed_result = message_enforcer.strictlyFollowFormat(
+                copy_from_peer_check,
+                message_enforcer.is_valid_ai_code_format,
+                lhs_input_code,
+                ai_code,
             )
+
             database_tools.insertsimilarityCheck(
-                "fineTune", "similarityCheck", firstInput, aiCode, analyzeResult
+                "fineTune", "similarityCheck", lhs_input_code, ai_code, analyzed_result
             )
 
         # Output the result to the console and log file
-        print("Similarity check event:" + analyzeResult + "\n")
+        # print("Similarity check event:" + analyzeResult + "\n")
 
-        return jsonify({"result": analyzeResult})
+        return jsonify({"result": analyzed_result})
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -661,7 +664,10 @@ def replaceOptimizedCode(results, dependentArray, default_string="Can't identify
             result = default_string
 
 
-# Condtion to pick which server to use.
+# ---------------------------------------------------
+'''Run the server'''
+# ---------------------------------------------------
+
 if SERVER_TYPE == "http":
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5000)
