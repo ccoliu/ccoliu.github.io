@@ -143,19 +143,83 @@ class Normalize:
     def is_valid_bullet_list_format(self, input_string):
         # 定義正則表達式模式
         bullet_list_pattern = r"""
-            ^(?:                             # 開始匹配
-                No\sissues$                  # 第一種情況: "No issues"
-                |                           # 或
-                (?:                         # 啟動多行模式
-                    Problem\s\d+:           # 匹配 Problem + 數字 + 冒號
-                    \s*\(.*?\)              # 匹配括號內的內容（允許空白或任意內容）
-                    \s*                     # 允許任意空白
-                )+                          # 至少一組問題
-            )$                              # 確保整個字符串都符合
-        """
+                ^(?:                             # 開始匹配
+                    No\sissues$                  # 第一種情況: "No issues"
+                    |                           # 或
+                    (?:                         # 啟動多行模式
+                        Problem\s\d+:           # 匹配 Problem + 數字 + 冒號
+                        .+                      # 匹配至少一個非空內容
+                        \s*                     # 允許任意空白
+                    )+                          # 至少一組問題
+                )$                              # 確保整個字符串都符合
+            """
 
         # 使用正則表達式檢查格式
         return bool(re.match(bullet_list_pattern, input_string.strip(), re.VERBOSE | re.MULTILINE))
+
+    def is_valid_ai_code_format(self, input_string):
+        required_headers = [
+            "Probability of AI code:",
+            "Analysis:",
+            "Final Judgement:",
+            "Jugement Reason:",
+        ]
+        valid_headers = set(required_headers)
+        input_headers = set()
+
+        # Extract headers from the input string
+        for line in input_string.split('\n'):
+            line = line.strip()
+            if ':' in line:
+                header = line.split(':', 1)[0].strip() + ":"
+                input_headers.add(header)
+
+        # Check for extra headers
+        extra_headers = input_headers - valid_headers
+        if extra_headers:
+            return False
+
+        # Check content of required headers
+        for header in required_headers:
+            content = self.extract_section_content(
+                input_string, header[:-1]
+            )  # Remove the colon for section name
+            if content == "Warning: No content was found.":
+                return False
+
+        return True
+
+    def is_valid_plagiarism_code_format(self, input_string):
+        required_headers = [
+            "Probability of Plagiarism:",
+            "Analysis:",
+            "Final Judgement:",
+            "Jugement Reason:",
+        ]
+        valid_headers = set(required_headers)
+        input_headers = set()
+
+        # Extract headers from the input string
+        for line in input_string.split('\n'):
+            line = line.strip()
+            if ':' in line:
+                header = line.split(':', 1)[0].strip() + ":"
+                input_headers.add(header)
+
+        # Check for extra headers
+        extra_headers = input_headers - valid_headers
+        if extra_headers:
+            return False
+
+        # Check content of required headers
+        for header in required_headers:
+            content = self.extract_section_content(
+                input_string, header[:-1]
+            )  # Remove the colon for section name
+            if content == "Warning: No content was found.":
+                return False
+
+        return True
 
 
 class Enforcer(Normalize):

@@ -18,6 +18,7 @@ from bson import json_util  # For MongoDB may use the json_util
 import threading
 import logging
 from datetime import datetime
+import configparser  # For reading the config file (ini file)
 
 # ---------------------------------------------------
 '''Import the self-defined tools and functions'''
@@ -140,6 +141,24 @@ key_path = resource_path('private_key.key')
 
 # Set the server type to https or http
 SERVER_TYPE = "https"
+# Set the default GPT model to use
+GPT_MODEL = "gpt-3.5-turbo"
+
+# Get current file path
+current_path = os.path.dirname(os.path.realpath(__file__))
+# Get the ini file path
+config_file_path = os.path.join(current_path, "Config.ini")
+# Get the config tool to manage the config file
+config_tool = configparser.ConfigParser()
+
+# Check if the config file exists
+if not os.path.exists(config_file_path):
+    raise FileNotFoundError(f"Config file not found at: {config_file_path}")
+else:
+    config_tool.read(config_file_path)
+    # Get the connection type from the config file
+    SERVER_TYPE = config_tool["ServerSettings"]["ConnectionType"]
+    GPT_MODEL = config_tool["ServerSettings"]["GptModel"]
 
 # Create a Flask app
 app = Flask(__name__)
@@ -177,25 +196,45 @@ AI_CHECKER = "You will reviced two code one is written by AI and the other is wr
 DEPENDENT_CODE_MODIFIER = "You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code."
 
 # Define some format for the AI to follow.
-ASK_FOR_CODE = '''Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code.\n
-The output should be in the following format:\n
-Using language: (Language the program use)
-Main program: (The program code)
+ASK_FOR_CODE = '''
+Give me the compelete source code after you have modify or generate it, if there is no changes at all, just return the original source code, there is no need to explain what you have done, just return the code.\n
+You should return in the following format:\n
+Using language: 
+(Language the program use)
+Main program: 
+(The program code)
 Things that had been modified:
 - (The things that had been modified)
 - (The things that had been modified)
-....
+etc.
 '''
 
-SIMILARITY_FORMAT = "If there exists two codes, please analyze the percentage of similarity between them. The legal output format should be: \"The similarity between the two codes is: (Percentage Input) \", with analysis in the following newlines. For the last paragraph, judge if the code is plagiarized between the two codes or not, you can infer by the percentage and the analysis."
-
-AI_CODE_FORMAT = '''This is an AI-generated code for probability: (Percentage that the human code copy from AI)\n
-(With analysis in the following newlines.)\n
-Final Judgement: (Plagiarism/Written by human (judge if the human code may plagiarism AI))\n
-Jugement Reason: (Reasons using bullet points)\n
+# Two code comapre plagiarism format
+COPY_FROM_PEER_FORMAT = '''
+Probability of Plagiarism:\n 
+(Percentage (%) that the LHS code copy from RHS code)
+Analysis:\n
+(With analysis in the following newlines.)
+Final Judgement:\n 
+(Plagiarism/Not Plagiarism)
+Jugement Reason:\n 
+(Reasons using bullet points)
 '''
 
-BULLIT_LIST_FORMAT = '''
+# AI plagiarism format
+COPY_FROM_AI_FORMAT = '''
+Probability of AI code:\n 
+(Percentage (%) that the LHS code might copy from AI (RHS) code)
+Analysis:\n
+(With analysis in the following newlines.)
+Final Judgement:\n 
+(Plagiarism/Written by human)
+Jugement Reason:\n 
+(Reasons using bullet points)
+'''
+
+# Define the format for the problem list.
+PROBLEM_BULLIT_LIST_FORMAT = '''
 Problem 1: 
 (......)
 Problem 2:
@@ -212,7 +251,7 @@ def analyzeCode(input_code):
 
     # Use the GPT-3.5-turbo-A model to analyze the code.
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -223,7 +262,7 @@ def analyzeCode(input_code):
                 "content": "Here is the user's source code\n"
                 + input_code
                 + "Please help me find the potential problems in the code and return in the following format:\n"
-                + BULLIT_LIST_FORMAT,
+                + PROBLEM_BULLIT_LIST_FORMAT,
             },
         ],
     )
@@ -234,7 +273,7 @@ def analyzeCode(input_code):
 # This function wiil optimize the code using the source code and the problem list.
 def optimizeCode(inputCode, problemList):
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -261,7 +300,7 @@ def optimizeCode(inputCode, problemList):
 # This function will read the code and decribe it in human language.
 def describeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -283,7 +322,7 @@ def describeCode(inputCode):
 # This function is for similarity check between two codes.
 def getSimilarity(firstInputCode, secondInputCode):
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -297,7 +336,7 @@ def getSimilarity(firstInputCode, secondInputCode):
                 + "Here is the RHS code\n"
                 + secondInputCode
                 + "\n"
-                + SIMILARITY_FORMAT,
+                + COPY_FROM_PEER_FORMAT,
             },
         ],
     )
@@ -307,10 +346,11 @@ def getSimilarity(firstInputCode, secondInputCode):
     return analyzeResult.choices[0].message.content
 
 
-# This function is for AI code cheching.
-def aiCodeChecker(inputCode, aiCode):
-    analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+# This fucntion is for AI code checker.
+def aiCodeChecker(input_code, ai_code):
+
+    gpt_output = client_model_1.chat.completions.create(
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -321,27 +361,26 @@ def aiCodeChecker(inputCode, aiCode):
                 "content": AI_CHECKER
                 + "\n"
                 + "Here is the human code\n"
-                + inputCode
+                + input_code
                 + "\n"
                 + "Here is the AI code\n"
-                + aiCode
+                + ai_code
                 + "\n"
                 + "Help me determine how similar human code and AI code are, based on the logic, sturcture, and coding style of the code.\n"
                 + "For example if the two code have all the same functions but the varaible name is different, you should think the human code is copied from AI code, on the other hand, if the AI code is highly structered and looked more neat, you should think the human code is written by human because human written code is usually not that neat.\n"
                 + "Please return in the following format:\n"
-                + AI_CODE_FORMAT,
+                + COPY_FROM_AI_FORMAT,
             },
         ],
     )
 
-    print(analyzeResult.choices[0].message.content)
-    return analyzeResult.choices[0].message.content
+    return gpt_output.choices[0].message.content
 
 
 # This function will ask AI for writing code based on the input code.
 def aiWriteCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -363,7 +402,7 @@ def aiWriteCode(inputCode):
 
 def modifyDependency(inputString):
     modifiedString = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -468,16 +507,30 @@ def similarity():
 
         # If there are two input codes, compare them
         if secondInput != "":
-            analyzeResult = getSimilarity(firstInput, secondInput)
+            # MOD 20241204 Daniel enforce the format of the code
+            # analyzeResult = getSimilarity(firstInput, secondInput)
+            analyzeResult = message_inforcer.strictlyFollowFormat(
+                getSimilarity,
+                message_inforcer.is_valid_plagiarism_code_format,
+                firstInput,
+                secondInput,
+            )
             database_tools.insertsimilarityCheck(
                 "fineTune", "similarityCheck", firstInput, secondInput, analyzeResult
             )
         else:
+            # MOD 20241204 Daniel enforce the format of the code
             aiCode = aiWriteCode(firstInput)
-            analyzeResult = aiCodeChecker(firstInput, aiCode)
+            # analyzeResult = aiCodeChecker(firstInput, aiCode)
+            analyzeResult = message_inforcer.strictlyFollowFormat(
+                getSimilarity, message_inforcer.is_valid_ai_code_format, firstInput, aiCode
+            )
             database_tools.insertsimilarityCheck(
                 "fineTune", "similarityCheck", firstInput, aiCode, analyzeResult
             )
+
+        # Output the result to the console and log file
+        print("Similarity check event:" + analyzeResult + "\n")
 
         return jsonify({"result": analyzeResult})
     except Exception as e:

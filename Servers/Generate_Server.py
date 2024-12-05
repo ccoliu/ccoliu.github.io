@@ -135,8 +135,10 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 dbTools = dataBaseTools()
 message_inforcer = FormatEnforcer.Enforcer()
 
-# Initialize some variables
+# Set the server type to https or http
 SERVER_TYPE = "https"
+# Set the default GPT model to use
+GPT_MODEL = "gpt-3.5-turbo"
 
 # Get current file path
 current_path = os.path.dirname(os.path.realpath(__file__))
@@ -152,6 +154,7 @@ else:
     config_tool.read(config_file_path)
     # Get the connection type from the config file
     SERVER_TYPE = config_tool["ServerSettings"]["ConnectionType"]
+    GPT_MODEL = config_tool["ServerSettings"]["GptModel"]
 
 
 # Read API keys from key file using resource_path function
@@ -263,7 +266,7 @@ FORMAT_TOKEN = '''You should return in the following format:\n'''
 # This function will read the code and decribe it in human language.
 def describeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -285,7 +288,7 @@ def describeCode(inputCode):
 # Use to creating the worksheet for the team to solve the problem.
 def createWorkSheet(request, language):
     workSheet = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -334,7 +337,7 @@ def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
     global currentProgress
 
     aiOutput = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -362,7 +365,7 @@ def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
 # This is the main API of the Ai Engineer, every little job is done by this function.
 def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
     ai_output = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -393,7 +396,7 @@ def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
         current_program_pool = ""
 
     combined_output_request = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -420,7 +423,7 @@ def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
 def tidyUpProgramPool(mainTarget, programPool):
 
     ai_output = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -481,7 +484,7 @@ def groupingAllJobs(jobArray, mainTarget):
 # This function will format the final output to the frontend.
 def finalOutputDisplayer(currentProgess, mainTarget):
     finalOutput = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model=GPT_MODEL,
         messages=[
             {
                 "role": "system",
@@ -551,7 +554,7 @@ def assignGptRoles(jobArray):
 
     for jobContents in jobArray:
         tempMessages = client_model_1.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=GPT_MODEL,
             messages=[
                 {
                     "role": "system",

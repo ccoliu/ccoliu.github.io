@@ -242,39 +242,3 @@ def combineOutputs(pool, output):
 # )
 
 # print(final_out)
-
-
-import re
-
-
-def is_valid_bullet_list_format(self, input_string):
-    # 定義正則表達式模式
-    bullet_list_pattern = r"""
-        ^(?:                             # 開始匹配
-            No\sissues$                  # 第一種情況: "No issues"
-            |                           # 或
-            (?:                         # 啟動多行模式
-                Problem\s\d+:           # 匹配 Problem + 數字 + 冒號
-                \s*\(.*?\)              # 匹配括號內的內容（允許空白或任意內容）
-                \s*                     # 允許任意空白
-            )+                          # 至少一組問題
-        )$                              # 確保整個字符串都符合
-    """
-
-    # 使用正則表達式檢查格式
-    return bool(re.match(bullet_list_pattern, input_string.strip(), re.VERBOSE | re.MULTILINE))
-
-
-false_test_cases = [
-    "Problem 1:\nProblem 2:",
-    "Problem 1:\n(......)\nProblem 2:\n(......)\nExtra content here!",
-    "Problem1:\n(......)\nProblem 2:\n(......)",
-    "Problem 1:\n(......\nProblem 2:\n(......)",
-    "Problem 1\n(......)\nProblem 2:\n(......)",
-    "No issues\nProblem 1:\n(......)",
-    "Problem 1:\n\nProblem 2:\n(......)",
-]
-
-# 測試 False 案例
-for idx, case in enumerate(false_test_cases, 1):
-    print(f"False Test Case {idx}: {case.strip()} => {is_valid_bullet_list_format(None, case)}")
