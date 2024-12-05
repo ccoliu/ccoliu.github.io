@@ -399,9 +399,9 @@ def ai_write_code(inputCode):
     return gpt_output.choices[0].message.content
 
 
-def modifyDependency(inputString):
+def modify_consider_dependency(inputString):
 
-    modifiedString = client_model_1.chat.completions.create(
+    gpt_output = client_model_1.chat.completions.create(
         model=GPT_MODEL,
         messages=[
             {
@@ -419,7 +419,41 @@ def modifyDependency(inputString):
         ],
     )
 
-    return modifiedString.choices[0].message.content
+    return gpt_output.choices[0].message.content
+
+
+def dependency_array_to_str(dependent_array):
+    formatted_string = ""
+    for index, content in enumerate(dependent_array):
+        formatted_string += f"Tab {index + 1}: {content}\n"
+    return formatted_string
+
+
+def convert_to_final_output(inputString):
+    lines = inputString.split('\n')
+    content = []
+    for line in lines:
+        parts = line.split(':')
+        if len(parts) > 1:
+            content.append(parts[1].strip())
+
+    return content
+
+
+def replace_results_content(results, dependentArray, default_string="Can't identify the code."):
+    if len(dependentArray) < len(results):
+        print("Error: final_modified array does not have enough entries.")
+        return
+
+    for index, result in enumerate(results):
+        if 'optimizedCode' in result:
+            if index < len(dependentArray):
+                result['optimizedCode'] = dependentArray[index]
+                database_tools.updateDocument(
+                    "fineTune", "codoctopus", result['id'], "optimizedCode", result['optimizedCode']
+                )
+        else:
+            result = default_string
 
 
 # ---------------------------------------------------
@@ -436,21 +470,31 @@ def index():
         return "No referrer found, this is the default page."
 
 
-def processEachTab(code, results, index, dependedArray):
+# Modify the code received from the frontend different tab and execute in differnet thread.
+def execute_each_tab_content(input_code, results_array, current_index, dependency_array):
     try:
-        problems = analyze_user_code(code)
-        optimizedCode = optimize_code(code, problems)
-        summary = summarize_code_in_sentence(optimizedCode)
+        # Analyze the code and get the problem list
+        code_problems = analyze_user_code(input_code)
+        # Optimize the code based on the problem list
+        fixed_code = optimize_code(input_code, code_problems)
+        # Summarize the code in one sentence
+        code_summary = summarize_code_in_sentence(fixed_code)
 
-        dataId = database_tools.insertModifyDocument(
-            "fineTune", "codoctopus", code, optimizedCode, summary
+        # Store the modified code and summary in the database
+        data_id = database_tools.insertModifyDocument(
+            "fineTune", "codoctopus", input_code, fixed_code, code_summary
         )
 
-        # Store result in the results list at the index corresponding to the original code
-        results[index] = {"optimizedCode": optimizedCode, "summary": summary, "id": str(dataId)}
-        dependedArray.append(optimizedCode)
+        # Store the result in the results list
+        results_array[current_index] = {
+            "optimizedCode": fixed_code,
+            "summary": code_summary,
+            "id": str(data_id),
+        }
+
+        dependency_array.append(fixed_code)
     except Exception as e:
-        results[index] = {"error": str(e)}
+        results_array[current_index] = {"error": str(e)}
 
 
 # Process the code received from the frontend.
@@ -459,14 +503,18 @@ def processEachTab(code, results, index, dependedArray):
 def process_code():
     try:
         data = request.get_json()
-        inputCode = data.get('longcode', [])
+        input_code = data.get('longcode', [])
 
+        # Create a list to store threads
         threads = []
-        results = [{} for _ in inputCode]  # Pre-allocate a list for results
-        dependedArray = []
-        for index, code in enumerate(inputCode):
+        # Pre-allocate a list for results
+        results_array = [{} for _ in input_code]
+        # Pre-allocate a list for the modified code
+        dependency_array = []
+
+        for index, code in enumerate(input_code):
             thread = threading.Thread(
-                target=processEachTab, args=(code, results, index, dependedArray)
+                target=execute_each_tab_content, args=(code, results_array, index, dependency_array)
             )
             threads.append(thread)
             thread.start()
@@ -474,22 +522,18 @@ def process_code():
         for thread in threads:
             thread.join()
 
-        # Now the each modified result is in a big string.
-        afterDependencyCheck = converDependentArrayToString(dependedArray)
-        print("first check")
-        print(afterDependencyCheck)
-        afterDependencyCheck = modifyDependency(afterDependencyCheck)
-        print("second check")
-        print(afterDependencyCheck)
-        afterDependencyCheck = converToFinalTabContent(afterDependencyCheck)
-        print("third check")
-        print(afterDependencyCheck)
-        replaceOptimizedCode(afterDependencyCheck, results)
+        # Convert the dependency array to a long string
+        afterDependencyCheck = dependency_array_to_str(dependency_array)
+        # Modify the code based on the dependency
+        afterDependencyCheck = modify_consider_dependency(afterDependencyCheck)
+        # Convert the modified code to the final tab content
+        afterDependencyCheck = convert_to_final_output(afterDependencyCheck)
 
-        print(results)
+        # Replace the results content with the modified code
+        replace_results_content(afterDependencyCheck, results_array)
 
         # Return the processed results to the frontend
-        return jsonify({"results": results})
+        return jsonify({"results": results_array})
     except Exception as e:
         return jsonify({"error": str(e)})
 
@@ -628,40 +672,6 @@ def viewer_comment():
         return jsonify({"result": "success"})
     except Exception as e:
         return jsonify({"error": str(e)})
-
-
-def converDependentArrayToString(dependent_array):
-    formatted_string = ""
-    for index, content in enumerate(dependent_array):
-        formatted_string += f"Tab {index + 1}: {content}\n"
-    return formatted_string
-
-
-def converToFinalTabContent(inputString):
-    lines = inputString.split('\n')
-    content = []
-    for line in lines:
-        parts = line.split(':')
-        if len(parts) > 1:
-            content.append(parts[1].strip())
-
-    return content
-
-
-def replaceOptimizedCode(results, dependentArray, default_string="Can't identify the code."):
-    if len(dependentArray) < len(results):
-        print("Error: final_modified array does not have enough entries.")
-        return
-
-    for index, result in enumerate(results):
-        if 'optimizedCode' in result:
-            if index < len(dependentArray):
-                result['optimizedCode'] = dependentArray[index]
-                database_tools.updateDocument(
-                    "fineTune", "codoctopus", result['id'], "optimizedCode", result['optimizedCode']
-                )
-        else:
-            result = default_string
 
 
 # ---------------------------------------------------
