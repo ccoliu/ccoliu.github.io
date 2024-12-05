@@ -1,281 +1,19 @@
-body {
-    position: static;
-    height: 100vh;
-    width: 100vw;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-body::-webkit-scrollbar, .searchresults div::-webkit-scrollbar {
-    width: 8px;
-}
-
-body::-webkit-scrollbar-track, .searchresults div::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-body::-webkit-scrollbar-thumb, .searchresults div::-webkit-scrollbar-thumb {
-    background: #c7c7c7;
-    border-radius: 10px;
-}
-
-.background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../icons/search.png');
-    background-color: #363636;
-    filter: brightness(0.15);
-    z-index: -1;
-    animation: breathEffect 2.5s infinite;
-}
-
-@font-face {
-    font-family: "Consolas";
-    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot");
-    src: url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.eot?#iefix")format("embedded-opentype"),
-    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff2")format("woff2"),
-    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.woff")format("woff"),
-    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.ttf")format("truetype"),
-    url("https://db.onlinewebfonts.com/t/1db29588408eadbd4406aae9238555eb.svg#Consolas")format("svg");
-}
-
-@keyframes breathEffect {
-    0% {
-        background-color: #363636;
-    }
-    30% {
-        background-color: #949494;
-    }
-    60% {
-        background-color: #949494;
-    }
-    100% {
-        background-color: #363636;
-    }
-}
-
-@keyframes heightaddon {
-    0% {
-        height: 0px;
-    }
-    100% {
-        height: 50px;
-    }
-}
-
-@keyframes heightoff {
-    0% {
-        height: 50px;
-    }
-    100% {
-        height: 0px;
-    }
-}
-
 nav.navbar {
-    color: #cccccc;
-    left: 0;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    width: 100%;
-    display: flex; /* This will lay out the children in a row */
-    align-items: center; /* This will vertically center the children in the navbar */
-    justify-content: flex-start; /* This will align children to the start of the navbar */
-    background: transparent;
-}
-
-h1.InnerText {
-    font: 400 40px/1.5 "Noto Sans", sans-serif;
-    font-weight: bold;
-    margin: 0;
-    padding-left: 25px;
-    margin-top: -5px;
-    margin-right: 10px; /* Add a margin to the right of the text for spacing */
-    line-height: 48px;
-    white-space: nowrap;
-}
-
-h1 a {
-    text-decoration: none;
-    color: #cccccc;
+    padding-left: 0;
+    margin-left: -2.7em;
 }
 
 h1 a:hover {
     text-decoration: none;
 }
 
-p.InnerShort {
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    margin: 0;
-    padding: 0;
-    margin-top: 10px;
-    margin-left: 20px;
-    margin-right: 10px; /* Add a margin to the right of the text for spacing */
-    padding-right: 20px;
+.titlelink {
+    margin-left: 0;
 }
 
-h2.beginText, h2.TicketInfo {
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
-    padding: 0;
-    margin-top: 10px;
-    margin-left: 55px;
-    margin-right: 10px; /* Add a margin to the right of the text for spacing */
-    padding-right: 20px;
-    margin-bottom: 10px;
-    color: #cccccc;
-    white-space: nowrap;
-}
-
-.container {
-    margin-bottom: 10px;
-}
-
-/* 定義內容區域的樣式 */
-.content {
-    margin-left: 60px; /* 內容區域距離側邊欄的左邊距 */
-}
-
-div .search-container {
-    margin-top: 45px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 0px;
-}
-
-.inputsearch,.submitbtn {
-    display: inline-block;
-}
-
-.inputsearch {
-    width: 60vw;
-    height: 55px;
-    background-color: #363636;
-    font: 100 15px/1 "Lexend Deca", sans-serif;
-    font-weight: lighter;
-    color: #c7c7c7;
-    border-radius: 50px 0 0 50px;
-    border: 0px;
-    padding: 0px 1.3em 0px 1.3em;
-    margin-left: 2em;
-}
-
-.submitbtn {
-    width: 10vw;
-    max-width: 100px;
-    min-width: 60px;
-    height: 55px;
-    font: 100 15px/1 "Lexend Deca", sans-serif;
-    background-color: #363636;
-    color: #c7c7c7;
-    border: 1px solid #5e5c5c;
-    border-width: 0 0 0 5px;
-    border-radius: 0 50px 50px 0;
-    cursor: pointer;
-    padding: 20px;
-    padding-bottom: 1.3em;
-    padding-left: 10px;
-    margin-left: -5px;
-    padding-left: auto;
-    box-sizing: border-box;
-}
-
-.inputsearch:focus {
-    outline: none;
-}
-
-.submitbtn:hover {
-    background-color: #555454;
-}
-
-.footerdesc {
-    font: 200 14px/1.5 "Lexend Deca", sans-serif;
-    color: #000000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    bottom: 0px;
-    padding-left: 2em;
-    background-color: #35f52e;
-    width: 100%;
-    height: 0px;
-    animation: heightaddon 0.75s forwards;
-}
-
-div.loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.loadinggif {
-    display: none;
-    width: 54px;
-    height: 54px;
-    background-color: transparent;
-}
-
-.searchresults {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
-}
-
-.resultfound {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    font: 200 14px/1.5 "Lexend Deca", sans-serif;
-    color: #c7c7c7;
-    margin-top: 10px;
-}
-
-.searchresults div {
-    margin-left: 1em;
-    height: auto;
-    width: auto;
-    max-width: 450px;
-    max-height: 450px;
-    min-height: 100px;
-    min-width: 300px;
-    font: 200 14px/1.5 "Lexend Deca", sans-serif;
-    background-color: #363636;
-    color: #c7c7c7;
-    padding: 0px 20px 0px 20px;
-    border-radius: 10px;
-    border: 2px solid #8d8d8d;
+.titlelink:hover {
     text-decoration: none;
-    margin-top: 10px;
-    overflow-y: auto;
-    cursor: pointer;
-}
-
-.searchresults div:hover {
-    background-color: #0a0a0a;
-}
-
-.searchresults div a {
-    font: 200 14px/1.5 "Lexend Deca", sans-serif;
     color: #c7c7c7;
-    text-decoration: none;
-    margin-top: 0;
-}
-
-.searchresultid {
-    position: relative;
-    font-size: 12px;
-    top: 0px;
-    padding-top: 1.5em;
 }
 
 .username-labl, .password-labl, .password-conf {
@@ -285,12 +23,15 @@ div.loading {
 
 .username-input,.password-input {
     width: 90%;
-    margin-bottom: 25px;
 }
 
 .password-conf-input {
     width: 90%;
-    margin-bottom: 40px;
+}
+
+.loginform {
+    padding-left: 50px;
+    padding-right: 50px;
 }
 
 .logintitle {
@@ -303,51 +44,31 @@ div.loading {
 }
 
 .logininput {
-    margin-top: 10px;
+    margin-top: 25px;
     margin-left: 25%;
-    background-color: #363636;
+    background-color: rgba(54, 54, 54, 0.8);
     border-radius: 5px;
     padding: 20px 10px;
 }
 
-.warning {
+.username-warning, .password-warning, .password-conf-warning {
     font: 200 14px/1.5 "Lexend Deca", sans-serif;
     color: #ff0000;
-    display: none;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-@media screen and (max-width: 800px) {
-    h1 a {
-        font: 400 28px/1.5 "Noto Sans", sans-serif;
-        margin-left: 20px;
-        margin-top: -20px;
-        white-space: nowrap;
-    }
-    .submitbtn {
-        font-size: 13px;
-        padding-left: 0.4em;
-        padding-bottom: 1.4em;
-    }
-    .content {
-        margin-left: 20px;
-    }
+.password-conf-warning {
+    margin-bottom: 40px;
 }
 
-@media screen and (max-width: 800px) {
-    h2.beginText {
-        font-size: 17px;
-    }
+.buttoncontain {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 25px;
 }
 
-@media screen and (max-width: 480px) {
-    h2.beginText {
-        margin-left: 54px;
-    }
-    .submitbtn {
-        padding-bottom: 1.24em;
-    }
-}
 
