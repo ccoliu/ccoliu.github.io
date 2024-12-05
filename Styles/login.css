@@ -33,7 +33,7 @@ h1 a:hover {
 
 .password-input {
     width: 90%;
-    margin-bottom: 80px;
+    margin-bottom: 10px;
 }
 
 .logintitle {
@@ -61,3 +61,10 @@ h1 a:hover {
     margin-bottom: 25px;
 }
 
+.warning {
+    font: 200 14px/1.5 "Lexend Deca", sans-serif;
+    color: #ff0000;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+}
