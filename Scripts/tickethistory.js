@@ -1,3 +1,7 @@
+//////////////IP SETTINGS/////////////////////
+//const SERVERIP = "https://140.118.101.66:61911/"
+const SERVERIP = "https://127.0.0.1:61911/"
+/////////////////////////////////////////////
 const yesBtn = document.querySelector('.yesbtn');
 let yesBtnClicked = false;
 
@@ -17,7 +21,7 @@ function sendCode(dataChunk) {
     let id = dataChunk.id;
 
     setTimeout(() => {
-        fetch(GLOBALREST+"retrieve_comment", {
+        fetch(SERVERIP+"retrieve_comment", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

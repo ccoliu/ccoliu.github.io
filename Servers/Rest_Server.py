@@ -17,7 +17,6 @@ from flask_cors import CORS
 import ssl  # Local https key
 from bson import json_util  # For MongoDB may use the json_util
 import threading
-import logging
 from datetime import datetime
 import yaml  # Import the PyYAML library
 from LogHelper import initialize_logging  # For logging
@@ -59,10 +58,10 @@ log_handler = initialize_logging("Rest")
 
 
 # Initialize Tools
-database_tools = dataBaseTools()
+old_db = dataBaseTools()
 message_enforcer = FormatEnforcer.Enforcer()
 similarity_helper = PlagiarismChecker()
-toolTest = MongoDBTools()
+database_tools = MongoDBTools()
 document_builder = DocumentBuilder()
 # ---------------------------------------------------
 '''Define the server and API keys'''
@@ -83,10 +82,18 @@ gpt_model = "gpt-3.5-turbo"
 # Load the configuration from the YAML file
 config_file_path = resource_path("Servers\\Config.yaml")
 config = load_yaml_config(config_file_path)
+database_file_path = resource_path("Servers\\DatabaseConfig.yaml")
+database_config = load_yaml_config(database_file_path)
 
 # Extract server configuration from the loaded YAML
 server_type = config["ServerSettings"]["ConnectionType"]
 gpt_model = config["ServerSettings"]["GptModel"]
+
+# Extract database configuration from the loaded YAML
+database_name = database_config["DatabaseStructure"]["db_name"]
+modify_collection_name = database_config["DatabaseStructure"]["modify_mode"]["collection"]
+similarity_collection_name = database_config["DatabaseStructure"]["similarity_mode"]["collection"]
+viewer_collection_name = database_config["DatabaseStructure"]["viewer_mode"]["collection"]
 
 # Create a Flask app
 app = Flask(__name__)
@@ -336,8 +343,13 @@ def replace_results_content(results, dependentArray, default_string="Can't ident
         if 'optimizedCode' in result:
             if index < len(dependentArray):
                 result['optimizedCode'] = dependentArray[index]
-                database_tools.updateDocument(
-                    "fineTune", "codoctopus", result['id'], "optimizedCode", result['optimizedCode']
+
+                data_id = result['id']
+                field_name = "final_output"
+                replace_content = result['optimizedCode']
+
+                database_tools.update_document(
+                    database_name, modify_collection_name, data_id, field_name, replace_content
                 )
         else:
             result = default_string
@@ -367,10 +379,13 @@ def execute_each_tab_content(input_code, results_array, current_index, dependenc
         # Summarize the code in one sentence
         code_summary = summarize_code_in_sentence(fixed_code)
 
-        # Store the modified code and summary in the database
-        data_id = database_tools.insertModifyDocument(
-            "fineTune", "codoctopus", input_code, fixed_code, code_summary
+        insert_document = document_builder.modify_document(input_code, fixed_code, code_summary)
+        data_id = database_tools.insert_document(
+            database_name, modify_collection_name, insert_document
         )
+
+        viewer_document = document_builder.viewer_document(data_id, code_summary)
+        database_tools.insert_document(database_name, viewer_collection_name, viewer_document)
 
         # Store the result in the results list
         results_array[current_index] = {
@@ -443,17 +458,15 @@ def similarity():
                 lhs_input_code,
                 rhs_input_code,
             )
+
+            # Insert the document into the database
             insert_document = document_builder.similarity_check_document(
                 lhs_input_code, rhs_input_code, analyzed_result
             )
-            data_id = toolTest.insert_document("fine_tune_db", "similarity", insert_document)
+            data_id = database_tools.insert_document(
+                database_name, similarity_collection_name, insert_document
+            )
 
-            view_result = document_builder.viewer_document(data_id, analyzed_result)
-
-            data_id = toolTest.insert_document("fine_tune_db", "viewer", view_result)
-            # database_tools.insertsimilarityCheck(
-            #     "fineTune", "similarityCheck", lhs_input_code, rhs_input_code, analyzed_result
-            # )
         else:
             # MOD 20241204 Daniel enforce the format of the code
             ai_code = ai_write_code(lhs_input_code)
@@ -464,14 +477,8 @@ def similarity():
                 message_enforcer.is_valid_ai_code_format,
                 lhs_input_code,
             )
-
-            database_tools.insertsimilarityCheck(
-                "fineTune", "similarityCheck", lhs_input_code, ai_code, analyzed_result
-            )
-
-        # Output the result to the console and log file
-        # print("Similarity check event:" + analyzeResult + "\n")
-
+            # Insert the document into the database
+            # flag later deal with
         return jsonify({"result": analyzed_result})
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -488,8 +495,8 @@ def retreive_code():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        database_tools.updateDocument("fineTune", "codoctopus", id, "rate", rate)
-        database_tools.updateDocument("fineTune", "codoctopus", id, "comment", comment)
+        database_tools.update_document_in_database(database_name, id, "rate", rate)
+        database_tools.update_document_in_database(database_name, id, "comment", comment)
 
         return jsonify({"result": "success"})
     except Exception as e:
@@ -507,7 +514,7 @@ def search():
         searchResult = [[]]
         # searchResult = database_tools.communitySearch("fineTune", "codoctopus", data)
         # print(searchResult)
-        searchResult = toolTest.community_search("fineTune", "codoctopus", data)
+        searchResult = database_tools.community_search("fineTune", "codoctopus", data)
         # print(searchResult)
         # return list of searched arrays
 
@@ -524,16 +531,16 @@ def view():
         lang = None
 
         # Get the keyword from the frontend
-        mode = database_tools.getMode("fineTune", "codoctopus", id)
+        mode = old_db.getMode("fineTune", "codoctopus", id)
         if mode == "modify code":
-            origin = database_tools.getOriginMessage("fineTune", "codoctopus", id)
-            output = database_tools.getGptOutput("fineTune", "codoctopus", id)
-            summary = database_tools.getSummary("fineTune", "codoctopus", id)
+            origin = old_db.getOriginMessage("fineTune", "codoctopus", id)
+            output = old_db.getGptOutput("fineTune", "codoctopus", id)
+            summary = old_db.getSummary("fineTune", "codoctopus", id)
         elif mode == "generate code":
-            lang = database_tools.getLang("fineTune", "codoctopus", id)
-            origin = database_tools.getOriginMessage("fineTune", "codoctopus", id)
-            output = database_tools.getGptOutput("fineTune", "codoctopus", id)
-            summary = database_tools.getSummary("fineTune", "codoctopus", id)
+            lang = old_db.getLang("fineTune", "codoctopus", id)
+            origin = old_db.getOriginMessage("fineTune", "codoctopus", id)
+            output = old_db.getGptOutput("fineTune", "codoctopus", id)
+            summary = old_db.getSummary("fineTune", "codoctopus", id)
 
         if lang == None:
             lang = "undefined"
@@ -562,7 +569,7 @@ def viewer_comment():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        database_tools.updateCommentToCommnity(id, rate, comment)
+        old_db.updateCommentToCommnity(id, rate, comment)
 
         return jsonify({"result": "success"})
     except Exception as e:

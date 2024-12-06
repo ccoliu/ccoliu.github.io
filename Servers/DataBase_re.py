@@ -177,6 +177,52 @@ class MongoDBTools:
             print(f"Failed to update document with _id '{document_id}': {e}")
             return None
 
+    def update_document_in_database(self, db_name, document_id, field_name, new_value):
+        """
+        Update a specific field of a document by its ID across all collections in the database.
+
+        Parameters:
+            - db_name: The name of the database.
+            - document_id: The ID of the document to update.
+            - field_name: The field to update.
+            - new_value: The new value to set.
+
+        Returns:
+            - The _id of the updated document if successful.
+            - None if an error occurs or no document is found.
+        """
+        try:
+            # Get the database
+            db = self.client[db_name]
+
+            # Build filter and update query
+            filter_query = {"_id": ObjectId(document_id)}
+            update_query = {"$set": {field_name: new_value}}
+
+            # Iterate through all collections in the database
+            for collection_name in db.list_collection_names():
+                collection = db[collection_name]
+
+                # Perform the update
+                result = collection.update_one(filter_query, update_query)
+
+                # Check if any document was updated
+                if result.modified_count > 0:
+                    print(
+                        f"Document with _id '{document_id}' updated successfully in collection '{collection_name}'. "
+                        f"Field '{field_name}' set to: {new_value}"
+                    )
+                    return document_id
+
+            # If no document was found in any collection
+            print(
+                f"No document found with _id '{document_id}' in any collection of database '{db_name}'."
+            )
+            return None
+        except Exception as e:
+            print(f"Failed to update document with _id '{document_id}': {e}")
+            return None
+
     def write_collection_to_file(self, db_name, collection_name, file_path):
         """Write all documents from a collection to a JSONL file."""
         collection = self._get_collection(db_name, collection_name)

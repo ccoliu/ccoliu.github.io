@@ -2,7 +2,7 @@
 # Author:Daniel Hsiao (Github: https://github.com/whps970083),  ccoliu (Github: https://github.com/ccoliu)
 # Date: 2024/10/01
 # Update: 2024/12/01
-# Version: <V10.0.1.0>
+# Version: <V10.1.0.0>
 # ---------------------------------------------------
 
 # ---------------------------------------------------
@@ -26,7 +26,7 @@ from LogHelper import initialize_logging  # For logging
 # ---------------------------------------------------
 
 import FormatEnforcer
-from dataBase import dataBaseTools
+from DataBase_re import MongoDBTools, DocumentBuilder
 
 # ---------------------------------------------------
 '''System initialization and configuration'''
@@ -49,8 +49,9 @@ def resource_path(relative_path):
 log_handler = initialize_logging("Genreate")
 
 # Initialize Tools
-dbTools = dataBaseTools()
 message_inforcer = FormatEnforcer.Enforcer()
+database_tools = MongoDBTools()
+document_builder = DocumentBuilder()
 
 # Set the server type to https or http
 server_type = "https"
@@ -68,11 +69,16 @@ def load_yaml_config(file_path):
 # Load the configuration from the YAML file
 config_file_path = resource_path("Servers\\Config.yaml")
 config = load_yaml_config(config_file_path)
+database_file_path = resource_path("Servers\\DatabaseConfig.yaml")
+database_config = load_yaml_config(database_file_path)
 
 # Extract server configuration from the loaded YAML
 server_type = config["ServerSettings"]["ConnectionType"]
 gpt_model = config["ServerSettings"]["GptModel"]
-
+# Extract database configuration from the loaded YAML
+database_name = database_config["DatabaseStructure"]["db_name"]
+generate_collection_name = database_config["DatabaseStructure"]["generate_mode"]["collection"]
+viewer_collection_name = database_config["DatabaseStructure"]["viewer_mode"]["collection"]
 
 # Read API keys from key file using resource_path function
 key_file_path = resource_path("key.txt")
@@ -556,7 +562,7 @@ def start_processing(mainTarget, roles, jobArray, layerIndex):
 
 
 currentProgress = ""
-mainProblem = ""
+main_problem = ""
 language = ""
 
 
@@ -573,7 +579,7 @@ def index():
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
-        global mainProblem, originalTasks, language
+        global main_problem, ai_gen_tasks, language
         data = request.get_json()
         userInput = data.get("code", "")
         lang = data.get("lang", "")
@@ -584,11 +590,11 @@ def gen_code():
         dividedJobs = []
 
         workSheet = create_worksheet(userInput, lang)
-        mainProblem = extract_worksheet_content(workSheet, roles, dividedJobs, mainProblem)
-        mainProblem += "Using the language: " + lang
+        main_problem = extract_worksheet_content(workSheet, roles, dividedJobs, main_problem)
+        main_problem += "Using the language: " + lang
         dividedJobs = convert_job_to_front_format(dividedJobs)
 
-        originalTasks = dividedJobs
+        ai_gen_tasks = dividedJobs
         return jsonify({"result": dividedJobs})
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -598,53 +604,52 @@ def gen_code():
 @app.route("/execute_steps", methods=["POST"])
 def execute_steps():
     try:
-        global mainProblem, currentProgress, progressBar_current, progressBar_total, language
+        global main_problem, currentProgress, progressBar_current, progressBar_total, language
         data = request.get_json()
         # Should deal with the arrays that send back.
-        newJobs = data.get('steps', [])
+        user_confirm_task = data.get('steps', [])
         newRoles = []
 
-        newJobs = convert_job_to_back_format(newJobs)
-        newRoles = assign_gpt_roles(newJobs)
-        taskGroup = classify_all_jobs(newJobs, mainProblem)
+        user_confirm_task = convert_job_to_back_format(user_confirm_task)
+        newRoles = assign_gpt_roles(user_confirm_task)
+        taskGroup = classify_all_jobs(user_confirm_task, main_problem)
         jobLayers = []
-        jobLayers = assign_layers(taskGroup, newJobs)
+        jobLayers = assign_layers(taskGroup, user_confirm_task)
 
         # Start the processing of the jobs.
-        finalOutputCode = start_processing(mainProblem, newRoles, newJobs, jobLayers)
+        final_output = start_processing(main_problem, newRoles, user_confirm_task, jobLayers)
 
         # Get the Program pool first.
-        final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
-        finalOutputCode = refine_program_pool(mainProblem, final_prog_pool)
+        final_prog_pool = message_inforcer.extract_section_content(final_output, "Program pool")
+        final_output = refine_program_pool(main_problem, final_prog_pool)
 
         # Let AI to gerate the final output content.
         # finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
         # Force the final output code to follow the format.
-        finalOutputCode = message_inforcer.strictlyFollowFormat(
+        final_output = message_inforcer.strictlyFollowFormat(
             get_final_display,
             message_inforcer.is_valid_message_format,
-            finalOutputCode,
-            mainProblem,
+            final_output,
+            main_problem,
         )
 
         # Finshed the progress bar.
         progressBar_current += 1
 
         time.sleep(1)
-        summary = describe_code(finalOutputCode)
+        summary = describe_code(final_output)
 
-        dataId = dbTools.insertGenerateData(
-            "fineTune",
-            "codoctopus",
-            mainProblem,
-            language,
-            originalTasks,
-            newJobs,
-            finalOutputCode,
-            summary,
+        # Insert the data into the database.
+        insert_document = document_builder.generate_document(
+            main_problem, language, ai_gen_tasks, user_confirm_task, final_output, summary
         )
+        data_id = database_tools.insert_document(
+            database_name, generate_collection_name, insert_document
+        )
+        viewer_document = document_builder.viewer_document(data_id, summary)
+        database_tools.insert_document(database_name, viewer_collection_name, viewer_document)
 
-        return jsonify({"result": finalOutputCode, "id": str(dataId)})
+        return jsonify({"result": final_output, "id": str(data_id)})
     except Exception as e:
         return jsonify({"error": str(e)})
 
