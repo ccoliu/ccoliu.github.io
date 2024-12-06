@@ -11,14 +11,12 @@
 
 import os  # System imports
 import sys
-import configparser  # For reading the config file (ini file)
 from flask import Flask, request, jsonify, redirect, Response  # For Flask server
 from flask_cors import CORS  # For Flask server
 from openai import OpenAI  # OpenAI API
 import os
 import time
 import threading
-import random
 import ssl  # Local https key
 import yaml  # Import the PyYAML library
 from LogHelper import initialize_logging  # For logging
@@ -127,134 +125,152 @@ format_token = config["Formats"]["FORMAT_TOKEN"]
 # ---------------------------------------------------
 
 
-# This function will read the code and decribe it in human language.
-def describeCode(inputCode):
-    analyzeResult = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": reverse_discriber,
-            },
-            {
-                "role": "user",
-                "content": inputCode + "\n" + "Please summarize in 1 sentences with in 100 tokens.",
-            },
-        ],
-        max_tokens=100,
+def call_gpt(model_name, gpt_roles, input_string, max_tokens=None):
+    """
+    General function to call GPT models with specified parameters.
+
+    :param model_name: The GPT model to use (e.g., "gpt-3.5-turbo").
+    :param gpt_roles: The role for the GPT assistant (e.g., system instructions or persona).
+    :param input_string: The user's question or input content.
+    :param max_tokens: Optional. The maximum number of tokens in the response. If None, no limit is applied.
+    :return: The GPT model's response as a string.
+    """
+    try:
+        # Prepare the base parameters
+        params = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": gpt_roles},
+                {"role": "user", "content": input_string},
+            ],
+        }
+
+        # Add max_tokens only if it is specified
+        if max_tokens is not None:
+            params["max_tokens"] = max_tokens
+
+        # Call the GPT API
+        response = client_model_1.chat.completions.create(**params)
+
+        # Return the content of the first choice
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error occurred while calling GPT: {str(e)}"
+
+
+def describe_code(inputCode):
+    """
+    This function reads the input code and describes it in human language.
+
+    :param inputCode: The source code to be analyzed and summarized.
+    :return: A summarized description of the code in one sentence.
+    """
+    role = reverse_discriber
+    input_sentence = inputCode + "\n" + "Please summarize in 1 sentence within 100 tokens."
+    max_tokens = 100
+
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, role, input_sentence, max_tokens)
+
+
+def create_worksheet(request, language):
+    """
+    This function creates a worksheet for the team to solve the given problem.
+
+    :param request: The main target or problem to be addressed.
+    :param language: The language the team members will use.
+    :return: A worksheet in the specified format.
+    """
+    role = boss
+    input_sentence = (
+        "Please strictly follow the format below to create a worksheet for the team to solve the problem.\n"
+        + format_worksheet
+        + "How many members are needed to complete this project, as well as the messages of each member, is up to you. "
+        + "It is **required** that the output strictly follows the above format, and any deviations are unacceptable.\n"
+        + "The main target (request) is:\n"
+        + request
+        + "\n"
+        + "Please make sure all the team members are using the language: "
+        + language
     )
+    max_tokens = None  # No limit on tokens for this function
 
-    # print(analyzeResult.choices[0].message.content)
-
-    return analyzeResult.choices[0].message.content
-
-
-# Use to creating the worksheet for the team to solve the problem.
-def createWorkSheet(request, language):
-    workSheet = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": boss,
-            },
-            {
-                "role": "user",
-                "content": "Please strictly follow the format below to create a worksheet for the team to solve the problem.\n"
-                + format_worksheet
-                + "How many members are needed to complete this project, as well as the messages of each member, is up to you, It is **required** that the output strictly follows the above format, and any deviations are unacceptable."
-                + "The main target (request) is:\n"
-                + request
-                + "\n"
-                + "Please make sure all the team members is using the language: "
-                + language
-                + "\n",
-            },
-        ],
-    )
-
-    # Use to debug the output
-    # print(workSheet.choices[0].message.content)
-
-    return workSheet.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, role, input_sentence, max_tokens)
 
 
 # Use for getting the specific content from the worksheet.
-def getWorkSheetContent(text, roles, messages, mainProblem):
+def extract_worksheet_content(input_text, member_roles, member_messages, main_problem):
     # Splitting the text into lines
-    lines = text.strip().split('\n')
+    lines = input_text.strip().split('\n')
 
     # Initialize lists to hold the roles and messages
     for line in lines:
         if line.startswith("Main problem:"):
-            mainProblem = line.split("Main problem:")[1].strip()
+            main_problem = line.split("Main problem:")[1].strip()
         elif line.startswith("Member role:"):
-            roles.append(line.split("Member role:")[1].strip())
+            member_roles.append(line.split("Member role:")[1].strip())
         elif line.startswith("Member message:"):
-            messages.append(line.split("Member message:")[1].strip())
+            member_messages.append(line.split("Member message:")[1].strip())
 
-    return mainProblem
+    return main_problem
 
 
-# This is the main API of the Ai Engineer, every little job is done by this function.
-def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
-    ai_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": systemRole,
-            },
-            {
-                "role": "user",
-                "content": "Here is the main target of the project\n"
-                + mainTarget
-                + '\n'
-                + "Here is the last member's progress for you to refer:\n"
-                + inputProgress
-                + '\n'
-                + "Here is the job that you need to do:\n"
-                + jobContent
-                + '\n'
-                + format_token
-                + format_message,
-            },
-        ],
+def employee_work(main_target, system_role, job_content, input_progress):
+    """
+    Main API for AI Engineer to perform a specific job in the project.
+
+    :param main_target: The main target or goal of the project.
+    :param system_role: The role of the system (instructions for GPT).
+    :param job_content: The job content or task assigned to the AI.
+    :param input_progress: The progress or context from the last member.
+    :return: The final output after completing the job.
+    """
+    # Construct user input for the main job
+    job_instruction = (
+        "Here is the main target of the project\n"
+        + main_target
+        + "\nHere is the last member's progress for you to refer:\n"
+        + input_progress
+        + "\nHere is the job that you need to do:\n"
+        + job_content
+        + "\n"
+        + format_token
+        + format_message
     )
 
-    ai_response = ai_output.choices[0].message.content
-    current_program_pool = message_inforcer.extract_section_content(inputProgress, "Program pool")
+    # Call GPT for the main job
+    ai_response = call_gpt(gpt_model, system_role, job_instruction)
+
+    # Extract sections from the input and AI response
+    current_program_pool = message_inforcer.extract_section_content(input_progress, "Program pool")
     current_job_output = message_inforcer.extract_section_content(ai_response, "Current job output")
 
+    # Handle empty program pool
     if current_program_pool == "Warning: No content was found.":
         current_program_pool = ""
 
-    combined_output_request = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "Help me combine the content of two strings without any adjustment.",
-            },
-            {
-                "role": "user",
-                "content": "Help me combine the following two strings:\n"
-                + current_program_pool
-                + '\n'
-                + current_job_output
-                + '\n'
-                + "Simply combine them together without any adjustment.",
-            },
-        ],
+    # Combine the program pool and current job output
+    combine_instruction = (
+        "Help me combine the following two strings:\n"
+        + current_program_pool
+        + "\n"
+        + current_job_output
+        + "\nSimply combine them together without any adjustment."
+    )
+    combined_output = call_gpt(
+        gpt_model,
+        "Help me combine the content of two strings without any adjustment.",
+        combine_instruction,
     )
 
-    combined_output = combined_output_request.choices[0].message.content
+    # Insert the combined output back into the response under "Program pool"
     final_output = message_inforcer.insert_section(ai_response, "Program pool", combined_output)
 
     return final_output
 
 
-def tidyUpProgramPool(mainTarget, programPool):
+def refine_program_pool(mainTarget, programPool):
 
     ai_output = client_model_1.chat.completions.create(
         model=gpt_model,
@@ -281,7 +297,7 @@ def tidyUpProgramPool(mainTarget, programPool):
 
 
 # This function will analyze the job content and assign the group of each job.
-def groupingAllJobs(jobArray, mainTarget):
+def classify_all_jobs(jobArray, mainTarget):
     # Divide the jobs array into strings.
     jobString = str(jobArray)
     jobString = f"JOBS: {jobString}"
@@ -316,7 +332,7 @@ def groupingAllJobs(jobArray, mainTarget):
 
 
 # This function will format the final output to the frontend.
-def finalOutputDisplayer(currentProgess, mainTarget):
+def get_final_display(currentProgess, mainTarget):
     finalOutput = client_model_1.chat.completions.create(
         model=gpt_model,
         messages=[
@@ -344,7 +360,7 @@ def finalOutputDisplayer(currentProgess, mainTarget):
 
 
 # Convert the tasks to the format that can be displayed on the frontend 'Job: ...... '
-def convertJobToFrontFormat(inputJobArray):
+def convert_job_to_front_format(inputJobArray):
     outputJobArray = []
 
     for s in inputJobArray:
@@ -365,7 +381,7 @@ def convertJobToFrontFormat(inputJobArray):
 
 
 # Convert the tasks back to the format that can be read by gpt 'Help me ...... '
-def convertToBackFormat(inputJobArray):
+def convert_job_to_back_format(inputJobArray):
     outputJobArray = []
 
     for s in inputJobArray:
@@ -383,7 +399,7 @@ def convertToBackFormat(inputJobArray):
 
 
 # This function will help to create the new gpt role array after the user's operation.
-def assignGptRoles(jobArray):
+def assign_gpt_roles(jobArray):
     gptRoles = []
 
     for jobContents in jobArray:
@@ -412,11 +428,11 @@ def assignGptRoles(jobArray):
 
 
 # This function will create the layer array for the jobs.
-def assignLayers(jobGroup, jobArray):
+def assign_layers(jobGroup, jobArray):
     # Preprocess the jobGroup
-    jobGroup = preprocessGroupString(jobGroup)
+    jobGroup = preprocess_group_string(jobGroup)
     # Preprocess the jobArray
-    jobArray = preprocessJobArray(jobArray)
+    jobArray = preprocess_job_array(jobArray)
 
     groupStringLines = jobGroup.split('\n')
     layers = []
@@ -432,7 +448,7 @@ def assignLayers(jobGroup, jobArray):
 
 
 # This function will deal with the job array to make sure there is no space in the job content.
-def preprocessJobArray(jobArray):
+def preprocess_job_array(jobArray):
     newJobArray = []
 
     for job in jobArray:
@@ -443,7 +459,7 @@ def preprocessJobArray(jobArray):
 
 
 # This function will deal with the group string to make sure there is no space in it.
-def preprocessGroupString(inputGroupString):
+def preprocess_group_string(inputGroupString):
     lines = inputGroupString.strip().split('\n')
 
     newLines = []
@@ -467,12 +483,10 @@ def preprocessGroupString(inputGroupString):
 
 
 # The job worker called by threads.
-def jobWorker(mainTarget, role, job, inputProgress, barrier):
+def job_worker(mainTarget, role, job, inputProgress, barrier):
     global currentProgress
     # Call the single engineer to do the job.
-    # MOD 20241201 Daniel Now use the enhancedEmployeeWork to do the job.
-    currentProgress = enhancedEmployeeWork(mainTarget, role, job, inputProgress)
-    # currentProgress = employeeWork(mainTarget, role, job, inputProgress)
+    currentProgress = employee_work(mainTarget, role, job, inputProgress)
 
     # Wait for all the threads to finish the job.
     barrier.wait()
@@ -485,7 +499,7 @@ progressBar_total = 0
 
 
 # The main function to start the processing all of the jobs.
-def startProcessing(mainTarget, roles, jobArray, layerIndex):
+def start_processing(mainTarget, roles, jobArray, layerIndex):
     # The shared variable to store the current progress of the project.
     global currentProgress, progressBar_current, progressBar_total
 
@@ -513,7 +527,7 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
         for jobIndex in jobLayers:
             # Create the thread for each job.
             thread = threading.Thread(
-                target=jobWorker,
+                target=job_worker,
                 args=(
                     mainTarget,
                     roles[jobIndex - 1],
@@ -563,10 +577,10 @@ def gen_code():
         roles = []
         dividedJobs = []
 
-        workSheet = createWorkSheet(userInput, lang)
-        mainProblem = getWorkSheetContent(workSheet, roles, dividedJobs, mainProblem)
+        workSheet = create_worksheet(userInput, lang)
+        mainProblem = extract_worksheet_content(workSheet, roles, dividedJobs, mainProblem)
         mainProblem += "Using the language: " + lang
-        dividedJobs = convertJobToFrontFormat(dividedJobs)
+        dividedJobs = convert_job_to_front_format(dividedJobs)
 
         originalTasks = dividedJobs
         return jsonify({"result": dividedJobs})
@@ -584,25 +598,25 @@ def execute_steps():
         newJobs = data.get('steps', [])
         newRoles = []
 
-        newJobs = convertToBackFormat(newJobs)
-        newRoles = assignGptRoles(newJobs)
-        taskGroup = groupingAllJobs(newJobs, mainProblem)
+        newJobs = convert_job_to_back_format(newJobs)
+        newRoles = assign_gpt_roles(newJobs)
+        taskGroup = classify_all_jobs(newJobs, mainProblem)
         jobLayers = []
-        jobLayers = assignLayers(taskGroup, newJobs)
+        jobLayers = assign_layers(taskGroup, newJobs)
 
         # Start the processing of the jobs.
-        finalOutputCode = startProcessing(mainProblem, newRoles, newJobs, jobLayers)
+        finalOutputCode = start_processing(mainProblem, newRoles, newJobs, jobLayers)
         # ADD 20241201 Daniel Now use the tidyUpProgramPool to tidy up the program pool.
 
         # Get the Program pool first.
         final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
-        finalOutputCode = tidyUpProgramPool(mainProblem, final_prog_pool)
+        finalOutputCode = refine_program_pool(mainProblem, final_prog_pool)
 
         # Let AI to gerate the final output content.
         # finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
         # Force the final output code to follow the format.
         finalOutputCode = message_inforcer.strictlyFollowFormat(
-            finalOutputDisplayer,
+            get_final_display,
             message_inforcer.is_valid_message_format,
             finalOutputCode,
             mainProblem,
@@ -612,7 +626,7 @@ def execute_steps():
         progressBar_current += 1
 
         time.sleep(1)
-        summary = describeCode(finalOutputCode)
+        summary = describe_code(finalOutputCode)
 
         dataId = dbTools.insertGenerateData(
             "fineTune",
