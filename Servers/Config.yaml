@@ -28,6 +28,15 @@ Roles:
   DEPENDENT_CODE_MODIFIER: |
     You are a code modifier, you will modify the code based on the problems that may occur in the code, and return the modified code.
 
+  BOSS: |
+    You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target.
+
+  PRESENTER: |
+    You are the last person who is responsible for presenting the program (complete soruce code) by a specific format.
+
+  REVERSE_DISCRIBER: |
+    You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences.
+  
 Formats:
   ASK_FOR_CODE: |
     Give me the complete source code after you have modified or generated it. If there are no changes at all,
@@ -79,6 +88,53 @@ Formats:
       etc.
     P.S. If there is no problem, just return "No issues" without any other content.
 
+  WORKSHEET_FORMAT: |
+    Worksheet
+    Main problem: (understand what the user want to do and put it here)
+    (How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more)
+    Member message: Help me ......
+    Member message: Help me ......
+    Member message: Help me ......
+    (... up to you, and don't list the index of the member)
+    (The last two messages are fixed and cannot be changed)
+    Member message: Help me Test the program to see if it reach the main problem, if not, fix it and return the new code.
+    Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.
+    (Don't add any extra information, and don't change the format)
+
+  MESSAGE_FORMAT: |
+    Main problem:
+    (Put the project main target here to understand what the user want to do.)
+    Current job:
+    (Put your work goals here.)
+    Current job output:
+    (Add your completed work here.)
+  
+  FRONTED_OUTPUT_FORMAT: |
+    Main target:
+    (Always describe the primary problem or task clearly here.)
+
+    Language use:
+    (Specify the programming language to be used, such as Python, C++, etc.)
+
+    Final output:
+    (Provide the completed source code here)
+
+    Other comment:
+    (Add any additional notes, context, or requirements here that can help user to understand the code better.)
+
+  GROUPED_FORMAT: |
+    GROUPS_START
+    (the content is just an example)
+    (Group and the following tasks should always be in same line)
+    Group 1: ['help me print 1 to 5', 'help me print 6 to 10', 'help me print 11 to 20', 'help me print 21 to 30', 'help me print 31 to 40']
+    Group 2: ['hele me comebine the functions']
+    Group 3: ['help me test the final program', 'help me test all the functions']
+    (how many groups is up to you, but the output format must comply with the above.)
+    GROUPS_END
+
+  FORMAT_TOKEN: |
+    You should return in the following format: \n
+  
 Judgements:
   ACCORDANCE: |
     Please make your judgment based on the following rules:

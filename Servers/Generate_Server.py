@@ -14,15 +14,14 @@ import sys
 import configparser  # For reading the config file (ini file)
 from flask import Flask, request, jsonify, redirect, Response  # For Flask server
 from flask_cors import CORS  # For Flask server
-from flask import session  # For Flask server
 from openai import OpenAI  # OpenAI API
 import os
 import time
 import threading
 import random
 import ssl  # Local https key
-import logging
-from datetime import datetime
+import yaml  # Import the PyYAML library
+from LogHelper import initialize_logging  # For logging
 
 # ---------------------------------------------------
 '''Import the self-defined tools and functions'''
@@ -48,114 +47,36 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 
-# Get the current path of the server
-current_path = resource_path("")
-
-# Create a Log folder if it does not exist
-log_folder_path = os.path.abspath(current_path + "/Log")
-if not os.path.exists(log_folder_path):
-    os.makedirs(log_folder_path)  # Create the log folder
-    print(f"Log folder created: {log_folder_path}")
-
-
-# Dynamic log handler to switch log files daily
-class DynamicLogHandler:
-    def __init__(self, log_folder):
-        self.log_folder = log_folder
-        self.current_date = datetime.now().strftime("%Y-%m-%d")
-        self.setup_general_logger()
-        self.setup_web_logger()
-
-    def setup_general_logger(self):
-        """Set up the logger for general stdout logs."""
-        self.general_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_gen_server_logs.log"
-        )
-        self.general_logger = logging.getLogger("general")
-        self.general_logger.setLevel(logging.INFO)
-        self.general_logger.handlers = []  # Clear previous handlers
-
-        # File handler for logging to a file
-        general_file_handler = logging.FileHandler(self.general_log_file, mode="a")
-        general_file_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-        )
-        self.general_logger.addHandler(general_file_handler)
-
-        # Stream handler for logging to console
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-        self.general_logger.addHandler(console_handler)
-
-    def setup_web_logger(self):
-        """Set up the logger for werkzeug (web-related) logs."""
-        self.web_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_gen_server_web_logs.log"
-        )
-        werkzeug_logger = logging.getLogger("werkzeug")
-        werkzeug_logger.setLevel(logging.INFO)
-        werkzeug_logger.handlers = []  # Clear previous handlers
-        web_file_handler = logging.FileHandler(self.web_log_file, mode="a")
-        web_file_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-        )
-        werkzeug_logger.addHandler(web_file_handler)
-
-    def check_date_and_rotate_logs(self):
-        """Check the date and rotate log files if the date has changed."""
-        new_date = datetime.now().strftime("%Y-%m-%d")
-        if new_date != self.current_date:
-            self.current_date = new_date
-            self.setup_general_logger()
-            self.setup_web_logger()
-
-
-# Initialize the dynamic log handler
-log_handler = DynamicLogHandler(log_folder_path)
-
-
-# Custom stream handler to log only stdout to the general log file and console
-class StreamToLogger:
-    def __init__(self, logger):
-        self.logger = logger
-
-    def write(self, message):
-        if message.strip():
-            log_handler.check_date_and_rotate_logs()  # Check and rotate logs if needed
-            self.logger.info(message.strip())
-
-    def flush(self):
-        pass
-
-
-# Redirect stdout to both console and general logger
-sys.stdout = StreamToLogger(log_handler.general_logger)
-
+# Initialize the logging system
+log_handler = initialize_logging("Genreate")
 
 # Initialize Tools
 dbTools = dataBaseTools()
 message_inforcer = FormatEnforcer.Enforcer()
 
 # Set the server type to https or http
-SERVER_TYPE = "https"
+server_type = "https"
 # Set the default GPT model to use
-GPT_MODEL = "gpt-3.5-turbo"
+gpt_model = "gpt-3.5-turbo"
+
+
+# Load the YAML file
+def load_yaml_config(file_path):
+    """Load configuration from a YAML file."""
+    with open(file_path, "r") as yaml_file:
+        return yaml.safe_load(yaml_file)
+
 
 # Get current file path
-current_path = os.path.dirname(os.path.realpath(__file__))
-# Get the ini file path
-config_file_path = os.path.join(current_path, "Config.ini")
-# Get the config tool to manage the config file
-config_tool = configparser.ConfigParser()
+# current_path = os.path.dirname(os.path.realpath(__file__))
 
-# Check if the config file exists
-if not os.path.exists(config_file_path):
-    raise FileNotFoundError(f"Config file not found at: {config_file_path}")
-else:
-    config_tool.read(config_file_path)
-    # Get the connection type from the config file
-    SERVER_TYPE = config_tool["ServerSettings"]["ConnectionType"]
-    GPT_MODEL = config_tool["ServerSettings"]["GptModel"]
+# Load the configuration from the YAML file
+config_file_path = resource_path("Servers\\Config.yaml")
+config = load_yaml_config(config_file_path)
+
+# Extract server configuration from the loaded YAML
+server_type = config["ServerSettings"]["ConnectionType"]
+gpt_model = config["ServerSettings"]["GptModel"]
 
 
 # Read API keys from key file using resource_path function
@@ -185,79 +106,21 @@ CORS(app)
 '''Define some necessary roles for the team members.'''
 # ---------------------------------------------------
 
-# This is the Boss of the team, who is responsible for dividing the work and assigning them to different people.
-BOSS = "You are a software company boss that is skilled at divided the work into different parts and assign them to different people, and you are really good at managing the team and make sure the project is finished with high quality and meet the main target."
-# This is the presenter, who is responsible for presenting the final output of the project.
-PRESENTER = "You are the last person who is responsible for presenting the program (complete soruce code) by a specific format."
-# This is the reverse engineer, who is responsible for understanding the source code and describing its functionality.
-# Note: This person is use to describe the code in human language and put it in the database will be used for community search.
-REVERSE_DISCRIBER = "You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences."
+boss = config["Roles"]["BOSS"]
+presenter = config["Roles"]["PRESENTER"]
+reverse_discriber = config["Roles"]["REVERSE_DISCRIBER"]
 
 # ---------------------------------------------------
 '''Define some output format below.'''
 # ---------------------------------------------------
 
 # Note the enforced format is done.
-WORKSHEET_FORMAT = '''Worksheet
-Main problem: (understand what the user want to do and put it here)
-(How many members are needed is up to you, since this is a one-way transfer, the roles cannot involve roles that require interactive communication. Each role will complete their work and then hand it off to the next person to continue. The smallest unit of task division is a function, meaning each person must be responsible for at least one function. Whether a person will need to handle more)
-Member message: Help me ......
-Member message: Help me ......
-Member message: Help me ......
-(... up to you, and don't list the index of the member)
-(The last two messages are fixed and cannot be changed)
-Member message: Help me Test the program to see if it reach the main problem, if not, fix it and return the new code.
-Member message: Help me combine all the finished tasked and adjust the variable name to make sure the program runs correctly, and make sure to solved the errors.
-(Don't add any extra information, and don't change the format)
-'''
-# Note the enforced format is done.
-MESSAGE_FORMAT = '''
-Main problem:
-(Always put the main problem here)
-Program pool:
-(Add your completed work to the here.)
-Current job:
-(Put your work goals here.)
-Current job output:
-(Add your completed work here.)
-'''
-
-MESSAGE_FORMAT_V2 = '''
-Main problem:
-(Put the project main target here to understand what the user want to do.)
-Current job:
-(Put your work goals here.)
-Current job output:
-(Add your completed work here.)
-'''
-
-# Note the enforced format is done.
-FRONTED_OUTPUT_FORMAT = '''
-Main target:
-(Always describe the primary problem or task clearly here.)
-
-Language use:
-(Specify the programming language to be used, such as Python, C++, etc.)
-
-Final output:
-(Provide the completed source code here)
-
-Other comment:
-(Add any additional notes, context, or requirements here that can help user to understand the code better.)
-'''
-
-GROUPED_FORMAT = '''GROUPS_START\n
-(the content is just an example)
-(Group and the following tasks should always be in same line)
-Group 1: ['help me print 1 to 5', 'help me print 6 to 10', 'help me print 11 to 20', 'help me print 21 to 30', 'help me print 31 to 40']
-Group 2: ['hele me comebine the functions']
-Group 3: ['help me test the final program', 'help me test all the functions']
-(how many groups is up to you, but the output format must comply with the above.)
-GROUPS_END\n
-'''
-
+format_worksheet = config["Formats"]["WORKSHEET_FORMAT"]
+format_message = config["Formats"]["MESSAGE_FORMAT"]
+format_fronted_output = config["Formats"]["FRONTED_OUTPUT_FORMAT"]
+format_group = config["Formats"]["GROUPED_FORMAT"]
 # This phrase is use to place before the specific format.
-FORMAT_TOKEN = '''You should return in the following format:\n'''
+format_token = config["Formats"]["FORMAT_TOKEN"]
 
 # ---------------------------------------------------
 '''Define some functions below.'''
@@ -267,11 +130,11 @@ FORMAT_TOKEN = '''You should return in the following format:\n'''
 # This function will read the code and decribe it in human language.
 def describeCode(inputCode):
     analyzeResult = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": REVERSE_DISCRIBER,
+                "content": reverse_discriber,
             },
             {
                 "role": "user",
@@ -289,16 +152,16 @@ def describeCode(inputCode):
 # Use to creating the worksheet for the team to solve the problem.
 def createWorkSheet(request, language):
     workSheet = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": BOSS,
+                "content": boss,
             },
             {
                 "role": "user",
                 "content": "Please strictly follow the format below to create a worksheet for the team to solve the problem.\n"
-                + WORKSHEET_FORMAT
+                + format_worksheet
                 + "How many members are needed to complete this project, as well as the messages of each member, is up to you, It is **required** that the output strictly follows the above format, and any deviations are unacceptable."
                 + "The main target (request) is:\n"
                 + request
@@ -334,39 +197,9 @@ def getWorkSheetContent(text, roles, messages, mainProblem):
 
 
 # This is the main API of the Ai Engineer, every little job is done by this function.
-def employeeWork(mainTarget, systemRole, jobContent, inputProgress):
-    global currentProgress
-
-    aiOutput = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": systemRole,
-            },
-            {
-                "role": "user",
-                "content": "Here is the target of the project\n"
-                + mainTarget
-                + '\n'
-                + "Here is the last member's output:\n"
-                + inputProgress
-                + '\n'
-                + jobContent
-                + '\n'
-                + FORMAT_TOKEN
-                + MESSAGE_FORMAT,
-            },
-        ],
-    )
-
-    return aiOutput.choices[0].message.content
-
-
-# This is the main API of the Ai Engineer, every little job is done by this function.
 def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
     ai_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
@@ -383,8 +216,8 @@ def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
                 + "Here is the job that you need to do:\n"
                 + jobContent
                 + '\n'
-                + FORMAT_TOKEN
-                + MESSAGE_FORMAT_V2,
+                + format_token
+                + format_message,
             },
         ],
     )
@@ -397,7 +230,7 @@ def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
         current_program_pool = ""
 
     combined_output_request = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
@@ -424,7 +257,7 @@ def enhancedEmployeeWork(mainTarget, systemRole, jobContent, inputProgress):
 def tidyUpProgramPool(mainTarget, programPool):
 
     ai_output = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
@@ -470,8 +303,8 @@ def groupingAllJobs(jobArray, mainTarget):
                 + "According to the main target, please group the jobs into same group if they can be executed at the same time, the jobs that need to be executed in sequence shouldn't be in the same group and the jobs that can be executed in parallel should be in same group.\n"
                 + "Each group now becomes a larger job, and there is a definite sequence among groups. For instance, in group 1, there are some printing functions, while in group 2, the task is to combine these printing functions. In group 3, the task is to test the functions from group 2. This means that the contents of groups 1, 2, and 3 are interrelated with the contents of other groups.\n"
                 + "The group number should be the legitimate order of the execution.\n"
-                + FORMAT_TOKEN
-                + GROUPED_FORMAT,
+                + format_token
+                + format_group,
             },
         ],
     )
@@ -485,11 +318,11 @@ def groupingAllJobs(jobArray, mainTarget):
 # This function will format the final output to the frontend.
 def finalOutputDisplayer(currentProgess, mainTarget):
     finalOutput = client_model_1.chat.completions.create(
-        model=GPT_MODEL,
+        model=gpt_model,
         messages=[
             {
                 "role": "system",
-                "content": PRESENTER,
+                "content": presenter,
             },
             {
                 "role": "user",
@@ -499,8 +332,8 @@ def finalOutputDisplayer(currentProgess, mainTarget):
                 + "Here is the final result:\n"
                 + currentProgess
                 + '\n'
-                + FORMAT_TOKEN
-                + FRONTED_OUTPUT_FORMAT,
+                + format_token
+                + format_fronted_output,
             },
         ],
     )
@@ -555,7 +388,7 @@ def assignGptRoles(jobArray):
 
     for jobContents in jobArray:
         tempMessages = client_model_1.chat.completions.create(
-            model=GPT_MODEL,
+            model=gpt_model,
             messages=[
                 {
                     "role": "system",
@@ -836,10 +669,10 @@ def stream():
 
 
 # Switch the server connection type
-if SERVER_TYPE == "http":
+if server_type == "http":
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5001)
-elif SERVER_TYPE == "https":
+elif server_type == "https":
     if __name__ == "__main__":
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(certfile=cert_path, keyfile=key_path)

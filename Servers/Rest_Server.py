@@ -20,6 +20,7 @@ import threading
 import logging
 from datetime import datetime
 import yaml  # Import the PyYAML library
+from LogHelper import initialize_logging  # For logging
 
 # ---------------------------------------------------
 '''Import the self-defined tools and functions'''
@@ -53,88 +54,8 @@ def load_yaml_config(file_path):
         return yaml.safe_load(yaml_file)
 
 
-# Get the current path of the server
-current_path = resource_path("")
-
-# Create a Log folder if it does not exist
-log_folder_path = os.path.abspath(current_path + "/Log")
-if not os.path.exists(log_folder_path):
-    os.makedirs(log_folder_path)  # Create the log folder
-    print(f"Log folder created: {log_folder_path}")
-
-
-# Dynamic log handler to switch log files daily
-class DynamicLogHandler:
-    def __init__(self, log_folder):
-        self.log_folder = log_folder
-        self.current_date = datetime.now().strftime("%Y-%m-%d")
-        self.setup_general_logger()
-        self.setup_web_logger()
-
-    def setup_general_logger(self):
-        """Set up the logger for general stdout logs."""
-        self.general_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_rest_server_logs.log"
-        )
-        self.general_logger = logging.getLogger("general")
-        self.general_logger.setLevel(logging.INFO)
-        self.general_logger.handlers = []  # Clear previous handlers
-
-        # File handler for logging to a file
-        general_file_handler = logging.FileHandler(self.general_log_file, mode="a")
-        general_file_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-        )
-        self.general_logger.addHandler(general_file_handler)
-
-        # Stream handler for logging to console
-        console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-        self.general_logger.addHandler(console_handler)
-
-    def setup_web_logger(self):
-        """Set up the logger for werkzeug (web-related) logs."""
-        self.web_log_file = os.path.join(
-            self.log_folder, f"{self.current_date}_rest_server_web_logs.log"
-        )
-        werkzeug_logger = logging.getLogger("werkzeug")
-        werkzeug_logger.setLevel(logging.INFO)
-        werkzeug_logger.handlers = []  # Clear previous handlers
-        web_file_handler = logging.FileHandler(self.web_log_file, mode="a")
-        web_file_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-        )
-        werkzeug_logger.addHandler(web_file_handler)
-
-    def check_date_and_rotate_logs(self):
-        """Check the date and rotate log files if the date has changed."""
-        new_date = datetime.now().strftime("%Y-%m-%d")
-        if new_date != self.current_date:
-            self.current_date = new_date
-            self.setup_general_logger()
-            self.setup_web_logger()
-
-
-# Initialize the dynamic log handler
-log_handler = DynamicLogHandler(log_folder_path)
-
-
-# Custom stream handler to log only stdout to the general log file and console
-class StreamToLogger:
-    def __init__(self, logger):
-        self.logger = logger
-
-    def write(self, message):
-        if message.strip():
-            log_handler.check_date_and_rotate_logs()  # Check and rotate logs if needed
-            self.logger.info(message.strip())
-
-    def flush(self):
-        pass
-
-
-# Redirect stdout to both console and general logger
-sys.stdout = StreamToLogger(log_handler.general_logger)
+# Initialize the logging
+log_handler = initialize_logging("Rest")
 
 
 # Initialize Tools
@@ -152,7 +73,7 @@ cert_path = resource_path('certificate.crt')
 key_path = resource_path('private_key.key')
 
 # Set the server type to https or http
-SERVER_TYPE = "https"
+server_type = "https"
 # Set the default GPT model to use
 gpt_model = "gpt-3.5-turbo"
 
@@ -164,7 +85,7 @@ config_file_path = resource_path("Servers\\Config.yaml")
 config = load_yaml_config(config_file_path)
 
 # Extract server configuration from the loaded YAML
-SERVER_TYPE = config["ServerSettings"]["ConnectionType"]
+server_type = config["ServerSettings"]["ConnectionType"]
 gpt_model = config["ServerSettings"]["GptModel"]
 
 # Create a Flask app
@@ -652,10 +573,10 @@ def viewer_comment():
 '''Run the server'''
 # ---------------------------------------------------
 
-if SERVER_TYPE == "http":
+if server_type == "http":
     if __name__ == "__main__":
         app.run(host="0.0.0.0", port=5000)
-elif SERVER_TYPE == "https":
+elif server_type == "https":
     if __name__ == "__main__":
         context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         context.load_cert_chain(certfile=cert_path, keyfile=key_path)
