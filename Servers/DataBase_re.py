@@ -116,6 +116,54 @@ class MongoDBTools:
         collection = self._get_collection(db_name, collection_name)
         return collection.find(query)
 
+    def find_field_by_id(self, db_name, document_id, field_name):
+        """
+        Find a document by its ID across all collections in a database and retrieve a specific field value.
+
+        Parameters:
+            - db_name: The name of the database.
+            - document_id: The ID of the document to search for.
+            - field_name: The field to extract from the matched document.
+
+        Returns:
+            - The value of the specified field from the matched document.
+            - None if no document or field is found.
+        """
+        try:
+            # Get the database
+            db = self.client[db_name]
+            filter_query = {"_id": ObjectId(document_id)}
+
+            # Iterate through all collections in the database
+            for collection_name in db.list_collection_names():
+                collection = db[collection_name]
+
+                # Search for the document in the collection
+                document = collection.find_one(filter_query)
+
+                # If the document is found
+                if document:
+                    print(f"Document found in collection '{collection_name}': {document}")
+
+                    # Check if the field exists in the document
+                    if field_name in document:
+                        print(f"Field '{field_name}' found in document: {document[field_name]}")
+                        return document[field_name]
+                    else:
+                        print(
+                            f"Field '{field_name}' does not exist in the document in collection '{collection_name}'."
+                        )
+                        return None
+
+            # If no document is found
+            print(
+                f"No document with ID '{document_id}' found in any collection of database '{db_name}'."
+            )
+            return None
+        except Exception as e:
+            print(f"An error occurred while searching for ID '{document_id}': {e}")
+            return None
+
     def delete_documents(self, db_name, collection_name, query, single=False):
         """Delete documents matching a query."""
         collection = self._get_collection(db_name, collection_name)
@@ -223,6 +271,66 @@ class MongoDBTools:
             print(f"Failed to update document with _id '{document_id}': {e}")
             return None
 
+    def update_viewer_content(self, db_name, collection_name, id, field_name, new_value):
+        """
+        Update or append a new rate value in the 'rate' field of a document
+        where the 'data_id' field matches the given ID.
+
+        Parameters:
+            - db_name: The name of the database.
+            - collection_name: The name of the collection.
+            - data_id: The ID to match in the 'data_id' field.
+            - new_rate: The new rate value to add.
+
+        Returns:
+            - A count of updated documents if successful.
+            - None if an error occurs.
+        """
+        try:
+            # Get the collection
+            db = self.client[db_name]
+            collection = db[collection_name]
+
+            # Filter to find documents where 'data_id' matches
+            filter_query = {"data_id": id}
+
+            # Retrieve the document to check the current state of 'rate'
+            document = collection.find_one(filter_query)
+
+            if not document:
+                print(
+                    f"No document found with 'data_id' = '{id}' in collection '{collection_name}'."
+                )
+                return 0
+
+            # Check the current state of the 'rate' field
+            current_rate = document.get(field_name, "N/A")
+
+            if current_rate == "no rate":
+                # If the current rate is "no rate", simply set it to the new value
+                update_query = {"$set": {field_name: new_value}}
+            elif isinstance(current_rate, list):
+                # If the current rate is already a list, append the new value
+                update_query = {"$push": {field_name: new_value}}
+            else:
+                # If the current rate is a single value, convert it into a list and add the new value
+                update_query = {"$set": {field_name: [current_rate, new_value]}}
+
+            # Perform the update
+            result = collection.update_one(filter_query, update_query)
+
+            if result.modified_count > 0:
+                print(
+                    f"Document with 'data_id' = '{id}' updated successfully in collection '{collection_name}'. "
+                )
+                return result.modified_count
+            else:
+                print(f"No changes made to the document with 'data_id' = '{id}'.")
+                return 0
+        except Exception as e:
+            print(f"Failed to update document in collection '{collection_name}': {e}")
+            return None
+
     def write_collection_to_file(self, db_name, collection_name, file_path):
         """Write all documents from a collection to a JSONL file."""
         collection = self._get_collection(db_name, collection_name)
@@ -242,23 +350,23 @@ class MongoDBTools:
         return list(collection.aggregate(pipeline))
 
     def community_search(self, db_name, collection_name, query):
-        """Search documents based on query similarity and return only _id and summary."""
+        """Search documents based on query similarity and return only _id and data_summary."""
         collection = self._get_collection(db_name, collection_name)
 
         regex = "|".join(query.split())
         results = collection.find(
-            {"summary": {"$regex": regex, "$options": "i"}},
-            {"_id": 1, "summary": 1},  # Only return _id and summary
+            {"data_summary": {"$regex": regex, "$options": "i"}},
+            {"data_id": 1, "data_summary": 1},  # Only return _id and summary
         )
 
         # Sort results by the number of query words found in the summary
         sorted_results = sorted(
             results,
-            key=lambda doc: sum(word in doc.get("summary", "") for word in query.split()),
+            key=lambda doc: sum(word in doc.get("data_summary", "") for word in query.split()),
             reverse=True,
         )
 
-        return [{str(doc["_id"]): doc["summary"]} for doc in sorted_results]
+        return [{str(doc["data_id"]): doc["data_summary"]} for doc in sorted_results]
 
 
 class DocumentBuilder:

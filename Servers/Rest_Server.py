@@ -17,7 +17,6 @@ from flask_cors import CORS
 import ssl  # Local https key
 from bson import json_util  # For MongoDB may use the json_util
 import threading
-from datetime import datetime
 import yaml  # Import the PyYAML library
 from LogHelper import initialize_logging  # For logging
 
@@ -26,7 +25,6 @@ from LogHelper import initialize_logging  # For logging
 # ---------------------------------------------------
 
 import FormatEnforcer
-from dataBase import dataBaseTools
 from PlagiarismChecker import PlagiarismChecker
 from DataBase_re import MongoDBTools, DocumentBuilder
 
@@ -57,8 +55,6 @@ def load_yaml_config(file_path):
 log_handler = initialize_logging("Rest")
 
 
-# Initialize Tools
-old_db = dataBaseTools()
 message_enforcer = FormatEnforcer.Enforcer()
 similarity_helper = PlagiarismChecker()
 database_tools = MongoDBTools()
@@ -512,11 +508,8 @@ def search():
         # Get the keyword from the frontend
 
         searchResult = [[]]
-        # searchResult = database_tools.communitySearch("fineTune", "codoctopus", data)
-        # print(searchResult)
-        searchResult = database_tools.community_search("fineTune", "codoctopus", data)
-        # print(searchResult)
-        # return list of searched arrays
+
+        searchResult = database_tools.community_search(database_name, viewer_collection_name, data)
 
         # Retuen two dimesional array to the frontend
         return json_util.dumps(searchResult)
@@ -528,30 +521,30 @@ def search():
 def view():
     try:
         id = request.get_json()
-        lang = None
+        use_language = None
 
-        # Get the keyword from the frontend
-        mode = old_db.getMode("fineTune", "codoctopus", id)
-        if mode == "modify code":
-            origin = old_db.getOriginMessage("fineTune", "codoctopus", id)
-            output = old_db.getGptOutput("fineTune", "codoctopus", id)
-            summary = old_db.getSummary("fineTune", "codoctopus", id)
-        elif mode == "generate code":
-            lang = old_db.getLang("fineTune", "codoctopus", id)
-            origin = old_db.getOriginMessage("fineTune", "codoctopus", id)
-            output = old_db.getGptOutput("fineTune", "codoctopus", id)
-            summary = old_db.getSummary("fineTune", "codoctopus", id)
+        mode = database_tools.find_field_by_id(database_name, id, "mode")
 
-        if lang == None:
-            lang = "undefined"
+        if mode == "modify_mode":
+            user_input = database_tools.find_field_by_id(database_name, id, "user_input")
+            final_output = database_tools.find_field_by_id(database_name, id, "final_output")
+            summary = database_tools.find_field_by_id(database_name, id, "summary")
+        elif mode == "generate_mode":
+            use_language = database_tools.find_field_by_id(database_name, id, "language")
+            user_input = database_tools.find_field_by_id(database_name, id, "user_input")
+            final_output = database_tools.find_field_by_id(database_name, id, "final_output")
+            summary = database_tools.find_field_by_id(database_name, id, "summary")
+
+        if use_language == None:
+            use_language = "undefined"
 
         return jsonify(
             {
                 "id": str(id),
                 "mode": mode,
-                "lang": lang,
-                "original": origin,
-                "output": output,
+                "lang": use_language,
+                "original": user_input,
+                "output": final_output,
                 "summary": summary,
             }
         )
@@ -569,7 +562,12 @@ def viewer_comment():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        old_db.updateCommentToCommnity(id, rate, comment)
+        database_tools.update_viewer_content(
+            database_name, viewer_collection_name, id, "rate", rate
+        )
+        database_tools.update_viewer_content(
+            database_name, viewer_collection_name, id, "comment", comment
+        )
 
         return jsonify({"result": "success"})
     except Exception as e:
