@@ -59,28 +59,3 @@ class PlagiarismChecker(ASTAnalyzer, LevenshteinAnalyzer):
         output_string += f"Combined Similarity: {weighted_similarity * 100:.2f}%"
 
         return output_string
-
-
-code1 = """
-```c
-// Updated code in my preferred structure and coding style
-#include <stdio.h>
-
-int main() {
-    printf("Hello, World!\n");
-    return 0;
-}
-```
-"""
-
-code2 = """
-//example code1
-#include <stdio.h>
-int main() {
-printf("Hello, World!");
-return 0;
-}"""
-
-checker = PlagiarismChecker()
-
-print(checker.compare_levenshtein(code1, code2))

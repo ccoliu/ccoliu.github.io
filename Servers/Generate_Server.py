@@ -14,6 +14,7 @@ import sys
 import configparser  # For reading the config file (ini file)
 from flask import Flask, request, jsonify, redirect, Response  # For Flask server
 from flask_cors import CORS  # For Flask server
+from flask import session  # For Flask server
 from openai import OpenAI  # OpenAI API
 import os
 import time
@@ -703,6 +704,7 @@ def startProcessing(mainTarget, roles, jobArray, layerIndex):
 
 currentProgress = ""
 mainProblem = ""
+language = ""
 
 
 @app.route("/", methods=["GET"])
@@ -718,10 +720,12 @@ def index():
 @app.route("/gen_code", methods=["POST"])
 def gen_code():
     try:
-        global mainProblem, originalTasks
+        global mainProblem, originalTasks, language
         data = request.get_json()
         userInput = data.get("code", "")
         lang = data.get("lang", "")
+
+        language = lang
 
         roles = []
         dividedJobs = []
@@ -741,7 +745,7 @@ def gen_code():
 @app.route("/execute_steps", methods=["POST"])
 def execute_steps():
     try:
-        global mainProblem, currentProgress, progressBar_current, progressBar_total
+        global mainProblem, currentProgress, progressBar_current, progressBar_total, language
         data = request.get_json()
         # Should deal with the arrays that send back.
         newJobs = data.get('steps', [])
@@ -778,7 +782,14 @@ def execute_steps():
         summary = describeCode(finalOutputCode)
 
         dataId = dbTools.insertGenerateData(
-            "fineTune", "codoctopus", mainProblem, originalTasks, newJobs, finalOutputCode, summary
+            "fineTune",
+            "codoctopus",
+            mainProblem,
+            language,
+            originalTasks,
+            newJobs,
+            finalOutputCode,
+            summary,
         )
 
         return jsonify({"result": finalOutputCode, "id": str(dataId)})

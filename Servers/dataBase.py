@@ -1,7 +1,21 @@
-'''This is the database class has tools to manupulate the database.'''
+# ---------------------------------------------------
+# Author:Daniel Hsiao
+# Date: 2024/10/01
+# Update: 2024/12/05
+# Version: <V10.0.0.0>
+# File Name: dataBase.py
+# File Description: This file is used to connect to the MongoDB server and provide the necessary functions to manipulate the database.
+# ---------------------------------------------------
 
+# Import the necessary libraries
 import os
 import sys
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+from pprint import pprint  # To print out all the item in single data.
+import json
+from bson import ObjectId  # To convert the id to a string.
+from fileFormatt import StringToJsonl  # Self defined class to write the data to a jsonl file.
 
 
 def resource_path(relative_path):
@@ -13,15 +27,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
-
-# Import the mongodb library
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from pprint import pprint  # To print out all the item in single data.
-import json
-from bson import ObjectId  # To convert the id to a string.
-from fileFormatt import StringToJsonl  # Self defined class to write the data to a jsonl file.
 
 
 class dataBaseTools:
@@ -41,6 +46,7 @@ class dataBaseTools:
             # Send a ping to confirm a successful connection
             self.client.admin.command('ping')
             print("Successfully connected to MongoDB!")
+            print(f"MongoDB version: {self.getMongoDBVersion()}")
         except Exception as e:
             print(e)
 
@@ -304,6 +310,7 @@ class dataBaseTools:
         dbName,
         collectionName,
         userInputRequest,
+        language,
         dividedTasks,
         finalTasks,
         finalOutput,
@@ -318,6 +325,7 @@ class dataBaseTools:
             "pin": "data",
             "type": "generate code",
             "request": userInputRequest,
+            "language": language,
             "tasks": dividedTasks,
             "finalTasks": finalTasks,
             "output": finalOutput,
@@ -562,7 +570,7 @@ class dataBaseTools:
 
         for item in result:
             if item.get("type") == "generate code":
-                return item.get("requirement")
+                return item.get("request")
             else:
                 return item.get("sourceCode")
 
@@ -575,7 +583,7 @@ class dataBaseTools:
 
         for item in result:
             if item.get("type") == "generate code":
-                return item.get("generatedCode")
+                return item.get("output")
             else:
                 return item.get("modifiedCode")
 
@@ -608,8 +616,3 @@ class dataBaseTools:
         except Exception as e:
             print(f"Error retrieving MongoDB version: {e}")
             return None
-
-
-# TODO:
-# 1. Generate server data base structure modify the data base structure to fit the server.
-# 2. Rest server data base structure modify the data base structure to fit the rest server.

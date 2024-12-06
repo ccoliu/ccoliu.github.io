@@ -28,6 +28,7 @@ import yaml  # Import the PyYAML library
 import FormatEnforcer
 from dataBase import dataBaseTools
 from PlagiarismChecker import PlagiarismChecker
+from DataBase_re import MongoDBTools, DocumentBuilder
 
 # ---------------------------------------------------
 '''System initialization and configuration'''
@@ -140,7 +141,8 @@ sys.stdout = StreamToLogger(log_handler.general_logger)
 database_tools = dataBaseTools()
 message_enforcer = FormatEnforcer.Enforcer()
 similarity_helper = PlagiarismChecker()
-
+toolTest = MongoDBTools()
+document_builder = DocumentBuilder()
 # ---------------------------------------------------
 '''Define the server and API keys'''
 # ---------------------------------------------------
@@ -520,10 +522,17 @@ def similarity():
                 lhs_input_code,
                 rhs_input_code,
             )
-
-            database_tools.insertsimilarityCheck(
-                "fineTune", "similarityCheck", lhs_input_code, rhs_input_code, analyzed_result
+            insert_document = document_builder.similarity_check_document(
+                lhs_input_code, rhs_input_code, analyzed_result
             )
+            data_id = toolTest.insert_document("fine_tune_db", "similarity", insert_document)
+
+            view_result = document_builder.viewer_document(data_id, analyzed_result)
+
+            data_id = toolTest.insert_document("fine_tune_db", "viewer", view_result)
+            # database_tools.insertsimilarityCheck(
+            #     "fineTune", "similarityCheck", lhs_input_code, rhs_input_code, analyzed_result
+            # )
         else:
             # MOD 20241204 Daniel enforce the format of the code
             ai_code = ai_write_code(lhs_input_code)
@@ -575,8 +584,10 @@ def search():
         # Get the keyword from the frontend
 
         searchResult = [[]]
-        searchResult = database_tools.communitySearch("fineTune", "codoctopus", data)
-
+        # searchResult = database_tools.communitySearch("fineTune", "codoctopus", data)
+        # print(searchResult)
+        searchResult = toolTest.community_search("fineTune", "codoctopus", data)
+        # print(searchResult)
         # return list of searched arrays
 
         # Retuen two dimesional array to the frontend
