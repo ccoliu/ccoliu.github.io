@@ -36,7 +36,12 @@ Roles:
 
   REVERSE_DISCRIBER: |
     You are a reverse engineer, capable of understanding the source code and discribing its' functionality or what this code is doing in sentences.
-  
+
+  JOB_CLASSIFIER: |
+    You are a Job classifier, you can understand if the job is independent or dependent, and you can group the jobs that can be executed at the same time.
+   
+  JOB_ASSIGNER: |
+    You are very good at giving a role to the team members, you can assign the roles to the team members based on the job they need to do.
 Formats:
   ASK_FOR_CODE: |
     Give me the complete source code after you have modified or generated it. If there are no changes at all,

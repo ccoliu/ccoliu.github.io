@@ -65,9 +65,6 @@ def load_yaml_config(file_path):
         return yaml.safe_load(yaml_file)
 
 
-# Get current file path
-# current_path = os.path.dirname(os.path.realpath(__file__))
-
 # Load the configuration from the YAML file
 config_file_path = resource_path("Servers\\Config.yaml")
 config = load_yaml_config(config_file_path)
@@ -107,7 +104,8 @@ CORS(app)
 boss = config["Roles"]["BOSS"]
 presenter = config["Roles"]["PRESENTER"]
 reverse_discriber = config["Roles"]["REVERSE_DISCRIBER"]
-
+job_classifier = config["Roles"]["JOB_CLASSIFIER"]
+job_assigner = config["Roles"]["JOB_ASSIGNER"]
 # ---------------------------------------------------
 '''Define some output format below.'''
 # ---------------------------------------------------
@@ -181,7 +179,7 @@ def create_worksheet(request, language):
     :param language: The language the team members will use.
     :return: A worksheet in the specified format.
     """
-    role = boss
+    gpt_role = boss
     input_sentence = (
         "Please strictly follow the format below to create a worksheet for the team to solve the problem.\n"
         + format_worksheet
@@ -196,7 +194,7 @@ def create_worksheet(request, language):
     max_tokens = None  # No limit on tokens for this function
 
     # Call the generalized GPT function
-    return call_gpt(gpt_model, role, input_sentence, max_tokens)
+    return call_gpt(gpt_model, gpt_role, input_sentence, max_tokens)
 
 
 # Use for getting the specific content from the worksheet.
@@ -270,93 +268,100 @@ def employee_work(main_target, system_role, job_content, input_progress):
     return final_output
 
 
-def refine_program_pool(mainTarget, programPool):
+def refine_program_pool(main_target, program_pool):
+    """
+    Refine the program pool to ensure it meets the main target without duplicates.
 
-    ai_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are responsible for tidying up the program pool. Ensure the source code meets the main target without any duplicate code.",
-            },
-            {
-                "role": "user",
-                "content": "Here is the main target of the project:\n"
-                + mainTarget
-                + '\n'
-                + "Here is the program pool that contains all the code that has been done:\n"
-                + programPool
-                + '\n'
-                + "Please tidy up the program pool to ensure it meets the main target and keep all the functions in the program pool."
-                + "Only retrun the source code, don't add any extra information.",
-            },
-        ],
+    :param main_target: The main target or goal of the project.
+    :param program_pool: The current state of the program pool.
+    :return: The refined program pool as a string.
+    """
+    gpt_role = "You are responsible for tidying up the program pool. Ensure the source code meets the main target without any duplicate code."
+
+    # Construct the instruction for tidying up the program pool
+    instruction = (
+        "Here is the main target of the project:\n"
+        + main_target
+        + "\nHere is the program pool that contains all the code that has been done:\n"
+        + program_pool
+        + "\nPlease tidy up the program pool to ensure it meets the main target and keep all the functions in the program pool."
+        + "Only return the source code, don't add any extra information."
     )
 
-    return ai_output.choices[0].message.content
-
-
-# This function will analyze the job content and assign the group of each job.
-def classify_all_jobs(jobArray, mainTarget):
-    # Divide the jobs array into strings.
-    jobString = str(jobArray)
-    jobString = f"JOBS: {jobString}"
-
-    gptGroupFormat = client_model_1.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a Job classifier, you can unsderstand if the job is independent or dependent, and you can group the jobs that can be executed at the same time.",
-            },
-            {
-                "role": "user",
-                "content": "Here are the Jobs that need to be classify:\n"
-                + jobString
-                + '\n'
-                + "Here is the main target of the project\n"
-                + mainTarget
-                + "According to the main target, please group the jobs into same group if they can be executed at the same time, the jobs that need to be executed in sequence shouldn't be in the same group and the jobs that can be executed in parallel should be in same group.\n"
-                + "Each group now becomes a larger job, and there is a definite sequence among groups. For instance, in group 1, there are some printing functions, while in group 2, the task is to combine these printing functions. In group 3, the task is to test the functions from group 2. This means that the contents of groups 1, 2, and 3 are interrelated with the contents of other groups.\n"
-                + "The group number should be the legitimate order of the execution.\n"
-                + format_token
-                + format_group,
-            },
-        ],
+    # Call GPT without named parameters
+    ai_output = call_gpt(
+        gpt_model,
+        gpt_role,
+        instruction,
     )
 
-    # Assign the output message to the gptGroupFormat
-    gptGroupFormat = gptGroupFormat.choices[0].message.content
-
-    return gptGroupFormat
+    return ai_output
 
 
-# This function will format the final output to the frontend.
-def get_final_display(currentProgess, mainTarget):
-    finalOutput = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": presenter,
-            },
-            {
-                "role": "user",
-                "content": "Here is the main target\n"
-                + mainTarget
-                + '\n'
-                + "Here is the final result:\n"
-                + currentProgess
-                + '\n'
-                + format_token
-                + format_fronted_output,
-            },
-        ],
+def classify_all_jobs(job_array, main_target):
+    """
+    Analyze the job content and classify jobs into groups based on dependency.
+
+    :param job_array: List of jobs to be classified.
+    :param main_target: The main target or goal of the project.
+    :return: Grouped job classifications as a string.
+    """
+    # Convert job array to string format
+    job_string = f"JOBS: {str(job_array)}"
+
+    gpt_role = job_classifier
+    # Construct user input for the GPT classification
+    classification_instruction = (
+        "Here are the Jobs that need to be classified:\n"
+        + job_string
+        + "\nHere is the main target of the project:\n"
+        + main_target
+        + "\nAccording to the main target, please group the jobs into the same group if they can be executed at the same time. "
+        + "The jobs that need to be executed in sequence shouldn't be in the same group, and the jobs that can be executed in parallel should be in the same group.\n"
+        + "Each group now becomes a larger job, and there is a definite sequence among groups. For instance, in group 1, there are some printing functions, while in group 2, the task is to combine these printing functions. "
+        + "In group 3, the task is to test the functions from group 2. This means that the contents of groups 1, 2, and 3 are interrelated with the contents of other groups.\n"
+        + "The group number should be the legitimate order of execution.\n"
+        + format_token
+        + format_group
     )
 
-    finalOutput = finalOutput.choices[0].message.content
+    # Call GPT for job classification
+    gpt_group_format = call_gpt(
+        gpt_model,
+        gpt_role,
+        classification_instruction,
+    )
 
-    return finalOutput
+    return gpt_group_format
+
+
+def get_final_display(current_progress, main_target):
+    """
+    Format the final output for the frontend display.
+
+    :param current_progress: The current progress or final result of the project.
+    :param main_target: The main target or goal of the project.
+    :return: The formatted output ready for frontend display.
+    """
+    # Construct user input for the final display
+    display_instruction = (
+        "Here is the main target\n"
+        + main_target
+        + "\nHere is the final result:\n"
+        + current_progress
+        + "\n"
+        + format_token
+        + format_fronted_output
+    )
+
+    # Call GPT for final output formatting
+    final_output = call_gpt(
+        gpt_model,
+        presenter,
+        display_instruction,
+    )
+
+    return final_output
 
 
 # Convert the tasks to the format that can be displayed on the frontend 'Job: ...... '
@@ -398,33 +403,35 @@ def convert_job_to_back_format(inputJobArray):
     return outputJobArray
 
 
-# This function will help to create the new gpt role array after the user's operation.
-def assign_gpt_roles(jobArray):
-    gptRoles = []
+def assign_gpt_roles(job_array):
+    """
+    Assign GPT roles to team members based on the job content.
 
-    for jobContents in jobArray:
-        tempMessages = client_model_1.chat.completions.create(
-            model=gpt_model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are very good at giving a role to the team members, you can assign the roles to the team members based on the job they need to do.",
-                },
-                {
-                    "role": "user",
-                    "content": "Here is the job:\n"
-                    + jobContents
-                    + "\n"
-                    + "Please use one sencence to describe the role for this person.\n"
-                    + "For example: You are a program tester, you will test the program and find out the problem and fix it.\n",
-                },
-            ],
+    :param job_array: List of job descriptions for which roles need to be assigned.
+    :return: A list of roles assigned to each job.
+    """
+    gpt_roles = []
+    system_role = job_assigner
+    for job_content in job_array:
+        # Construct the user input for role assignment
+        role_instruction = (
+            "Here is the job:\n"
+            + job_content
+            + "\n"
+            + "Please use one sentence to describe the role for this person.\n"
+            + "For example: You are a program tester, you will test the program and find out the problem and fix it.\n"
         )
 
-        currentJobRole = tempMessages.choices[0].message.content
-        gptRoles.append(currentJobRole)
+        # Call GPT for role assignment
+        current_job_role = call_gpt(
+            gpt_model,
+            system_role,
+            role_instruction,
+        )
 
-    return gptRoles
+        gpt_roles.append(current_job_role)
+
+    return gpt_roles
 
 
 # This function will create the layer array for the jobs.
@@ -493,7 +500,6 @@ def job_worker(mainTarget, role, job, inputProgress, barrier):
 
 
 # Variables for progress bar
-
 progressBar_current = 0
 progressBar_total = 0
 
@@ -606,7 +612,6 @@ def execute_steps():
 
         # Start the processing of the jobs.
         finalOutputCode = start_processing(mainProblem, newRoles, newJobs, jobLayers)
-        # ADD 20241201 Daniel Now use the tidyUpProgramPool to tidy up the program pool.
 
         # Get the Program pool first.
         final_prog_pool = message_inforcer.extract_section_content(finalOutputCode, "Program pool")
