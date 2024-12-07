@@ -84,18 +84,16 @@ def decrypt_password(encrypted_password):
     try:
         # Decode the Base64 string to get the encrypted bytes
         encrypted_password_bytes = base64.b64decode(encrypted_password)
-        print("Decoded Encrypted Password Bytes:", encrypted_password_bytes)
     except Exception as e:
-        print("Base64 decoding failed:", e)
+        print("Base64 decoding failed.")
         raise ValueError("Invalid encrypted password format.")
 
     try:
         # Decrypt using the private key and PKCS1v15 padding
         decrypted_password = private_key.decrypt(encrypted_password_bytes, padding.PKCS1v15())
-        print("Decrypted Password (raw bytes):", decrypted_password)
         return decrypted_password.decode("utf-8")
     except Exception as e:
-        print("RSA Decryption failed:", e)
+        print("RSA decryption failed.")
         raise ValueError("RSA decryption failed.")
 
 
@@ -126,7 +124,7 @@ def get_public_key():
             public_key = file.read()
         return jsonify({"success": True, "public_key": public_key})
     except Exception as e:
-        print("Failed to load public key:", e)
+        print("Failed to load public key.")
         return jsonify({"success": False, "error": "Public key not available."}), 500
 
 
@@ -138,7 +136,7 @@ def register_user():
     """
     try:
         user_data = request.get_json(force=True)
-        print("Received data:", user_data)
+        print("Received registration data.")
 
         if not user_data:
             return jsonify({"success": False, "error": "No data provided."}), 400
@@ -146,9 +144,8 @@ def register_user():
         try:
             # Decrypt the password
             decrypted_password = decrypt_password(user_data["password"])
-            print("Decrypted password:", decrypted_password)
         except ValueError as ve:
-            print("Decryption failed:", ve)
+            print("Decryption failed during registration.")
             return jsonify({"success": False, "error": str(ve)}), 400
 
         # Register the user with the decrypted password
@@ -160,7 +157,7 @@ def register_user():
             return jsonify({"success": False, "error": "Username already exists."}), 400
 
     except Exception as e:
-        print("Error during registration:", e)
+        print("Error during registration.")
         return jsonify({"success": False, "error": "Server error occurred."}), 500
 
 
@@ -172,7 +169,7 @@ def login_user():
     """
     try:
         user_data = request.get_json(force=True)
-        print("Received login data:", user_data)
+        print("Received login data.")
 
         if not user_data:
             return jsonify({"success": False, "error": "No data provided."}), 400
@@ -180,9 +177,8 @@ def login_user():
         # Decrypt the password
         try:
             decrypted_password = decrypt_password(user_data["password"])
-            print("Decrypted password:", decrypted_password)
         except ValueError as ve:
-            print("Decryption failed:", ve)
+            print("Decryption failed during login.")
             return jsonify({"success": False, "error": str(ve)}), 400
 
         # Authenticate user
@@ -193,7 +189,7 @@ def login_user():
             return jsonify({"success": False, "error": "Invalid username or password."}), 401
 
     except Exception as e:
-        print("Error during login:", e)
+        print("Error during login.")
         return jsonify({"success": False, "error": "Server error occurred."}), 500
 
 
@@ -222,7 +218,7 @@ def verify_token():
         else:
             return jsonify({"success": False, "error": "Token is invalid or expired."}), 401
     except Exception as e:
-        print("Error verifying token:", e)
+        print("Error verifying token.")
         return (
             jsonify(
                 {"success": False, "error": "Server error occurred during token verification."}
