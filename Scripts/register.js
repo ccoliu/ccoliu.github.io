@@ -1,16 +1,50 @@
-//////////////IP SETTINGS/////////////////////
+// ---------------------------------------------------
+// Constants and Global Variables
+// ---------------------------------------------------
 const LOGIN_SERVER = "https://192.168.0.241:56123/";
-/////////////////////////////////////////////
+let PUBLIC_KEY = ""; // Public key initialized as empty
 
-const submitButton = document.getElementById("submit-btn");
+// ---------------------------------------------------
+// Functions
+// ---------------------------------------------------
 
-// 註冊事件
-submitButton.addEventListener("click", submit);
+/**
+ * Fetch the public key from the server and store it in the PUBLIC_KEY variable.
+ */
+async function fetchPublicKey() {
+    try {
+        const response = await fetch(`${LOGIN_SERVER}public_key`);
+        const data = await response.json();
+        if (data.success) {
+            PUBLIC_KEY = data.public_key;
+            console.log("Fetched Public Key:", PUBLIC_KEY);
+        } else {
+            console.error("Failed to fetch public key:", data.error);
+        }
+    } catch (error) {
+        console.error("Failed to fetch public key:", error);
+    }
+}
 
-// 驗證欄位是否為空
+/**
+ * Encrypt the password using the public key.
+ * @param {string} password - The plaintext password to encrypt.
+ * @returns {string} The encrypted password.
+ */
+function encryptPassword(password) {
+    const encryptor = new JSEncrypt();
+    encryptor.setPublicKey(PUBLIC_KEY);
+    return encryptor.encrypt(password);
+}
+
+/**
+ * Validate if the username and password fields are not empty.
+ * @param {string} username - The username input value.
+ * @param {string} password - The password input value.
+ * @returns {boolean} True if all fields are valid, false otherwise.
+ */
 function validateEmpty(username, password) {
     let legal = true;
-
     const usrnamwarning = document.querySelector(".username-warning");
     const passwordwarning = document.querySelector(".password-warning");
 
@@ -31,7 +65,12 @@ function validateEmpty(username, password) {
     return legal;
 }
 
-// 驗證密碼是否一致
+/**
+ * Validate if the password and confirm password fields match.
+ * @param {string} password - The password input value.
+ * @param {string} confirmPassword - The confirm password input value.
+ * @returns {boolean} True if passwords match, false otherwise.
+ */
 function validatePassword(password, confirmPassword) {
     const confirmPasswordwarning = document.querySelector(".password-conf-warning");
 
@@ -44,32 +83,32 @@ function validatePassword(password, confirmPassword) {
     }
 }
 
-// 提交表單
+/**
+ * Handle form submission and registration.
+ */
 function submit() {
     console.log("Submitting form...");
 
-    // 取得欄位值
     const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("password-conf").value.trim();
 
-    // 驗證欄位
     const isNotEmpty = validateEmpty(username, password);
     const isPasswordValid = validatePassword(password, confirmPassword);
 
     if (isNotEmpty && isPasswordValid) {
-        console.log("Validation passed!");
+        // Encrypt the password
+        const encryptedPassword = encryptPassword(password);
+        console.log("Encrypted Password:", encryptedPassword);
 
-        // 包裝成 JSON 格式
+        // Prepare payload
         const payload = {
             username: username,
-            password: password,
+            password: encryptedPassword,
         };
 
-        console.log("Payload:", payload);
-
-        // 傳送資料到後端
-        fetch(LOGIN_SERVER + "register", {
+        // Send the registration request
+        fetch(`${LOGIN_SERVER}register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -79,16 +118,13 @@ function submit() {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    // 成功註冊的提示訊息和操作
                     alert("Registration successful! Redirecting to login page...");
                     window.location.href = "login.html";
                 } else {
-                    // 根據後端回傳的錯誤訊息，顯示提示
                     alert(`Registration failed: ${data.error}`);
                 }
             })
             .catch((error) => {
-                // 錯誤處理
                 console.error("Error occurred during registration:", error);
                 alert("An error occurred while registering. Please try again later.");
             });
@@ -96,3 +132,13 @@ function submit() {
         console.log("Validation failed!");
     }
 }
+
+// ---------------------------------------------------
+// Event Listeners
+// ---------------------------------------------------
+
+// Add event listener for the "Submit" button
+document.getElementById("submit-btn").addEventListener("click", submit);
+
+// Fetch the public key when the page loads
+fetchPublicKey();

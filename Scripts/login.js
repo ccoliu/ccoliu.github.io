@@ -3,17 +3,43 @@ document.addEventListener('DOMContentLoaded', function() {
     const warning = document.getElementById('warning');
     const username = document.getElementById('username');
     const password = document.getElementById('password');
+    const LOGIN_SERVER = "https://192.168.0.241:56123/";
+    let PUBLIC_KEY = ""; // Public key initialized as empty
 
-    loginbtn.addEventListener('click', function() {
+    // Fetch the public key
+    async function fetchPublicKey() {
+        try {
+            const response = await fetch(`${LOGIN_SERVER}public_key`);
+            const data = await response.json();
+            if (data.success) {
+                PUBLIC_KEY = data.public_key;
+                console.log("Fetched Public Key:", PUBLIC_KEY);
+            } else {
+                console.error("Failed to fetch public key:", data.error);
+            }
+        } catch (error) {
+            console.error("Failed to fetch public key:", error);
+        }
+    }
+
+    // Encrypt password
+    function encryptPassword(password) {
+        const encryptor = new JSEncrypt();
+        encryptor.setPublicKey(PUBLIC_KEY);
+        return encryptor.encrypt(password);
+    }
+
+    // Login button event listener
+    loginbtn.addEventListener('click', async function() {
         let legal = true;
-        console.log('login button clicked');
+        console.log('Login button clicked');
         
+        // Validate username and password fields
         if (username.value === '') {
             warning.innerHTML = 'Please enter username/password!';
             username.style.border = '1px solid red';
             legal = false;
-        }
-        else {
+        } else {
             username.style.border = '1px solid #ced4da';
         }
 
@@ -21,8 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
             warning.innerHTML = 'Please enter username/password!';
             password.style.border = '1px solid red';
             legal = false;
-        }
-        else {
+        } else {
             password.style.border = '1px solid #ced4da';
         }
 
@@ -30,9 +55,54 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        warning.innerHTML = '';
-        username.style.border = '1px solid #ced4da';
-        password.style.border = '1px solid #ced4da';
+        // Encrypt the password
+        const encryptedPassword = encryptPassword(password.value);
+        if (!encryptedPassword) {
+            console.error("Password encryption failed!");
+            warning.innerHTML = 'Encryption error. Please try again.';
+            return;
+        }
 
+        // Prepare payload
+        const payload = {
+            username: username.value.trim(),
+            password: encryptedPassword,
+        };
+
+        // Send login request to the server
+        try {
+            const response = await fetch(`${LOGIN_SERVER}login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                warning.innerHTML = 'Login successful!';
+                warning.style.color = 'green';
+                console.log("Login successful");
+                
+                // Store the token in localStorage for future authenticated requests
+                localStorage.setItem('auth_token', data.token);
+
+                // Redirect to a dashboard or other page if needed
+                // window.location.href = "/dashboard.html";
+            } else {
+                warning.innerHTML = 'Invalid username or password.';
+                warning.style.color = 'red';
+                console.error("Login failed:", data.error);
+            }
+        } catch (error) {
+            console.error("Error during login request:", error);
+            warning.innerHTML = 'An error occurred. Please try again later.';
+            warning.style.color = 'red';
+        }
     });
+
+    // Fetch the public key on page load
+    fetchPublicKey();
 });

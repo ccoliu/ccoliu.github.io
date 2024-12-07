@@ -9,4 +9,6 @@ server.crt
 server.key
 server.pfx
 /Log
+private_key.pem
+public_key.pem
 .vscode/*
