@@ -31,6 +31,7 @@ async function fetchPublicKey() {
  * @param {string} password - The plaintext password to encrypt.
  * @returns {string} The encrypted password.
  */
+
 function encryptPassword(password) {
     const encryptor = new JSEncrypt();
     encryptor.setPublicKey(PUBLIC_KEY);
@@ -43,6 +44,7 @@ function encryptPassword(password) {
  * @param {string} password - The password input value.
  * @returns {boolean} True if all fields are valid, false otherwise.
  */
+
 function validateEmpty(username, password) {
     let legal = true;
     const usrnamwarning = document.querySelector(".username-warning");
@@ -71,6 +73,7 @@ function validateEmpty(username, password) {
  * @param {string} confirmPassword - The confirm password input value.
  * @returns {boolean} True if passwords match, false otherwise.
  */
+
 function validatePassword(password, confirmPassword) {
     const confirmPasswordwarning = document.querySelector(".password-conf-warning");
 
@@ -86,6 +89,7 @@ function validatePassword(password, confirmPassword) {
 /**
  * Handle form submission and registration.
  */
+
 function submit() {
     console.log("Submitting form...");
 
@@ -139,6 +143,5 @@ function submit() {
 
 // Add event listener for the "Submit" button
 document.getElementById("submit-btn").addEventListener("click", submit);
-
 // Fetch the public key when the page loads
 fetchPublicKey();

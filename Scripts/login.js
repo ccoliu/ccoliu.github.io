@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const loginbtn = document.getElementById('loginbtn');
+    const testbtn = document.getElementById('testbtn');
     const warning = document.getElementById('warning');
     const username = document.getElementById('username');
     const password = document.getElementById('password');
@@ -103,6 +104,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Test button event listener
+    testbtn.addEventListener('click', async function () {
+        console.log('Test button clicked');
+        try {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                warning.innerHTML = 'No authentication token found.';
+                warning.style.color = 'red';
+                return;
+            }
+
+            const response = await fetch(`${LOGIN_SERVER}verify`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                warning.innerHTML = 'Verification successful!';
+                warning.style.color = 'green';
+                console.log("Verification successful:", data);
+            } else {
+                warning.innerHTML = 'Verification failed.';
+                warning.style.color = 'red';
+                console.error("Verification failed:", data.error);
+            }
+        } catch (error) {
+            console.error("Error during verification request:", error);
+            warning.innerHTML = 'An error occurred during verification. Please try again.';
+            warning.style.color = 'red';
+        }
+    });
+    
     // Fetch the public key on page load
     fetchPublicKey();
 });

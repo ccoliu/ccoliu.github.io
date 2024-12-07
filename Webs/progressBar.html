@@ -87,8 +87,7 @@
         function updateProgress(newPercentage) {
             targetProgress = newPercentage;
             const progressBar = document.getElementById('progress-bar');
-            
-            // 添加一个临时的动画结束监听器，确保光影动画结束后才推进进度条
+
             progressBar.addEventListener('animationiteration', function() {
                 if (currentProgress < targetProgress) {
                     progressBar.style.width = targetProgress + '%';
@@ -97,7 +96,6 @@
             }, { once: true });
         }
 
-        // 測試函式，模擬進度條的運行
         function testProgressBar() {
             const testSteps = [10, 15, 33, 60, 80, 50, 100];
             let stepIndex = 0;
