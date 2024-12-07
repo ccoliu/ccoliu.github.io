@@ -5,26 +5,18 @@
 # Version: <V10.1.0.0>
 # ---------------------------------------------------
 
-# ---------------------------------------------------
-'''Import the necessary libraries and modules'''
-# ---------------------------------------------------
-
-import os  # System imports
+# Import the necessary libraries
+import os
 import sys
-from flask import Flask, request, jsonify, redirect, Response  # For Flask server
-from flask_cors import CORS  # For Flask server
-from openai import OpenAI  # OpenAI API
+from flask import Flask, request, jsonify, redirect, Response
+from flask_cors import CORS
+from openai import OpenAI
 import os
 import time
 import threading
-import ssl  # Local https key
-import yaml  # Import the PyYAML library
+import ssl
+import yaml
 from LogHelper import initialize_logging  # For logging
-
-# ---------------------------------------------------
-'''Import the self-defined tools and functions'''
-# ---------------------------------------------------
-
 import FormatEnforcer
 from DataBase import MongoDBTools, DocumentBuilder
 
@@ -121,7 +113,6 @@ format_worksheet = config["Formats"]["WORKSHEET_FORMAT"]
 format_message = config["Formats"]["MESSAGE_FORMAT"]
 format_fronted_output = config["Formats"]["FRONTED_OUTPUT_FORMAT"]
 format_group = config["Formats"]["GROUPED_FORMAT"]
-# This phrase is use to place before the specific format.
 format_token = config["Formats"]["FORMAT_TOKEN"]
 
 # ---------------------------------------------------
@@ -162,7 +153,7 @@ def call_gpt(model_name, gpt_roles, input_string, max_tokens=None):
         return f"Error occurred while calling GPT: {str(e)}"
 
 
-def describe_code(inputCode):
+def describe_code(input_code):
     """
     This function reads the input code and describes it in human language.
 
@@ -170,7 +161,7 @@ def describe_code(inputCode):
     :return: A summarized description of the code in one sentence.
     """
     role = reverse_discriber
-    input_sentence = inputCode + "\n" + "Please summarize in 1 sentence within 100 tokens."
+    input_sentence = input_code + "\n" + "Please summarize in 1 sentence within 100 tokens."
     max_tokens = 100
 
     # Call the generalized GPT function
@@ -505,11 +496,6 @@ def job_worker(mainTarget, role, job, inputProgress, barrier):
     barrier.wait()
 
 
-# Variables for progress bar
-progressBar_current = 0
-progressBar_total = 0
-
-
 # The main function to start the processing all of the jobs.
 def start_processing(mainTarget, roles, jobArray, layerIndex):
     # The shared variable to store the current progress of the project.
@@ -561,6 +547,9 @@ def start_processing(mainTarget, roles, jobArray, layerIndex):
     return currentProgress
 
 
+# Variables for progress bar
+progressBar_current = 0
+progressBar_total = 0
 currentProgress = ""
 main_problem = ""
 language = ""
@@ -624,7 +613,6 @@ def execute_steps():
         final_output = refine_program_pool(main_problem, final_prog_pool)
 
         # Let AI to gerate the final output content.
-        # finalOutputCode = finalOutputDisplayer(finalOutputCode, mainProblem)
         # Force the final output code to follow the format.
         final_output = message_inforcer.strictlyFollowFormat(
             get_final_display,
@@ -654,8 +642,7 @@ def execute_steps():
         return jsonify({"error": str(e)})
 
 
-# SSE Streaming route
-# This route is for the frontend to get the progress of the project.
+# SSE Streaming route for the progress bar
 @app.route('/stream')
 def stream():
     def event_stream():
@@ -674,7 +661,6 @@ def stream():
             # Since the last message won't be sent, we need to send the final message.
             progress_message = f"{progressBar_total},{progressBar_total}\n"
             yield f"data: {progress_message}\n\n"
-            # print('Final Progress:', progress_message)
 
             # Make sure the last message is send before the return.
             time.sleep(1.5)
