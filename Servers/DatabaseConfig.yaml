@@ -38,6 +38,16 @@ DatabaseStructure:
     comment: comment
     created_time: created_time
     creator: creator
+  plagiarism_ai_mode:
+    collection: plagiarism
+    pin: data
+    mode: plagiarism_mode
+    user_input: user_input
+    final_output: final_output
+    rate: rate
+    comment: comment
+    created_time: created_time
+    creator: creator
   viewer_mode:
     collection: viewer
     pin: data

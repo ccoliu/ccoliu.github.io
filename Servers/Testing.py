@@ -1,16 +1,12 @@
 import os
 import sys
 import configparser
-import time
-import threading
-import random
-import unittest
 from flask import Flask, request, jsonify, redirect, Response
 from flask_cors import CORS
 from openai import OpenAI
 
 # 自訂義模組
-from dataBase import dataBaseTools
+from dataBase_old import dataBaseTools
 import FormatEnforcer
 
 testEnforcer = FormatEnforcer.Enforcer()

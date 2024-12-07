@@ -225,111 +225,76 @@ class MongoDBTools:
             print(f"Failed to update document with _id '{document_id}': {e}")
             return None
 
+    # Search through all collections in the database
     def update_document_in_database(self, db_name, document_id, field_name, new_value):
-        """
-        Update a specific field of a document by its ID across all collections in the database.
+        # Get the database
+        db = self.client[db_name]
 
-        Parameters:
-            - db_name: The name of the database.
-            - document_id: The ID of the document to update.
-            - field_name: The field to update.
-            - new_value: The new value to set.
+        # Build filter and update query
+        filter_query = {"_id": ObjectId(document_id)}
+        update_query = {"$set": {field_name: new_value}}
 
-        Returns:
-            - The _id of the updated document if successful.
-            - None if an error occurs or no document is found.
-        """
-        try:
-            # Get the database
-            db = self.client[db_name]
-
-            # Build filter and update query
-            filter_query = {"_id": ObjectId(document_id)}
-            update_query = {"$set": {field_name: new_value}}
-
-            # Iterate through all collections in the database
-            for collection_name in db.list_collection_names():
-                collection = db[collection_name]
-
-                # Perform the update
-                result = collection.update_one(filter_query, update_query)
-
-                # Check if any document was updated
-                if result.modified_count > 0:
-                    print(
-                        f"Document with _id '{document_id}' updated successfully in collection '{collection_name}'. "
-                        f"Field '{field_name}' set to: {new_value}"
-                    )
-                    return document_id
-
-            # If no document was found in any collection
-            print(
-                f"No document found with _id '{document_id}' in any collection of database '{db_name}'."
-            )
-            return None
-        except Exception as e:
-            print(f"Failed to update document with _id '{document_id}': {e}")
-            return None
-
-    def update_viewer_content(self, db_name, collection_name, id, field_name, new_value):
-        """
-        Update or append a new rate value in the 'rate' field of a document
-        where the 'data_id' field matches the given ID.
-
-        Parameters:
-            - db_name: The name of the database.
-            - collection_name: The name of the collection.
-            - data_id: The ID to match in the 'data_id' field.
-            - new_rate: The new rate value to add.
-
-        Returns:
-            - A count of updated documents if successful.
-            - None if an error occurs.
-        """
-        try:
-            # Get the collection
-            db = self.client[db_name]
+        # Iterate through all collections in the database
+        for collection_name in db.list_collection_names():
             collection = db[collection_name]
-
-            # Filter to find documents where 'data_id' matches
-            filter_query = {"data_id": id}
-
-            # Retrieve the document to check the current state of 'rate'
-            document = collection.find_one(filter_query)
-
-            if not document:
-                print(
-                    f"No document found with 'data_id' = '{id}' in collection '{collection_name}'."
-                )
-                return 0
-
-            # Check the current state of the 'rate' field
-            current_rate = document.get(field_name, "N/A")
-
-            if current_rate == "no rate":
-                # If the current rate is "no rate", simply set it to the new value
-                update_query = {"$set": {field_name: new_value}}
-            elif isinstance(current_rate, list):
-                # If the current rate is already a list, append the new value
-                update_query = {"$push": {field_name: new_value}}
-            else:
-                # If the current rate is a single value, convert it into a list and add the new value
-                update_query = {"$set": {field_name: [current_rate, new_value]}}
 
             # Perform the update
             result = collection.update_one(filter_query, update_query)
 
+            # Check if any document was updated
             if result.modified_count > 0:
                 print(
-                    f"Document with 'data_id' = '{id}' updated successfully in collection '{collection_name}'. "
+                    f"Document with _id '{document_id}' updated successfully in collection '{collection_name}'. "
+                    f"Field '{field_name}' set to: {new_value}"
                 )
-                return result.modified_count
-            else:
-                print(f"No changes made to the document with 'data_id' = '{id}'.")
-                return 0
-        except Exception as e:
-            print(f"Failed to update document in collection '{collection_name}': {e}")
-            return None
+                return document_id
+
+        # If no document was found in any collection
+        print(
+            f"No document found with _id '{document_id}' in any collection of database '{db_name}'."
+        )
+        return None
+
+    # The search index is not the collections _id is the data_id
+    def update_data_chain(self, db_name, collection_name, id, field_name, new_value):
+        # Get the collection
+        db = self.client[db_name]
+        collection = db[collection_name]
+
+        # Filter to find documents where 'data_id' matches
+        filter_query = {"data_id": ObjectId(id)}
+
+        # Retrieve the document to check the current state of the field
+        document = collection.find_one(filter_query)
+
+        if not document:
+            print(f"No document found with 'data_id' = '{id}' in collection '{collection_name}'.")
+            return 0
+
+        # Check the current state of the field
+        current_value = document.get(field_name, None)
+
+        if current_value is None:
+            # If the field does not exist, set it to the new value
+            update_query = {"$set": {field_name: new_value}}
+        elif isinstance(current_value, list):
+            # If the field is already a list, append the new value
+            update_query = {"$push": {field_name: new_value}}
+        else:
+            # If the field is a single value, convert it into a list with the new value
+            update_query = {"$set": {field_name: [current_value, new_value]}}
+
+        # Perform the update
+        result = collection.update_one(filter_query, update_query)
+
+        if result.modified_count > 0:
+            print(
+                f"Document with 'data_id' = '{id}' updated successfully in collection '{collection_name}'."
+            )
+            return result.modified_count
+        else:
+            print(f"No changes made to the document with 'data_id' = '{id}'.")
+            return 0
 
     def write_collection_to_file(self, db_name, collection_name, file_path):
         """Write all documents from a collection to a JSONL file."""
@@ -383,6 +348,7 @@ class DocumentBuilder:
     @staticmethod
     def generate_document(
         user_input,
+        language,
         ai_tasks,
         final_tasks,
         final_output,
@@ -398,6 +364,7 @@ class DocumentBuilder:
             "pin": "data",
             "mode": "generate_mode",
             "user_input": user_input,
+            "language": language,
             "ai_tasks": ai_tasks,
             "final_tasks": final_tasks,
             "final_output": final_output,
@@ -439,6 +406,24 @@ class DocumentBuilder:
             "mode": "similarity_mode",
             "lhs": lhs,
             "rhs": rhs,
+            "final_output": final_output,
+            "rate": rate,
+            "comment": comment,
+            "created_time": DocumentBuilder._get_current_time(),
+            "creator": creator,
+        }
+
+    @staticmethod
+    def plagiarism_ai_document(
+        user_input, final_output, rate="No rate", comment="No comment", creator="System"
+    ):
+        """
+        Build a document for "plagiarism_mode" type.
+        """
+        return {
+            "pin": "data",
+            "mode": "plagiarism_mode",
+            "user_input": user_input,
             "final_output": final_output,
             "rate": rate,
             "comment": comment,

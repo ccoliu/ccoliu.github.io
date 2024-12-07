@@ -3,7 +3,7 @@ from trainingClass import TrainingTool
 import time
 import threading
 from fileFormatt import StringToJsonl
-from dataBase import dataBaseTools
+from dataBase_old import dataBaseTools
 from bson import ObjectId
 
 fineTuneTools = TrainingTool()

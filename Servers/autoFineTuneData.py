@@ -7,7 +7,7 @@ from bson import json_util  # For MongoDB may use the json_util
 # Import self defined classes
 from fileFormatt import StringToJsonl
 from trainingClass import TrainingTool
-from dataBase import dataBaseTools
+from dataBase_old import dataBaseTools
 import random
 import datetime
 

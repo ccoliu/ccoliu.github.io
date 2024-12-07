@@ -89,7 +89,11 @@ gpt_model = config["ServerSettings"]["GptModel"]
 database_name = database_config["DatabaseStructure"]["db_name"]
 modify_collection_name = database_config["DatabaseStructure"]["modify_mode"]["collection"]
 similarity_collection_name = database_config["DatabaseStructure"]["similarity_mode"]["collection"]
+plagiarism_collection_name = database_config["DatabaseStructure"]["plagiarism_ai_mode"][
+    "collection"
+]
 viewer_collection_name = database_config["DatabaseStructure"]["viewer_mode"]["collection"]
+
 
 # Create a Flask app
 app = Flask(__name__)
@@ -132,184 +136,179 @@ judgement_accordance = config["Judgements"]["ACCORDANCE"]
 judgement_accordance_ai = config["Judgements"]["ACCORDANCE_AI"]
 
 
-# This function will read the source code and return a list of potential problems.
+def call_gpt(model_name, gpt_roles, input_string, max_tokens=None):
+    """
+    General function to call GPT models with specified parameters.
+
+    :param model_name: The GPT model to use (e.g., "gpt-3.5-turbo").
+    :param gpt_roles: The role for the GPT assistant (e.g., system instructions or persona).
+    :param input_string: The user's question or input content.
+    :param max_tokens: Optional. The maximum number of tokens in the response. If None, no limit is applied.
+    :return: The GPT model's response as a string.
+    """
+    try:
+        # Prepare the base parameters
+        params = {
+            "model": model_name,
+            "messages": [
+                {"role": "system", "content": gpt_roles},
+                {"role": "user", "content": input_string},
+            ],
+        }
+
+        # Add max_tokens only if it is specified
+        if max_tokens is not None:
+            params["max_tokens"] = max_tokens
+
+        # Call the GPT API
+        response = client_model_1.chat.completions.create(**params)
+
+        # Return the content of the first choice
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Error occurred while calling GPT: {str(e)}"
+
+
 def analyze_user_code(input_code):
+    """
+    Analyzes the given source code and returns a list of potential problems.
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": code_analyst,
-            },
-            {
-                "role": "user",
-                "content": "Here is the user's source code\n"
-                + input_code
-                + "Please help me find the potential problems in the code and return in the following format:\n"
-                + format_problem_list,
-            },
-        ],
+    :param input_code: The source code provided by the user as a string.
+    :return: A string containing the list of potential problems identified by GPT.
+    """
+    # Define the role for GPT
+    gpt_role = code_analyst
+
+    # Define the input message for GPT
+    input_message = (
+        "Here is the user's source code\n"
+        + input_code
+        + "Please help me find the potential problems in the code and return in the following format:\n"
+        + format_problem_list
     )
 
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, gpt_role, input_message)
 
 
-# This function wiil optimize the code using the source code and the problem list.
-def optimize_code(inputCode, problemList):
+def optimize_code(input_code, problem_list):
+    """
+    Optimizes the given source code based on the identified problem list.
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": code_master,
-            },
-            {
-                "role": "user",
-                "content": "Here is the source code\n"
-                + inputCode
-                + "\n"
-                + "Here are the problems that may occur\n"
-                + problemList
-                + "\n"
-                + format_modified_code,
-            },
-        ],
+    :param input_code: The source code provided by the user as a string.
+    :param problem_list: The list of problems identified in the source code.
+    :return: A string containing the optimized version of the source code.
+    """
+    # GPT role is predefined as 'code_master'
+    gpt_role = code_master
+
+    # Define the input message for GPT
+    input_message = (
+        "Here is the source code:\n"
+        + input_code
+        + "\nHere are the problems that may occur:\n"
+        + problem_list
+        + "\nPlease help optimize the code and return the modified version in the following format:\n"
+        + format_modified_code
     )
 
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, gpt_role, input_message)
 
 
-# This function will describe the code in one sentence. Use for code summarization stored in the database.
-def summarize_code_in_sentence(inputCode):
+def describe_code(input_code):
+    """
+    This function reads the input code and describes it in human language.
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": reverse_discriber,
-            },
-            {
-                "role": "user",
-                "content": inputCode
-                + "\n"
-                + "Please summarize what the code is doing in one sentence.(within 100 tokens)",
-            },
-        ],
-        max_tokens=100,
-    )
+    :param inputCode: The source code to be analyzed and summarized.
+    :return: A summarized description of the code in one sentence.
+    """
+    role = reverse_discriber
+    input_sentence = input_code + "\n" + "Please summarize in 1 sentence within 100 tokens."
+    max_tokens = 100
 
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, role, input_sentence, max_tokens)
 
 
 def copy_from_peer_check(lhs_code, rhs_code):
+    """
+    Checks for similarities between two pieces of code to identify potential copying.
 
+    :param lhs_code: The first code snippet (LHS) as a string.
+    :param rhs_code: The second code snippet (RHS) as a string.
+    :return: A string containing the similarity analysis result.
+    """
     # Calculate the Levenshtein similarity score between the two codes
     lev_score = similarity_helper.compare_levenshtein(lhs_code, rhs_code)
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": similarity_checker_peer,
-            },
-            {
-                "role": "user",
-                "content": (
-                    "Here is the first code (LHS):\n"
-                    + lhs_code
-                    + "\n"
-                    + "Here is the second code (RHS):\n"
-                    + rhs_code
-                    + "\n"
-                    "Here is the Levenshtein similarity score between the two codes:\n"
-                    + lev_score
-                    + "\n"
-                    + judgement_accordance
-                    + "\n"
-                    + "Return the result in the following format:\n"
-                    f"{format_similarity_peer}"
-                ),
-            },
-        ],
+    # GPT role is predefined as 'similarity_checker_peer'
+    gpt_role = similarity_checker_peer
+
+    # Define the input message for GPT
+    input_message = (
+        "Here is the first code (LHS):\n"
+        + lhs_code
+        + "\nHere is the second code (RHS):\n"
+        + rhs_code
+        + "\nHere is the Levenshtein similarity score between the two codes:\n"
+        + str(lev_score)
+        + "\n"
+        + judgement_accordance
+        + "\nPlease return the result in the following format:\n"
+        + format_similarity_peer
     )
 
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, gpt_role, input_message)
 
 
 def copy_from_ai_check(input_code):
+    """
+    Checks the input code for similarities with AI-generated patterns or known datasets.
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": similarity_checker_ai,
-            },
-            {
-                "role": "user",
-                "content": (
-                    "You are an AI code similarity checker.\n\n"
-                    "Here is the source code:\n"
-                    f"{input_code}\n\n" + judgement_accordance_ai + "\n"
-                    "Finally, return your analysis in the following format:\n"
-                    f"{format_similarity_ai}"
-                ),
-            },
-        ],
+    :param input_code: The source code to be analyzed.
+    :return: A string containing the AI similarity analysis result.
+    """
+    # GPT role is predefined as 'similarity_checker_ai'
+    gpt_role = similarity_checker_ai
+
+    # Define the input message for GPT
+    input_message = (
+        "You are an AI code similarity checker.\n\n"
+        "Here is the source code:\n"
+        f"{input_code}\n\n"
+        + judgement_accordance_ai
+        + "\nFinally, return your analysis in the following format:\n"
+        + format_similarity_ai
     )
 
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, gpt_role, input_message)
 
 
-# This function will ask AI for writing code based on the input code.
-def ai_write_code(inputCode):
+def modify_consider_dependency(input_string):
+    """
+    Modifies the code in different tabs while considering dependencies between them.
 
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": "You are a code master, good at writing code.",
-            },
-            {
-                "role": "user",
-                "content": "Here is the source code\n"
-                + inputCode
-                + "\n"
-                + "Modify the code into the structure and the coding style that you like.\n"
-                + "Simply return the code that you have written, there is no need to explain what you have done, just return the code.\n",
-            },
-        ],
+    :param input_string: The content of different tabs of source code as a string.
+    :return: A string with the modified or unmodified code in the same format.
+    """
+    # GPT role is predefined as 'code_modifier'
+    gpt_role = code_modifier
+
+    # Define the input message for GPT
+    input_message = (
+        "Here is the content of different tabs of source code:\n"
+        + input_string
+        + "\nIf you find any tabs that are dependent on each other, please modify the code based on the problems that may occur in the code. "
+        + "If all the code is fine, don't change anything.\n"
+        + "Please return in the exact same format you received (Tab #: content). "
+        + "All tabs should be printed no matter if the content has been modified or not. (Do not explain what you have done.)\n"
     )
 
-    return gpt_output.choices[0].message.content
-
-
-def modify_consider_dependency(inputString):
-
-    gpt_output = client_model_1.chat.completions.create(
-        model=gpt_model,
-        messages=[
-            {
-                "role": "system",
-                "content": code_modifier,
-            },
-            {
-                "role": "user",
-                "content": "Here is the content of diffferent tabs of source code\n"
-                + inputString
-                + "\n"
-                + "If you find any tabs that are depent on each other, please modify the code based on the problems that may occur in the code, if all the code are fine, don't change any thing.\n"
-                + "Please return in the exact same format you got(Tab #: content), all the tab should be print no matter the content had been modified or not.(do not explain what you have done.)\n",
-            },
-        ],
-    )
-
-    return gpt_output.choices[0].message.content
+    # Call the generalized GPT function
+    return call_gpt(gpt_model, gpt_role, input_message)
 
 
 def dependency_array_to_str(dependent_array):
@@ -351,20 +350,6 @@ def replace_results_content(results, dependentArray, default_string="Can't ident
             result = default_string
 
 
-# ---------------------------------------------------
-'''Define the API endpoints'''
-# ---------------------------------------------------
-
-
-@app.route("/", methods=["GET"])
-def index():
-    referrer = request.referrer
-    if referrer:
-        return redirect(referrer)
-    else:
-        return "No referrer found, this is the default page."
-
-
 # Modify the code received from the frontend different tab and execute in differnet thread.
 def execute_each_tab_content(input_code, results_array, current_index, dependency_array):
     try:
@@ -373,7 +358,7 @@ def execute_each_tab_content(input_code, results_array, current_index, dependenc
         # Optimize the code based on the problem list
         fixed_code = optimize_code(input_code, code_problems)
         # Summarize the code in one sentence
-        code_summary = summarize_code_in_sentence(fixed_code)
+        code_summary = describe_code(fixed_code)
 
         insert_document = document_builder.modify_document(input_code, fixed_code, code_summary)
         data_id = database_tools.insert_document(
@@ -393,6 +378,20 @@ def execute_each_tab_content(input_code, results_array, current_index, dependenc
         dependency_array.append(fixed_code)
     except Exception as e:
         results_array[current_index] = {"error": str(e)}
+
+
+# ---------------------------------------------------
+'''Define the API endpoints'''
+# ---------------------------------------------------
+
+
+@app.route("/", methods=["GET"])
+def index():
+    referrer = request.referrer
+    if referrer:
+        return redirect(referrer)
+    else:
+        return "No referrer found, this is the default page."
 
 
 # Process the code received from the frontend.
@@ -459,22 +458,25 @@ def similarity():
             insert_document = document_builder.similarity_check_document(
                 lhs_input_code, rhs_input_code, analyzed_result
             )
-            data_id = database_tools.insert_document(
+            database_tools.insert_document(
                 database_name, similarity_collection_name, insert_document
             )
 
         else:
-            # MOD 20241204 Daniel enforce the format of the code
-            ai_code = ai_write_code(lhs_input_code)
-
             # analyzeResult = aiCodeChecker(firstInput, aiCode)
             analyzed_result = message_enforcer.strictlyFollowFormat(
                 copy_from_ai_check,
                 message_enforcer.is_valid_ai_code_format,
                 lhs_input_code,
             )
-            # Insert the document into the database
-            # flag later deal with
+
+            insert_document = document_builder.plagiarism_ai_document(
+                lhs_input_code, analyzed_result
+            )
+            database_tools.insert_document(
+                database_name, plagiarism_collection_name, insert_document
+            )
+
         return jsonify({"result": analyzed_result})
     except Exception as e:
         return jsonify({"error": str(e)})
@@ -562,11 +564,11 @@ def viewer_comment():
         comment = data.get("comment", "")
         id = data.get("id", "")
 
-        database_tools.update_viewer_content(
-            database_name, viewer_collection_name, id, "rate", rate
+        database_tools.update_data_chain(
+            database_name, viewer_collection_name, id, "viewer_rate", rate
         )
-        database_tools.update_viewer_content(
-            database_name, viewer_collection_name, id, "comment", comment
+        database_tools.update_data_chain(
+            database_name, viewer_collection_name, id, "viewer_comment", comment
         )
 
         return jsonify({"result": "success"})
