@@ -165,3 +165,8 @@ body {
         padding-top: 20px; /* 添加上邊距 */
     }
 }
+
+.content-darkened {
+    filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
+    transition: filter 0.5s; /* 添加平滑過渡效果 */
+}
