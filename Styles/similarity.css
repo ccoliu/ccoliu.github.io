@@ -187,19 +187,46 @@ div .textarea {
 }
 
 .textarea div textarea {
-    font: 400 20px/1.5 "consolas", sans-serif;
-    color: #cccccc;
-    background-color: transparent;
+    font: 400 20px/1.5 "Consolas", monospace;
+    color: #ffffff; /* 白色字體 */
+    background-color: #2b2b2ba3; /* 深色背景 */
     resize: none;
     width: 42vw;
     height: 600px;
     min-width: 200px;
-    border-radius: 5px;
-    border-color: #c7c7c7;
+    border-radius: 8px; /* 更柔和的圓角 */
+    border: 1px solid #42a5f5; /* 藍色邊框 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); /* 微陰影效果 */
+    padding: 10px; /* 增加內部間距 */
+    caret-color: #42a5f5; /* 設置輸入游標顏色 */
+    transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
 }
 
+/* 聚焦時的特效 */
 .textarea div textarea:focus {
     outline: none;
+    border-color: #2196f3; /* 更亮的藍色邊框 */
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.6); /* 更明顯的聚焦陰影 */
+}
+
+/* 滑鼠懸停效果 */
+.textarea div textarea:hover {
+    background-color: #3333339e; /* 滑鼠懸停時加深背景 */
+    border-color: #90caf9; /* 滑鼠懸停時邊框顏色更亮 */
+}
+
+/* 滾動條樣式 */
+.textarea div textarea::-webkit-scrollbar {
+    width: 8px; /* 滾動條寬度 */
+}
+
+.textarea div textarea::-webkit-scrollbar-thumb {
+    background-color: #42a5f5; /* 滾動條顏色 */
+    border-radius: 4px; /* 滾動條圓角 */
+}
+
+.textarea div textarea::-webkit-scrollbar-track {
+    background-color: #1e1e1e; /* 滾動條軌道顏色 */
 }
 
 .uploadsys {
