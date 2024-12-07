@@ -13,13 +13,11 @@ import json
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
-from pprint import pprint
 from fileFormatt import StringToJsonl
 from datetime import datetime, timezone, timedelta
 import bcrypt
 import jwt
 import pytz
-from cryptography.fernet import Fernet
 
 
 # To get the absolute path of the resource file, which works for both development and PyInstaller
@@ -117,18 +115,6 @@ class MongoDBTools:
         return collection.find(query)
 
     def find_field_by_id(self, db_name, document_id, field_name):
-        """
-        Find a document by its ID across all collections in a database and retrieve a specific field value.
-
-        Parameters:
-            - db_name: The name of the database.
-            - document_id: The ID of the document to search for.
-            - field_name: The field to extract from the matched document.
-
-        Returns:
-            - The value of the specified field from the matched document.
-            - None if no document or field is found.
-        """
         try:
             # Get the database
             db = self.client[db_name]
@@ -143,7 +129,7 @@ class MongoDBTools:
 
                 # If the document is found
                 if document:
-                    print(f"Document found in collection '{collection_name}': {document}")
+                    print(f"Document found in collection '{collection_name}'")
 
                     # Check if the field exists in the document
                     if field_name in document:
@@ -189,18 +175,6 @@ class MongoDBTools:
             return None
 
     def update_document(self, db_name, collection_name, document_id, field_name, new_value):
-        """
-        Update a specific field of a document by its ID.
-        Parameters:
-            - db_name: The name of the database.
-            - collection_name: The name of the collection.
-            - document_id: The ID of the document to update.
-            - field_name: The field to update.
-            - new_value: The new value to set.
-        Returns:
-            - The _id of the updated document if successful.
-            - None if an error occurs.
-        """
         try:
             # Get the collection
             collection = self._get_collection(db_name, collection_name)
@@ -617,27 +591,3 @@ class AuthSystem(MongoDBTools):
 
 # 初始化 AuthSystem
 auth_system = AuthSystem(jwt_secret="your_jwt_secret", jwt_expiry_hours=24)
-
-# # 注册用户
-# user_id = auth_system.register_user("test_user", "secure_password")
-# print(f"Registered user ID: {user_id}")
-
-# # 登录用户
-# token = auth_system.login_user("test_user", "secure_password")
-# print(f"Generated token: {token}")
-
-# # 验证 Token
-# user = auth_system.verify_token(token)
-# if user:
-#     print(f"Token is valid. User: {user['user_name']}")
-
-# # 登出用户
-# auth_system.logout_user(user_id)
-
-
-# login_token = auth_system.login_user("test_user", "secure_password")
-
-# user = auth_system.verify_token(login_token)
-# auth_system.logout_user(user.get("_id"))
-
-# auth_system.register_user("whps", "secure_password")
