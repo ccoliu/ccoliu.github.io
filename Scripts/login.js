@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const loginbtn = document.getElementById('loginbtn');
-    const testbtn = document.getElementById('testbtn');
+    const statusbtn = document.getElementById('statusbtn');
+    const logoutbtn = document.getElementById('logoutbtn');
     const warning = document.getElementById('warning');
     const username = document.getElementById('username');
     const password = document.getElementById('password');
@@ -104,9 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Test button event listener
-    testbtn.addEventListener('click', async function () {
-        console.log('Test button clicked');
+    // Status button event listener
+    statusbtn.addEventListener('click', async function () {
+        console.log('Status button clicked');
         try {
             const token = localStorage.getItem('auth_token');
             if (!token) {
@@ -140,6 +141,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
+    // Logout button event listener
+    logoutbtn.addEventListener('click', async function () {
+        console.log('Logout button clicked');
+        try {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                warning.innerHTML = 'No authentication token found. Please log in first.';
+                warning.style.color = 'red';
+                return;
+            }
+
+            // Send logout request to the server
+            const response = await fetch(`${LOGIN_SERVER}logout`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                warning.innerHTML = 'Logout successful!';
+                warning.style.color = 'green';
+                console.log("Logout successful:", data);
+
+                // Clear token from localStorage
+                localStorage.removeItem('auth_token');
+            } else {
+                warning.innerHTML = 'Logout failed.';
+                warning.style.color = 'red';
+                console.error("Logout failed:", data.error);
+            }
+        } catch (error) {
+            console.error("Error during logout request:", error);
+            warning.innerHTML = 'An error occurred during logout. Please try again.';
+            warning.style.color = 'red';
+        }
+    });
+
     // Fetch the public key on page load
     fetchPublicKey();
 });

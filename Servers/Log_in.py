@@ -36,7 +36,7 @@ log_handler = initialize_logging("Log_in")
 # Initialize custom tools and systems
 database_tools = MongoDBTools()
 document_builder = DocumentBuilder()
-auth_system = AuthSystem(jwt_secret="my_testing_secret", jwt_expiry_hours=24)
+auth_system = AuthSystem(jwt_secret="my_testing_secret", jwt_expiry_hours=0.5)
 
 
 # Load YAML configuration
@@ -225,6 +225,37 @@ def verify_token():
             ),
             500,
         )
+
+
+@app.route("/logout", methods=["POST"])
+def logout_user():
+    """
+    Handle user logout.
+    This will verify the JWT token and, if valid, clear the token from the database.
+    """
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return jsonify({"success": False, "error": "Authorization header missing or invalid."}), 401
+
+    token = auth_header.split(" ")[1]
+
+    try:
+        # Verify the token
+        user = auth_system.verify_token(token)
+        if not user:
+            return jsonify({"success": False, "error": "Invalid or expired token."}), 401
+
+        # Invalidate the token
+        logout_result = auth_system.logout_user(user["_id"])
+        if logout_result:
+            return jsonify({"success": True, "message": "User logged out successfully."}), 200
+        else:
+            return jsonify({"success": False, "error": "Logout failed. Please try again."}), 500
+
+    except Exception as e:
+        print(f"Error during logout: {e}")
+        return jsonify({"success": False, "error": "Server error occurred during logout."}), 500
 
 
 # ---------------------------------------------------

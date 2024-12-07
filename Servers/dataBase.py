@@ -587,7 +587,3 @@ class AuthSystem(MongoDBTools):
         else:
             print(f"Failed to log out user with _id '{user_id}'.")
             return False
-
-
-# 初始化 AuthSystem
-auth_system = AuthSystem(jwt_secret="your_jwt_secret", jwt_expiry_hours=24)
