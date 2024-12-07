@@ -520,7 +520,7 @@ class AuthSystem(MongoDBTools):
         }
         result = collection.insert_one(user_document)
         print("User registered successfully.")
-        return result.inserted_id
+        return "User registered successfully."
 
     def login_user(self, user_name, password):
         """
