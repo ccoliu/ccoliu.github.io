@@ -6,17 +6,32 @@ body {
     overflow-y: auto;
 }
 
+/* 滾動條樣式 (Body) */
 body::-webkit-scrollbar {
-    width: 8px;
+    width: 10px; /* 滾動條寬度 */
 }
 
 body::-webkit-scrollbar-track {
-    background: transparent;
+    background: #0f3d3d; /* 深綠色背景 */
+    border-radius: 10px; /* 圓角設計 */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* 內部陰影效果 */
 }
 
 body::-webkit-scrollbar-thumb {
-    background: #c7c7c7;
-    border-radius: 10px;
+    background: linear-gradient(180deg, #2ecc71, #27ae60); /* 漸變綠色滑塊 */
+    border-radius: 10px; /* 滑塊圓角 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 外部陰影效果 */
+    border: 2px solid #0f3d3d; /* 與背景融合的邊框 */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #27ae60, #1e8449); /* 懸停時深綠漸變 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 增強陰影效果 */
+    transform: scale(1.1); /* 懸停時放大 */
+}
+
+body::-webkit-scrollbar-corner {
+    background: #0f3d3d; /* 滾動條角落的背景色 */
 }
 
 @font-face {
@@ -559,8 +574,28 @@ a.buttonUpload:hover {
     box-sizing: border-box;
 }
 
+.myselect::-webkit-scrollbar {
+    width: 8px; /* 滾動條寬度 */
+    height: 8px; /* 滾動條高度 */
+}
+
+.myselect::-webkit-scrollbar-thumb {
+    background: #555; /* 滾動條滑塊顏色 */
+    border-radius: 4px; /* 圓角滑塊 */
+}
+
+.myselect::-webkit-scrollbar-thumb:hover {
+    background: #888; /* 滑鼠懸停時滑塊顏色 */
+}
+
+.myselect::-webkit-scrollbar-track {
+    background: #f1f1f1; /* 滾動條軌道顏色 */
+    border-radius: 4px; /* 圓角軌道 */
+}
+
 .myselect option {
-    color: black;
+    color: white;
+    background-color: #363636;
     font: 400 15px/1.5 "Lexend Deca", sans-serif;
 }
 

@@ -20,14 +20,13 @@ body.bg {
     z-index: -1;
 }
 
-/* Navbar */
-nav.navbar {
-    width: 100%;
-    padding: 10px 20px;
-    text-align: center;
-    position: fixed;
-    top: 0;
+/* Navbar Styles */
+.navbar {
+    position: relative;
+    color: #ffffff;
+    border-radius: 10px;
     z-index: 10;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
 }
 
 h1.InnerText {
