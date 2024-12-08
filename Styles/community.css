@@ -124,7 +124,7 @@ h2.beginText, h2.TicketInfo {
     font: 400 20px/1.5 "Lexend Deca", sans-serif;
     padding: 0;
     margin-top: 10px;
-    margin-left: 55px;
+    margin-left: 40px;
     margin-right: 10px; /* Add a margin to the right of the text for spacing */
     padding-right: 20px;
     margin-bottom: 10px;
@@ -228,7 +228,7 @@ div.loading {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .resultfound {
@@ -243,11 +243,7 @@ div.loading {
 .searchresults div {
     margin-left: 1em;
     height: auto;
-    width: auto;
-    max-width: 450px;
-    max-height: 450px;
-    min-height: 100px;
-    min-width: 300px;
+    width: 500px;
     font: 200 14px/1.5 "Lexend Deca", sans-serif;
     background-color: #363636;
     color: #c7c7c7;
@@ -255,20 +251,25 @@ div.loading {
     border-radius: 10px;
     border: 2px solid #8d8d8d;
     text-decoration: none;
-    margin-top: 10px;
+    margin-top: 15px;
     overflow-y: auto;
     cursor: pointer;
+    scrollbar-width: none;
 }
 
 .searchresults div:hover {
     background-color: #0a0a0a;
+    transform: translateY(-5px);
+    border-color: #90caf9; /* 滑鼠懸停時邊框顏色更亮 */
 }
 
 .searchresults div a {
     font: 200 14px/1.5 "Lexend Deca", sans-serif;
     color: #c7c7c7;
     text-decoration: none;
-    margin-top: 0;
+    /* text-align: center; */
+    margin-top: 10px;
+    padding: 0px 20px 0px 20px;
 }
 
 .searchresultid {
