@@ -64,8 +64,8 @@ document_builder = DocumentBuilder()
 # ---------------------------------------------------
 
 # Set up SSL key for Flask to use https.
-cert_path = resource_path('certificate.crt')
-key_path = resource_path('private_key.key')
+cert_path = resource_path("Keys\\server_certificate.crt")
+key_path = resource_path("Keys\\server_private_key.key")
 
 # Set the server type to https or http
 server_type = "https"
@@ -76,9 +76,9 @@ gpt_model = "gpt-3.5-turbo"
 # current_path = os.path.dirname(os.path.realpath(__file__))
 
 # Load the configuration from the YAML file
-config_file_path = resource_path("Config.yaml")
+config_file_path = resource_path("Config\\Config.yaml")
 config = load_yaml_config(config_file_path)
-database_file_path = resource_path("DatabaseConfig.yaml")
+database_file_path = resource_path("Config\\DatabaseConfig.yaml")
 database_config = load_yaml_config(database_file_path)
 
 # Extract server configuration from the loaded YAML
@@ -100,7 +100,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Read API keys from key file.
-key_file_path = resource_path("key.txt")
+key_file_path = resource_path("Keys\\openai_key.txt")
 with open(key_file_path, "r") as file:
     keys = file.readlines()
 

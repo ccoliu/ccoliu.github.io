@@ -38,7 +38,7 @@ class MongoDBTools:
     @staticmethod
     def _initialize_client():
         """Initialize MongoDB client from a URI file."""
-        uri_file_path = resource_path("dbURI.txt")
+        uri_file_path = resource_path("Keys\\database_uri.txt")
         try:
             with open(uri_file_path, "r") as file:
                 uri = file.readline().strip()
