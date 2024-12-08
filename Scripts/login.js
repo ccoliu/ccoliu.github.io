@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             if (data.success) {
                 PUBLIC_KEY = data.public_key;
-                console.log("Fetched Public Key:", PUBLIC_KEY);
+                console.log("Fetched Public Key successfully !");
             } else {
                 console.error("Failed to fetch public key:", data.error);
             }
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 warning.innerHTML = 'Verification successful!';
                 warning.style.color = 'green';
-                console.log("Verification successful:", data);
+                console.log("Verification successfully !!");
             } else {
                 warning.innerHTML = 'Verification failed.';
                 warning.style.color = 'red';
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 warning.innerHTML = 'Logout successful!';
                 warning.style.color = 'green';
-                console.log("Logout successful:", data);
+                console.log("Logout successfully !!");
 
                 // Clear token from localStorage
                 localStorage.removeItem('auth_token');

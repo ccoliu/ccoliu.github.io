@@ -351,7 +351,7 @@ def replace_results_content(results, dependentArray, default_string="Can't ident
 
 
 # Modify the code received from the frontend different tab and execute in differnet thread.
-def execute_each_tab_content(input_code, results_array, current_index, dependency_array):
+def execute_each_tab_content(input_code, results_array, current_index, dependency_array, user_name):
     try:
         # Analyze the code and get the problem list
         code_problems = analyze_user_code(input_code)
@@ -360,12 +360,14 @@ def execute_each_tab_content(input_code, results_array, current_index, dependenc
         # Summarize the code in one sentence
         code_summary = describe_code(fixed_code)
 
-        insert_document = document_builder.modify_document(input_code, fixed_code, code_summary)
+        insert_document = document_builder.modify_document(
+            input_code, fixed_code, code_summary, creator=user_name
+        )
         data_id = database_tools.insert_document(
             database_name, modify_collection_name, insert_document
         )
 
-        viewer_document = document_builder.viewer_document(data_id, code_summary)
+        viewer_document = document_builder.viewer_document(data_id, code_summary, creator=user_name)
         database_tools.insert_document(database_name, viewer_collection_name, viewer_document)
 
         # Store the result in the results list
@@ -401,6 +403,7 @@ def process_code():
     try:
         data = request.get_json()
         input_code = data.get('longcode', [])
+        creater_name = data.get('username', "")
 
         # Create a list to store threads
         threads = []
@@ -411,7 +414,8 @@ def process_code():
 
         for index, code in enumerate(input_code):
             thread = threading.Thread(
-                target=execute_each_tab_content, args=(code, results_array, index, dependency_array)
+                target=execute_each_tab_content,
+                args=(code, results_array, index, dependency_array, creater_name),
             )
             threads.append(thread)
             thread.start()
@@ -443,6 +447,7 @@ def similarity():
         # Get the specifec item from the data string
         lhs_input_code = data.get("code1", "")
         rhs_input_code = data.get("code2", "")
+        creator_name = data.get("username", "")
 
         # If there are two input codes, compare them
         if rhs_input_code != "":
@@ -456,7 +461,7 @@ def similarity():
 
             # Insert the document into the database
             insert_document = document_builder.similarity_check_document(
-                lhs_input_code, rhs_input_code, analyzed_result
+                lhs_input_code, rhs_input_code, analyzed_result, creator=creator_name
             )
             database_tools.insert_document(
                 database_name, similarity_collection_name, insert_document
@@ -471,7 +476,7 @@ def similarity():
             )
 
             insert_document = document_builder.plagiarism_ai_document(
-                lhs_input_code, analyzed_result
+                lhs_input_code, analyzed_result, creator=creator_name
             )
             database_tools.insert_document(
                 database_name, plagiarism_collection_name, insert_document

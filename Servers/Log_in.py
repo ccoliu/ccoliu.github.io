@@ -49,17 +49,17 @@ def load_yaml_config(file_path):
 
 
 # Load server settings from configuration
-config_file_path = resource_path("Servers\\Config.yaml")
+config_file_path = resource_path("Config\\Config.yaml")
 config = load_yaml_config(config_file_path)
 server_type = config["ServerSettings"]["ConnectionType"]
 
-# SSL certificate paths
-cert_path = resource_path('certificate.crt')
-key_path = resource_path('private_key.key')
+# Set up SSL key for Flask to use https.
+cert_path = resource_path("Keys\\server_certificate.crt")
+key_path = resource_path("Keys\\server_private_key.key")
 
 # RSA key paths
-public_key_path = resource_path('public_key.pem')
-private_key_path = resource_path('private_key.pem')
+public_key_path = resource_path("Keys\\public_key.pem")
+private_key_path = resource_path("Keys\\private_key.pem")
 
 # ---------------------------------------------------
 # RSA encryption and decryption functions
