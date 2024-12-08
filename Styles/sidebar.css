@@ -111,7 +111,8 @@ body {
 }
 
 .sidebar a:hover {
-    background-color: #354e4e;
+    /* background-color: #354e4e; */
+    text-decoration: underline;
     color: #fff;
 }
 
