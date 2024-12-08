@@ -28,17 +28,15 @@
             <form action="login.php" method="post">
                 <div class="loginform">
                     <h2 class="logintitle">Login</h2>
-                    <label for="username" class="username-labl">Username</label>
+                    <label for="username" class="username-labl" id = "lb_username">Username</label>
                     <input type="text" class="form-control username-input" id="username" name="username" placeholder="Your username..">
-                    <label for="password" class="password-labl">Password</label>
+                    <label for="password" class="password-labl" id = "lb_password">Password</label>
                     <input type="password" class="form-control password-input" id="password" name="password" placeholder="Your password..">
                     <label for="password" class="warning" id="warning"></label>
                     <div class="buttoncontain">
                         <button type="button" class="btn btn-primary" value="Login" id="loginbtn">Log in</button>
-                        <button type="button" class="btn btn-info" onclick="window.location.href='register.html'">Register</button>
-                        <button type="button" class="btn btn-warning" id="statusbtn">Check status</button>
-                        <!-- Temp for the log out button -->
-                        <button type="button" class="btn btn-primary" value="Logout" id="logoutbtn">Log out</button>
+                        <button type="button" class="btn btn-info" onclick="window.location.href='register.html'" id="registerbtn">Register</button>
+                        <button type="button" class="btn btn-warning" value="Logout" id="logoutbtn">Log out</button>
                     </div>                 
                 </div>
             </form>

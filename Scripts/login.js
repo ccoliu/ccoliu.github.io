@@ -1,10 +1,11 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const loginbtn = document.getElementById('loginbtn');
-    const statusbtn = document.getElementById('statusbtn');
     const logoutbtn = document.getElementById('logoutbtn');
     const warning = document.getElementById('warning');
     const username = document.getElementById('username');
     const password = document.getElementById('password');
+    const label_password = document.getElementById('lb_password');
+    const registerbtn = document.getElementById('registerbtn');
     const LOGIN_SERVER = "https://127.0.0.1:56123/";
     let PUBLIC_KEY = ""; // Public key initialized as empty
 
@@ -32,10 +33,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Login button event listener
-    loginbtn.addEventListener('click', async function() {
+    loginbtn.addEventListener('click', async function () {
         let legal = true;
         console.log('Login button clicked');
-        
+
         // Validate username and password fields
         if (username.value === '') {
             warning.innerHTML = 'Please enter username/password!';
@@ -87,12 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 warning.innerHTML = 'Login successful!';
                 warning.style.color = 'green';
                 console.log("Login successful");
-                
+
                 // Store the token in localStorage for future authenticated requests
                 localStorage.setItem('auth_token', data.token);
 
-                // Redirect to a dashboard or other page if needed
-                // window.location.href = "/dashboard.html";
+                // Redirect to index.html
+                window.location.href = "index.html";
             } else {
                 warning.innerHTML = 'Invalid username or password.';
                 warning.style.color = 'red';
@@ -105,42 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Status button event listener
-    statusbtn.addEventListener('click', async function () {
-        console.log('Status button clicked');
-        try {
-            const token = localStorage.getItem('auth_token');
-            if (!token) {
-                warning.innerHTML = 'No authentication token found.';
-                warning.style.color = 'red';
-                return;
-            }
-
-            const response = await fetch(`${LOGIN_SERVER}verify`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                },
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                warning.innerHTML = 'Verification successful!';
-                warning.style.color = 'green';
-                console.log("Verification successfully !!");
-            } else {
-                warning.innerHTML = 'Verification failed.';
-                warning.style.color = 'red';
-                console.error("Verification failed:", data.error);
-            }
-        } catch (error) {
-            console.error("Error during verification request:", error);
-            warning.innerHTML = 'An error occurred during verification. Please try again.';
-            warning.style.color = 'red';
-        }
-    });
-    
     // Logout button event listener
     logoutbtn.addEventListener('click', async function () {
         console.log('Logout button clicked');
@@ -166,10 +131,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 warning.innerHTML = 'Logout successful!';
                 warning.style.color = 'green';
-                console.log("Logout successfully !!");
+                console.log("Logout successful!");
 
                 // Clear token from localStorage
                 localStorage.removeItem('auth_token');
+
+                // Refresh the page
+                location.reload();
             } else {
                 warning.innerHTML = 'Logout failed.';
                 warning.style.color = 'red';
@@ -182,6 +150,52 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Verify the token on page load
+    async function verifyToken() {
+        console.log('Verifying token on page load...');
+        try {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                console.log('No token found, skipping verification.');
+                return;
+            }
+
+            const response = await fetch(`${LOGIN_SERVER}verify`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Verification successful
+                warning.innerHTML = 'Welcome back!';
+                warning.style.color = 'green';
+                username.value = data.username; // Assuming the server returns the username
+                username.disabled = true; // Disable username input
+                password.disabled = true; // Disable password input
+                password.style.display = 'none'; // Hide password input
+                label_password.style.display = 'none'; // Hide password label
+
+                // Hide other buttons, keep only the logout button
+                loginbtn.style.display = 'none';
+                registerbtn.style.display = 'none';
+                logoutbtn.style.display = 'inline-block';
+
+                console.log("Token verification successful!");
+            } else {
+                console.log("Token verification failed:", data.error);
+                
+                // Proceed as usual without disabling fields
+            }
+        } catch (error) {
+            console.error("Error during token verification:", error);
+        }
+    }
+
     // Fetch the public key on page load
     fetchPublicKey();
+    verifyToken();
 });
