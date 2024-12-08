@@ -59,9 +59,9 @@ def load_yaml_config(file_path):
 
 
 # Load the configuration from the YAML file
-config_file_path = resource_path("Config.yaml")
+config_file_path = resource_path("Config\\Config.yaml")
 config = load_yaml_config(config_file_path)
-database_file_path = resource_path("DatabaseConfig.yaml")
+database_file_path = resource_path("Config\\DatabaseConfig.yaml")
 database_config = load_yaml_config(database_file_path)
 
 # Extract server configuration from the loaded YAML
@@ -73,7 +73,7 @@ generate_collection_name = database_config["DatabaseStructure"]["generate_mode"]
 viewer_collection_name = database_config["DatabaseStructure"]["viewer_mode"]["collection"]
 
 # Read API keys from key file using resource_path function
-key_file_path = resource_path("key.txt")
+key_file_path = resource_path("Keys\\openai_key.txt")
 with open(key_file_path, "r") as file:
     keys = file.readlines()
 
@@ -87,8 +87,8 @@ client_model_2 = OpenAI(api_key=api_key_model_2)  # Gpt-3.5-turbo-B
 client_model_3 = OpenAI(api_key=api_key_model_3)  # Fine-Tuning-Model
 
 # Set up SSL key for Flask to use https.
-cert_path = resource_path('certificate.crt')
-key_path = resource_path('private_key.key')
+cert_path = resource_path("Keys\\server_certificate.crt")
+key_path = resource_path("Keys\\server_private_key.key")
 
 
 # Create a Flask app
@@ -597,6 +597,7 @@ def execute_steps():
         data = request.get_json()
         # Should deal with the arrays that send back.
         user_confirm_task = data.get('steps', [])
+        creater_name = data.get('username', "")
         newRoles = []
 
         user_confirm_task = convert_job_to_back_format(user_confirm_task)
@@ -629,12 +630,18 @@ def execute_steps():
 
         # Insert the data into the database.
         insert_document = document_builder.generate_document(
-            main_problem, language, ai_gen_tasks, user_confirm_task, final_output, summary
+            main_problem,
+            language,
+            ai_gen_tasks,
+            user_confirm_task,
+            final_output,
+            summary,
+            creator=creater_name,
         )
         data_id = database_tools.insert_document(
             database_name, generate_collection_name, insert_document
         )
-        viewer_document = document_builder.viewer_document(data_id, summary)
+        viewer_document = document_builder.viewer_document(data_id, summary, creator=creater_name)
         database_tools.insert_document(database_name, viewer_collection_name, viewer_document)
 
         return jsonify({"result": final_output, "id": str(data_id)})
