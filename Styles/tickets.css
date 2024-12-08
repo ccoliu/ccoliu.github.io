@@ -115,9 +115,9 @@ p.InnerShort {
     font-size: clamp(12px, 1.5vw, 18px);
     font-family: "Lexend Deca", sans-serif;
     color: #cccccc;
-    overflow: auto; /* 開啟滾動條 */
+    overflow: auto;
     transition: transform 0.2s, background-color 0.2s;
-    scrollbar-width: none; /* 隱藏 Firefox 的滾動條 */
+    scrollbar-width: none;
 }
 
 
