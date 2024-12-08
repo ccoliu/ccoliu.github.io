@@ -133,6 +133,7 @@ document.getElementById('openFlipbookButton').addEventListener('mouseout', funct
     startIdleTimer(); // Reset idle timer when mouse leaves the button
 });
 
+
 // Idle detection for showing tooltip after 35 seconds of inactivity
 let idleTimer;
 let idleTooltipVisible = false; // To track if the idle tooltip is currently visible

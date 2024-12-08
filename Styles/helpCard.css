@@ -6,7 +6,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
     z-index: 1000;
 }
 
@@ -19,12 +19,12 @@
     transform: translate(-50%, -50%);
     width: 600px;
     height: 400px;
-    background-color: #6C7A89;  /* Gray background */
+    background-color: #2D3E50; /* Dark blue-gray background */
     z-index: 1001;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    border-radius: 15px; /* More rounded corners */
     overflow: hidden;
-    padding: 10px;  /* Reduce padding */
+    padding: 20px; /* Slightly larger padding */
     animation: slideInFromRight 0.8s ease forwards;
 }
 
@@ -35,182 +35,133 @@
     height: 100%;
     overflow: hidden;
     display: flex;
-    flex-direction: column; /* Arrange images and text vertically */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    text-align: center;  /* Center text */
+    text-align: center;
 }
 
-/* Styling for images within pages to ensure they scale with the flipbook container */
-.page img {
+/* Images and videos in pages */
+.page img, .page video {
     max-width: 100%;
-    max-height: 85%;  /* Increase the maximum height of the image */
-    object-fit: contain;
-    margin-bottom: 5px;  /* Reduce the spacing between the image and text */
+    max-height: 100%;
+    object-fit: contain; /* 等比例缩放 */
+    position: absolute; /* 绝对定位，便于居中 */
+    top: 45%; /* 定位到容器中心 */
+    left: 50%;
+    transform: translate(-50%, -50%); /* 将元素中心点调整到容器中心 */
+    background-color: #34495E; /* 深色背景，视觉对比更好 */
+    border-radius: 10px; /* 圆角效果 */
+    margin: 0; /* 清除 margin，避免偏移 */
 }
 
+/* Page visibility and transitions */
 .page {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 100%;
-    transition: left 0.5s ease-in-out;
+    transition: left 0.5s ease-in-out, opacity 0.5s ease-in-out;
     opacity: 0;
+    z-index: 1; /* Ensure proper stacking order */
 }
 
 .page.active {
     left: 0;
     opacity: 1;
+    z-index: 2; /* Bring active page to the front */
 }
 
 .page.previous {
     left: -100%;
+    z-index: 1;
 }
 
-/* Previous and Next page buttons */
+/* Page descriptions */
+.pageDescription {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    /* background-color: rgba(255, 255, 255, 0.1); Subtle translucent background */
+    color: #ECF0F1; /* Light text color */
+    font-size: 20px;
+    padding: px;
+    z-index: 1001;
+    display: none;
+}
+
+.page.active .pageDescription {
+    display: block;
+}
+
+/* Navigation Buttons */
 .pageButton {
     position: absolute;
-    bottom: 15px;
-    padding: 10px 10px;
-    background-color: #A3C6C4;
-    color: #354649;
+    bottom: 20px;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #1ABC9C, #16A085); /* Gradient green button */
+    color: #FFFFFF; /* White text */
     border: none;
-    border-radius: 15px;
+    border-radius: 25px; /* Circular button corners */
     cursor: pointer;
-    z-index: 1002;
-}
-
-#prevPageButton {
-    left: 5px;
-}
-
-#nextPageButton {
-    right: 5px;
+    z-index: 1002; /* Ensure buttons are above other elements */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .pageButton:hover {
-    background-color: #E0E7E9;
+    background: linear-gradient(45deg, #16A085, #1ABC9C); /* Reverse gradient on hover */
+    transform: scale(1.05); /* Slightly larger */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Fixed button in the bottom-right corner */
+#prevPageButton {
+    left: 20px;
+}
+
+#nextPageButton {
+    right: 20px;
+}
+
+/* Open Flipbook Button */
 .buttonOpenFlipbook {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    padding: 10px 20px;
-    background-color: #8b9db4;
-    color: white;
-    text-align: center;
-    text-decoration: none;
+    padding: 12px 25px;
+    background: linear-gradient(45deg, #3498DB, #2980B9); /* Gradient blue button */
+    color: #FFFFFF;
     font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
     cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+    transition: background 0.3s ease, transform 0.3s ease;
     z-index: 1002;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .buttonOpenFlipbook:hover {
-    background-color: #4c78af;
+    background: linear-gradient(45deg, #2980B9, #3498DB); /* Reverse gradient */
+    transform: scale(1.1); /* Slightly larger */
 }
 
-.tooltipText {
-    font-size: 18px;  /* Increase font size */
-    white-space: nowrap;
-    opacity: 0;
-    position: absolute;
-    right: calc(100% + 10px);
-    display: flex;
-    align-items: center;  /* Vertically center align */
-    top: 50%;  /* Vertically center the text within the button */
-    transform: translateY(-50%);  /* Ensure centering */
+.tooltipText:hover{
+    z-index: 1003;
+    color: red;
 }
-
-.tooltipText span {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(-20px); /* Initial state: shifted up and hidden */
-    margin-right: 2px;  /* Increase letter spacing */
-}
-
-@keyframes flyIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Styling for the information page content */
-.page p {
-    font-family: 'Roboto Slab', serif;
-    font-size: 35px; /* Increase font size */
-    font-weight: 200; /* Set to bold */
-    color: #354649; /* Set font color */
-    margin:2px 0 0 0;
-}
-
-.pushImageEffect {
-    position: fixed;  /* Position relative to the flipbookContainer */
-    top: 50%;
-    right: -200px;  /* Initial position outside the viewport, closer to flipbookContainer */
-    width: 200px;  /* Increase image width */
-    height: 200px; /* Increase image height */
-    background-image: url('../icons/GenerateHelp/push.png');  /* Path to octopus image */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    transform: translateY(-50%);  /* Vertically center */
-    z-index: 1002; /* Ensure it is above flipbookContainer */
-    animation: pushImage 1.5s ease forwards;
-    pointer-events: none; /* Disable interactions */
-}
-
+/* Animations */
 @keyframes slideInFromRight {
     from {
-        transform: translate(100%, -50%); /* Slide in from the right */
+        transform: translate(100%, -50%);
         opacity: 0;
     }
     to {
-        transform: translate(-50%, -50%); /* Arrive at the center position */
+        transform: translate(-50%, -50%);
         opacity: 1;
     }
-}
-
-#flipbookContainer {
-    /* Add animation effect */
-    animation: slideInFromRight 0.8s cubic-bezier(0.5, 0, 1, 1) forwards;
-}
-
-@keyframes pushImage {
-    0% {
-        right: -250px;  /* Image pushes in from outside the viewport, starting closer to flipbookContainer */
-        opacity: 1;
-    }
-    50% {
-        right: -50px;  /* Image moves to contact the flipbookContainer */
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;  /* Image fades out */
-    }
-}
-
-/* Images and videos scale proportionally within the flipbook container */
-.page img, .page video {
-    width: 100%; 
-    height: calc(100% - 60px); 
-    object-fit: contain; 
-    background-color: #6C7A89; 
-}
-
-/* Styling for the video within a page */
-.page video {
-    width: 100%; 
-    height: calc(100% - 60px); 
-    object-fit: contain; 
-    background-color: #6C7A89;
 }
