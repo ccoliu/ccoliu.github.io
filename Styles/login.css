@@ -25,8 +25,13 @@ body.bg {
     position: relative;
     color: #ffffff;
     border-radius: 10px;
-    z-index: 10;
     box-shadow: 0 0 15px rgba(0, 168, 255, 0.5);
+    width: 90% !important; /* 與 .logininput 一致的寬度 */
+    margin: 0 auto; /* 水平居中 */
+    padding: 10px 0; /* 上下內邊距 */
+    display: flex; /* 使用 Flexbox */
+    justify-content: center !important; /* 水平居中 */
+    margin-bottom: 30px;
 }
 
 h1.InnerText {
@@ -36,7 +41,7 @@ h1.InnerText {
 
 h1.InnerText .titlelink {
     text-decoration: none;
-    font-size: 2.5rem;
+    font-size: 3rem;
     font-weight: bold;
     color: #ffffff;
     text-shadow: 0 0 15px #00A8FF, 0 0 30px #00A8FF;
