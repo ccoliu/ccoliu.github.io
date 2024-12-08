@@ -537,7 +537,7 @@ a.buttonUpload:hover {
     font: 400 18px/1.5 "Lexend Deca", sans-serif;
     justify-content: center;
     align-items: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-left: auto;
     margin-right: auto;
     flex-direction: row;
@@ -674,9 +674,11 @@ a.buttonUpload:hover {
 }
 
 .Jobtitle {
-    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
     width: 80%;
-    min-width: 190px;
+    min-width: 200px;
 }
 
 .Jobbtn {
@@ -685,20 +687,21 @@ a.buttonUpload:hover {
     width: 20%;
     min-width: 60px;
     cursor: pointer;
-    padding-left: 0px;
+    border-style:dotted;
 }
 
 .AssignTitle {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+    width: 280px; /* 確保寬度已設置 */
+    height: auto; /* 確保高度已設置 */
     background: transparent;
     border: none;
     margin-left: 20px;
     font: 200 14px/1 "Lexend Deca", sans-serif;
     color: #cccccc;
     word-wrap: break-word;
-    padding-top: 13px;
-    padding-bottom: 0px;
-    width: 280px;
-    height: 50px;
     white-space: pre-wrap;
     overflow-wrap: break-word;
     overflow-y: hidden;
@@ -718,12 +721,16 @@ a.buttonUpload:hover {
 }
 
 .abortbtn {
-    margin-right: 20px;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
     cursor: pointer;
-    margin-left: 1.5em;
     font: 200 14px/1 "Lexend Deca", sans-serif;
     color: #f35a5a;
     border-radius: 50px;
+    height: 40px; /* 設置固定高度 */
+    width: 100px; /* 設置固定寬度 */
+    text-align: center; /* 確保文本對齊居中 */
 }
 
 .JobAdd {
@@ -758,6 +765,7 @@ a.buttonUpload:hover {
 
 .editbtn:hover, .JobAdd:hover, .Jobbtn:hover {
     background-color: #2a2a2a;
+    border-color: #90caf9; /* 滑鼠懸停時邊框顏色更亮 */
 }
 
 div.loading, div.loading2 {
