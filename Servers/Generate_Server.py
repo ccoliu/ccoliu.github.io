@@ -59,9 +59,9 @@ def load_yaml_config(file_path):
 
 
 # Load the configuration from the YAML file
-config_file_path = resource_path("Servers\\Config.yaml")
+config_file_path = resource_path("Config.yaml")
 config = load_yaml_config(config_file_path)
-database_file_path = resource_path("Servers\\DatabaseConfig.yaml")
+database_file_path = resource_path("DatabaseConfig.yaml")
 database_config = load_yaml_config(database_file_path)
 
 # Extract server configuration from the loaded YAML

@@ -1,0 +1,176 @@
+2024-12-08 14:28:28,122 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:30:08,476 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:30:08,876 - INFO - Successfully connected to MongoDB!
+2024-12-08 14:30:08,882 - INFO - MongoDB version: 8.0.3
+2024-12-08 14:30:08,882 - INFO - You may use format tools now!
+2024-12-08 14:30:08,882 - INFO - Current file is write into fineTuneData.jsonl & fact.jsonl
+2024-12-08 14:30:45,897 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:30:46,261 - INFO - Successfully connected to MongoDB!
+2024-12-08 14:30:46,269 - INFO - MongoDB version: 8.0.3
+2024-12-08 14:30:46,271 - INFO - You may use format tools now!
+2024-12-08 14:30:46,271 - INFO - Current file is write into fineTuneData.jsonl & fact.jsonl
+2024-12-08 14:31:42,630 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:31:42,882 - INFO - Successfully connected to MongoDB!
+2024-12-08 14:31:42,889 - INFO - MongoDB version: 8.0.3
+2024-12-08 14:31:42,890 - INFO - You may use format tools now!
+2024-12-08 14:31:42,890 - INFO - Current file is write into fineTuneData.jsonl & fact.jsonl
+2024-12-08 14:33:05,660 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:33:06,615 - INFO - Successfully connected to MongoDB!
+2024-12-08 14:33:06,718 - INFO - MongoDB version: 8.0.3
+2024-12-08 14:33:06,718 - INFO - You may use format tools now!
+2024-12-08 14:33:06,718 - INFO - Current file is write into fineTuneData.jsonl & fact.jsonl
+2024-12-08 14:33:07,925 - INFO - b"* Serving Flask app 'Generate_Server'"
+2024-12-08 14:33:07,925 - INFO - b'* Debug mode: off'
+2024-12-08 14:43:31,585 - INFO - Normalization Enforcer is ready.
+2024-12-08 14:43:31,960 - INFO - Successfully connected to MongoDB!
+2024-12-08 14:43:31,967 - INFO - MongoDB version: 8.0.3
+2024-12-08 14:43:31,967 - INFO - You may use format tools now!
+2024-12-08 14:43:31,967 - INFO - Current file is write into fineTuneData.jsonl & fact.jsonl
+2024-12-08 14:43:33,152 - INFO - b"* Serving Flask app 'Generate_Server'"
+2024-12-08 14:43:33,152 - INFO - b'* Debug mode: off'
+2024-12-08 14:56:57,899 - INFO - Processing jobs in layer 1
+2024-12-08 14:56:57,899 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 14:56:57,899 - INFO - Job 1 content: Help me declare the main function and write the code to output "hello world!" in C.
+2024-12-08 14:56:57,900 - INFO - Job 2 content: Help me include the necessary header files and set up the main function structure in C.
+2024-12-08 14:56:59,336 - INFO - Processing jobs in layer 2
+2024-12-08 14:56:59,336 - INFO - Jobs in layer 2: [3]
+2024-12-08 14:56:59,337 - INFO - Job 3 content: Help me compile the code, check for any syntax errors and correct them in C.
+2024-12-08 14:57:01,612 - INFO - Processing jobs in layer 3
+2024-12-08 14:57:01,613 - INFO - Jobs in layer 3: [4]
+2024-12-08 14:57:01,613 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 14:57:03,630 - INFO - Processing jobs in layer 4
+2024-12-08 14:57:03,631 - INFO - Jobs in layer 4: [5]
+2024-12-08 14:57:03,631 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to make sure the program runs correctly and solve any errors in C.
+2024-12-08 14:57:22,777 - INFO - Document inserted successfully.
+2024-12-08 14:57:22,789 - INFO - Document inserted successfully.
+2024-12-08 14:57:46,443 - INFO - Processing jobs in layer 1
+2024-12-08 14:57:46,443 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 14:57:46,444 - INFO - Job 1 content: Help me declare a main function that will execute the program.
+2024-12-08 14:57:46,445 - INFO - Job 2 content: Help me include the necessary header files for input and output operations.
+2024-12-08 14:57:49,053 - INFO - Processing jobs in layer 2
+2024-12-08 14:57:49,054 - INFO - Jobs in layer 2: [3, 4]
+2024-12-08 14:57:49,054 - INFO - Job 3 content: Help me define a function that will print "hello world!" to the console.
+2024-12-08 14:57:49,054 - INFO - Job 4 content: Help me call the function within the main function to execute the printing.
+2024-12-08 14:57:51,766 - INFO - Processing jobs in layer 3
+2024-12-08 14:57:51,766 - INFO - Jobs in layer 3: [6]
+2024-12-08 14:57:51,766 - INFO - Job 6 content: Help me combine all the finished tasks and adjust the variable name to make sure the program runs correctly and solve any errors.
+2024-12-08 14:57:54,882 - INFO - Processing jobs in layer 4
+2024-12-08 14:57:54,883 - INFO - Jobs in layer 4: [5]
+2024-12-08 14:57:54,883 - INFO - Job 5 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 14:57:59,929 - INFO - Client disconnected gracefully.
+2024-12-08 14:58:11,687 - INFO - Document inserted successfully.
+2024-12-08 14:58:11,700 - INFO - Document inserted successfully.
+2024-12-08 14:58:28,831 - INFO - Processing jobs in layer 1
+2024-12-08 14:58:28,831 - INFO - Jobs in layer 1: [1, 2, 3]
+2024-12-08 14:58:28,832 - INFO - Job 1 content: Help me declare the necessary header files and main function to start the program.
+2024-12-08 14:58:28,832 - INFO - Job 2 content: Help me define a function that prints "Hello, World!" to the console.
+2024-12-08 14:58:28,832 - INFO - Job 3 content: Help me create a variable to store the message "Hello, World!" for printing.
+2024-12-08 14:58:32,236 - INFO - Processing jobs in layer 2
+2024-12-08 14:58:32,237 - INFO - Jobs in layer 2: [5]
+2024-12-08 14:58:32,237 - INFO - Job 5 content: Help me combine all the finished tasks, adjust the variable names to ensure the program runs correctly, and fix any errors.
+2024-12-08 14:58:35,951 - INFO - Processing jobs in layer 3
+2024-12-08 14:58:35,952 - INFO - Jobs in layer 3: [4, 6]
+2024-12-08 14:58:35,952 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem; if not, fixes errors and return the new code.
+2024-12-08 14:58:35,953 - INFO - Job 6 content: Help me ensure that the code is well-documented and properly formatted.
+2024-12-08 14:58:45,388 - INFO - Processing jobs in layer 1
+2024-12-08 14:58:45,388 - INFO - Jobs in layer 1: [1, 2, 3]
+2024-12-08 14:58:45,389 - INFO - Job 1 content: Help me declare the necessary header files and main function to start the program.
+2024-12-08 14:58:45,389 - INFO - Job 2 content: Help me define a function that prints "Hello, World!" to the console.
+2024-12-08 14:58:45,389 - INFO - Job 3 content: Help me create a variable to store the message "Hello, World!" for printing.
+2024-12-08 14:58:52,710 - INFO - Processing jobs in layer 2
+2024-12-08 14:58:52,710 - INFO - Jobs in layer 2: [5]
+2024-12-08 14:58:52,711 - INFO - Job 5 content: Help me combine all the finished tasks, adjust the variable names to ensure the program runs correctly, and fix any errors.
+2024-12-08 14:58:53,786 - INFO - Client disconnected gracefully.
+2024-12-08 14:58:54,401 - INFO - Client disconnected gracefully.
+2024-12-08 14:58:54,670 - INFO - Document inserted successfully.
+2024-12-08 14:58:54,682 - INFO - Document inserted successfully.
+2024-12-08 14:58:59,833 - INFO - Processing jobs in layer 3
+2024-12-08 14:58:59,834 - INFO - Jobs in layer 3: [4, 6]
+2024-12-08 14:58:59,834 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem; if not, fixes errors and return the new code.
+2024-12-08 14:58:59,834 - INFO - Job 6 content: Help me ensure that the code is well-documented and properly formatted.
+2024-12-08 14:59:03,008 - INFO - Processing jobs in layer 1
+2024-12-08 14:59:03,008 - INFO - Jobs in layer 1: [1, 2, 3]
+2024-12-08 14:59:03,008 - INFO - Job 1 content: Help me define the main function and write the code to output "hello world!".
+2024-12-08 14:59:03,009 - INFO - Job 2 content: Help me compile the code and check for any syntax errors or warnings.
+2024-12-08 14:59:03,009 - INFO - Job 3 content: Help me run the compiled code to ensure it prints "hello world!" correctly.
+2024-12-08 14:59:09,326 - INFO - Processing jobs in layer 2
+2024-12-08 14:59:09,326 - INFO - Jobs in layer 2: [4]
+2024-12-08 14:59:09,327 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 14:59:14,636 - INFO - Processing jobs in layer 3
+2024-12-08 14:59:14,637 - INFO - Jobs in layer 3: [5]
+2024-12-08 14:59:14,637 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to ensure the program runs correctly, and make sure to solve any errors.
+2024-12-08 14:59:16,878 - INFO - Processing jobs in layer 1
+2024-12-08 14:59:16,878 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 14:59:16,878 - INFO - Job 1 content: Help me define the main function and write the code to output "hello world!".
+2024-12-08 14:59:16,879 - INFO - Job 2 content: Help me compile the code and check for any syntax errors or warnings.
+2024-12-08 14:59:19,344 - INFO - Processing jobs in layer 1
+2024-12-08 14:59:19,345 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 14:59:19,345 - INFO - Job 1 content: Help me define the main function and write the code to output "hello world!".
+2024-12-08 14:59:19,346 - INFO - Job 2 content: Help me compile the code and check for any syntax errors or warnings.
+2024-12-08 14:59:19,936 - INFO - Document inserted successfully.
+2024-12-08 14:59:19,946 - INFO - Document inserted successfully.
+2024-12-08 14:59:22,610 - INFO - Processing jobs in layer 2
+2024-12-08 14:59:22,610 - INFO - Jobs in layer 2: [3, 4]
+2024-12-08 14:59:22,611 - INFO - Job 3 content: Help me run the compiled code to ensure it prints "hello world!" correctly.
+2024-12-08 14:59:22,611 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 14:59:25,439 - INFO - Processing jobs in layer 2
+2024-12-08 14:59:25,439 - INFO - Jobs in layer 2: [3]
+2024-12-08 14:59:25,439 - INFO - Job 3 content: Help me run the compiled code to ensure it prints "hello world!" correctly.
+2024-12-08 14:59:28,792 - INFO - Processing jobs in layer 3
+2024-12-08 14:59:28,792 - INFO - Jobs in layer 3: [5]
+2024-12-08 14:59:28,793 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to ensure the program runs correctly, and make sure to solve any errors.
+2024-12-08 14:59:31,560 - INFO - Processing jobs in layer 3
+2024-12-08 14:59:31,561 - INFO - Jobs in layer 3: [4]
+2024-12-08 14:59:31,561 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 14:59:36,485 - INFO - Document inserted successfully.
+2024-12-08 14:59:36,495 - INFO - Document inserted successfully.
+2024-12-08 14:59:37,665 - INFO - Processing jobs in layer 4
+2024-12-08 14:59:37,665 - INFO - Jobs in layer 4: [5]
+2024-12-08 14:59:37,665 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to ensure the program runs correctly, and make sure to solve any errors.
+2024-12-08 14:59:48,164 - INFO - Document inserted successfully.
+2024-12-08 14:59:48,174 - INFO - Document inserted successfully.
+2024-12-08 14:59:56,158 - INFO - Document inserted successfully.
+2024-12-08 14:59:56,171 - INFO - Document inserted successfully.
+2024-12-08 15:08:54,354 - INFO - Processing jobs in layer 1
+2024-12-08 15:08:54,354 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 15:08:54,355 - INFO - Job 1 content: Help me declare the main function and print "hello world!"
+2024-12-08 15:08:54,355 - INFO - Job 2 content: Help me import the necessary libraries and define the variables to store the message.
+2024-12-08 15:09:00,902 - INFO - Processing jobs in layer 2
+2024-12-08 15:09:00,903 - INFO - Jobs in layer 2: [3]
+2024-12-08 15:09:00,903 - INFO - Job 3 content: Help me run the program to check for any errors and debug if necessary.
+2024-12-08 15:09:06,685 - INFO - Processing jobs in layer 3
+2024-12-08 15:09:06,685 - INFO - Jobs in layer 3: [4, 5]
+2024-12-08 15:09:06,685 - INFO - Job 4 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 15:09:06,685 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to make sure the program runs correctly, and make sure to solve the errors.
+2024-12-08 15:09:26,153 - INFO - Document inserted successfully.
+2024-12-08 15:09:26,163 - INFO - Document inserted successfully.
+2024-12-08 15:26:03,466 - INFO - Processing jobs in layer 1
+2024-12-08 15:26:03,466 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 15:26:03,468 - INFO - Job 1 content: Help me declare the necessary libraries and set up the initial structure of the program.
+2024-12-08 15:26:03,468 - INFO - Job 2 content: Help me write a function to print "Hello, World!" to the console.
+2024-12-08 15:26:09,580 - INFO - Processing jobs in layer 2
+2024-12-08 15:26:09,580 - INFO - Jobs in layer 2: [3, 5]
+2024-12-08 15:26:09,581 - INFO - Job 3 content: Help me test the program to see if it prints "Hello, World!", if not, fix it and return the new code.
+2024-12-08 15:26:09,581 - INFO - Job 5 content: Help me Test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 15:26:16,990 - INFO - Processing jobs in layer 3
+2024-12-08 15:26:16,990 - INFO - Jobs in layer 3: [4, 6]
+2024-12-08 15:26:16,991 - INFO - Job 4 content: Help me combine all the finished tasks and adjust the variable names to make sure the program runs correctly and solve any errors.
+2024-12-08 15:26:16,991 - INFO - Job 6 content: Help me combine all the finished tasks and adjust the variable name to make sure the program runs correctly, and make sure to solve any errors.
+2024-12-08 15:26:41,305 - INFO - Document inserted successfully.
+2024-12-08 15:26:41,316 - INFO - Document inserted successfully.
+2024-12-08 15:27:32,226 - INFO - Document inserted successfully.
+2024-12-08 15:27:32,236 - INFO - Document inserted successfully.
+2024-12-08 15:27:38,555 - INFO - Client disconnected gracefully.
+2024-12-08 15:28:00,176 - INFO - Processing jobs in layer 1
+2024-12-08 15:28:00,176 - INFO - Jobs in layer 1: [1, 2]
+2024-12-08 15:28:00,177 - INFO - Job 1 content: Help me write the main function that prints "hello world!" to the console.
+2024-12-08 15:28:00,177 - INFO - Job 2 content: Help me declare the necessary libraries and variables in the code.
+2024-12-08 15:28:08,311 - INFO - Processing jobs in layer 2
+2024-12-08 15:28:08,311 - INFO - Jobs in layer 2: [3, 5]
+2024-12-08 15:28:08,311 - INFO - Job 3 content: Help me finalize the code by adding comments for better understanding.
+2024-12-08 15:28:08,311 - INFO - Job 5 content: Help me combine all the finished tasks and adjust the variable names to ensure the program runs correctly and resolve any errors.
+2024-12-08 15:28:16,513 - INFO - Processing jobs in layer 3
+2024-12-08 15:28:16,514 - INFO - Jobs in layer 3: [4]
+2024-12-08 15:28:16,514 - INFO - Job 4 content: Help me test the program to see if it reaches the main problem, if not, fix it and return the new code.
+2024-12-08 15:28:41,196 - INFO - Document inserted successfully.
+2024-12-08 15:28:41,207 - INFO - Document inserted successfully.

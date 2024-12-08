@@ -6,6 +6,7 @@ const GLOBALREST = "https://140.118.101.66:61911/"
 const GLOBALGENERATE = "https://140.118.101.66:56494/"
 const LOCALREST = "https://127.0.0.1:61911/"
 const LOCALGENERATE = "https://127.0.0.1:56494/"
+const LOGIN_SERVER = "https://127.0.0.1:56123/";
 currentGenerateServerIP = LOCALGENERATE;
 currentRestServerIP = LOCALREST;
 /////////////////////////////////////////////
@@ -77,6 +78,33 @@ if (ServerStatusRes) {
 }
 //----------------------------------------------
 
+async function fetch_username() {
+  try {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      return "Anonymous";
+    }
+
+    const response = await fetch(`${LOGIN_SERVER}verify`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    })
+
+    const data = await response.json();
+
+    if (data.success) {
+      return data.username;
+    } else {
+      return "Anonymous";
+    }
+  }
+  catch (error) {
+    console.error("Error during verification request:", error);
+    return "Anonymous";
+  }
+}
 
 
 // Helper function to toggle the visibility of elements
@@ -342,7 +370,7 @@ responses = [];
 recordTexts = [];
 
 // Function to send code data to the server
-function sendDataToAnalyzeServer(code) {
+async function sendDataToAnalyzeServer(code) {
   IDs = [];
   responses = [];
   let longcode = [];
@@ -358,12 +386,16 @@ function sendDataToAnalyzeServer(code) {
     });
   }
   console.log(recordTexts);
+
+  const username = await fetch_username();
+  console.log(username);
+
   fetch(currentRestServerIP + "process_code", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ longcode }),
+    body: JSON.stringify({ longcode, username }),
   })
     .then((response) => response.json())
     .then((data) => {
@@ -432,6 +464,7 @@ function sendDataToGenerateServer(code, lang) {
     document.querySelector('.textEnter').style.filter = "brightness(0.5)";
     document.querySelector('.buttonUpload').style.cursor = "not-allowed";
     document.querySelector('.buttonUpload').style.filter = "brightness(0.5)";
+
     fetch(currentGenerateServerIP + "gen_code", {
         method: "POST",
         headers: {
@@ -776,7 +809,7 @@ function abortbtnDisable(bool) {
 
 const executebtn = document.querySelector('.buttonExecute');
 if (executebtn) {
-  executebtn.addEventListener('click', () => {
+  executebtn.addEventListener('click', async () => {
     recordText = temp;
     buttonDisabled = true;
     document.querySelector('.buttonClear').style.cursor = "not-allowed";
@@ -807,6 +840,9 @@ if (executebtn) {
       return;
     }
     console.log(steps);
+    // Mod 20241208 add information from /verify
+    const username = await fetch_username();
+    console.log(username);
     // Mod 20240820 test
     document.querySelector('.loadinggif2').style.display = "none";
     fetch(currentGenerateServerIP + "execute_steps", {
@@ -814,7 +850,7 @@ if (executebtn) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ steps }),
+      body: JSON.stringify({ steps, username }),
     })
     .then((response) => response.json())
     .then((data) => {

@@ -1,10 +1,40 @@
 //////////////IP SETTINGS/////////////////////
 //const SERVERIP = "https://140.118.101.66:61911/"
 const SERVERIP = "https://127.0.0.1:61911/"
+const LOGIN_SERVER = "https://127.0.0.1:56123/";
 /////////////////////////////////////////////
 
 const ServerStatus = document.querySelector('.ServerStatus');
 const ServerStatusRes = document.querySelector('.ServerStatusRes');
+
+async function fetch_username() {
+    try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        return "Anonymous";
+      }
+  
+      const response = await fetch(`${LOGIN_SERVER}verify`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      })
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        return data.username;
+      } else {
+        return "Anonymous";
+      }
+    }
+    catch (error) {
+      console.error("Error during verification request:", error);
+      return "Anonymous";
+    }
+}
+
 if (ServerStatus && ServerStatusRes) {
     fetch(SERVERIP)
     .then (response => {
@@ -170,7 +200,7 @@ clearbtn.addEventListener("click", () => {
 })
 
 const submitbtn = document.querySelector('.buttonAnalyse');
-submitbtn.addEventListener("click", () => {
+submitbtn.addEventListener("click", async () => {
 
     if (document.querySelector('.input1').value == "") {
         createErrorMsg("Please enter the text.");
@@ -192,13 +222,15 @@ submitbtn.addEventListener("click", () => {
     const code2 = document.querySelector('.input2').value;
     document.querySelector('.loadinggif').style.display = "flex";
 
+    const username = await fetch_username();
+    console.log(username);
  
     fetch(SERVERIP + "similarity", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({code1,code2}),
+        body: JSON.stringify({code1, code2, username}),
     })
     .then((response) => response.json())
     .then((data) => {

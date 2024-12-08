@@ -1,7 +1,7 @@
 // ---------------------------------------------------
 // Constants and Global Variables
 // ---------------------------------------------------
-const LOGIN_SERVER = "https://192.168.0.241:56123/";
+const LOGIN_SERVER = "https://127.0.0.1:56123/";
 let PUBLIC_KEY = ""; // Public key initialized as empty
 
 // ---------------------------------------------------

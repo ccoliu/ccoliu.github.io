@@ -12,3 +12,7 @@ server.pfx
 private_key.pem
 public_key.pem
 .vscode/*
+/Servers/dbURI.txt
+/Servers/key.txt
+/Servers/certificate.crt
+/Servers/private_key.key
