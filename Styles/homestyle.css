@@ -335,3 +335,18 @@ a.GotoModify:hover {
         padding-top: 270px;
     }
 }
+
+.index-background
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../icons/index.png');
+    background-color: #363636;
+    filter: brightness(0.15);
+    z-index: -1;
+    animation: breathEffect 2.5s infinite;
+    filter: brightness(0.1);
+}

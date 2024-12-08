@@ -102,7 +102,7 @@ p.InnerShort {
 .templateTicketContainer {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: center ;
     gap: 20px;
     margin: 2em auto;
     padding: 10px 20px;
@@ -112,11 +112,11 @@ p.InnerShort {
 .ticket6, .ticket7, .ticket8, .ticket9, .ticket10 {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: center ;
+    align-items: center ;
     text-align: center;
     background-color: #111111;
-    border: 2px solid #cccccc;
+    border: 2px dashed #cccccc;
     border-radius: 30px;
     width: 250px;
     height: 150px;
@@ -128,6 +128,7 @@ p.InnerShort {
     overflow: auto;
     transition: transform 0.2s, background-color 0.2s;
     scrollbar-width: none;
+    padding-top: 30px;
 }
 
 
@@ -165,25 +166,49 @@ p.InnerShort {
 
 .pageButton * {
     font-size: 14px;
-    color: #cccccc;
-    padding: 5px 10px;
+    color: #ffffff;
+    padding: 6px 14px; /* 更緊湊的內邊距 */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
+/* 分頁資訊 */
 .pageInfo {
     border: 1px solid #ababab;
-    border-radius: 10px;
+    border-radius: 5px; /* 輕微圓角 */
     background-color: #111111;
+    color: #cccccc;
+    padding: 4px 8px;
 }
 
+/* 上一頁和下一頁按鈕的樣式 */
 .prevPage, .nextPage {
+    background-color: #222222; /* 默認深灰背景，與 .pageInfo 協調 */
+    color: #cccccc; /* 與 .pageInfo 的文字色一致 */
+    border: 1px solid #444444; /* 輕微的邊框，保持簡潔 */
+    border-radius: 5px; /* 圓角與 .pageInfo 一致 */
+    padding: 4px 8px; /* 與 .pageInfo 的內邊距相符 */
     cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 
+/* Hover 效果 */
 .prevPage:hover, .nextPage:hover {
-    background-color: #cccccc;
-    color: #111111;
+    background-color: #333333; /* 輕微變亮的背景色 */
+    color: #ffffff; /* 文字變白以強調互動 */
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); /* 增加輕微的陰影效果 */
+    transform: scale(1.02); /* 輕微放大 */
 }
+
+/* Active 效果 */
+.prevPage:active, .nextPage:active {
+    background-color: #444444; /* 更深的灰色背景 */
+    color: #e0e0e0; /* 與默認文字色略有不同 */
+    transform: scale(0.98); /* 輕微縮小 */
+}
+
+
 
 /* 頁尾 */
 p.footerText {

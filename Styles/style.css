@@ -476,6 +476,7 @@ h2.AImsg {
     animation: breathEffect 2.5s infinite;
 }
 
+
 /* 定義內容區域的樣式 */
 .content {
     margin-left: 50px; /* 內容區域距離側邊欄的左邊距 */
