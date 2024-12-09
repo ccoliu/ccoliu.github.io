@@ -6,17 +6,32 @@ body {
     overflow-y: auto;
 }
 
+/* 滾動條樣式 (Body) */
 body::-webkit-scrollbar {
-    width: 8px;
+    width: 10px; /* 滾動條寬度 */
 }
 
 body::-webkit-scrollbar-track {
-    background: transparent;
+    background: #0f3d3d; /* 深綠色背景 */
+    border-radius: 10px; /* 圓角設計 */
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5); /* 內部陰影效果 */
 }
 
 body::-webkit-scrollbar-thumb {
-    background: #c7c7c7;
-    border-radius: 10px;
+    background: linear-gradient(180deg, #2ecc71, #27ae60); /* 漸變綠色滑塊 */
+    border-radius: 10px; /* 滑塊圓角 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 外部陰影效果 */
+    border: 2px solid #0f3d3d; /* 與背景融合的邊框 */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #27ae60, #1e8449); /* 懸停時深綠漸變 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* 增強陰影效果 */
+    transform: scale(1.1); /* 懸停時放大 */
+}
+
+body::-webkit-scrollbar-corner {
+    background: #0f3d3d; /* 滾動條角落的背景色 */
 }
 
 @font-face {
@@ -101,13 +116,27 @@ h1 a:hover {
     text-decoration: none;
 }
 
-div.InnerPage {
-    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+/* 外層容器，負責居中佈局 */
+div.CenterContainer {
     display: flex;
     justify-content: center;
-    align-items: center;   
+    align-items: center;
     margin-bottom: 40px;
+    margin-top: 30px;
 }
+
+/* 說明文字的樣式 */
+div.InnerPage {
+    font: 400 20px/1.5 "Lexend Deca", sans-serif;
+    display: inline-block; /* 讓邊框緊貼文字內容 */
+    text-align: center; /* 文字水平居中 */
+    padding: 10px 20px; /* 調整文字與邊框的間距 */
+    border-radius: 5px; /* 可選：圓角 */
+    position: relative; /* 為了讓內部元素相對定位 */
+    color: #fff; /* 文字顏色 */
+    overflow: hidden; /* 確保尾巴不會溢出 */
+}
+
 
 p.frontInfo {
     text-align: center;
@@ -174,9 +203,6 @@ a.GotoCommunity {
     transition: background-color 0.2s ease;
 }
 
-a.GotoGenerate:hover, a.GotoCommunity:hover {
-    background-color: #363636;
-}
 
 a.GotoModify {
     display: flex;
@@ -250,9 +276,6 @@ a.GotoSimilar {
     transition: background-color 0.2s ease;
 }
 
-a.GotoTicket:hover, a.GotoSimilar:hover {
-    background-color: #363636;
-}
 
 a span img.TicketIcon {
     text-align: center;
@@ -304,11 +327,6 @@ a span img.SearchIcon {
     margin-left: 15px;
 }
 
-a.GotoModify:hover {
-    background-color: #363636;
-}
-
-
 .background {
     position: fixed;
     top: 0;
@@ -349,4 +367,45 @@ a.GotoModify:hover {
     z-index: -1;
     animation: breathEffect 2.5s infinite;
     filter: brightness(0.1);
+}
+
+/* 按鈕樣式與 hover 特效 */
+a.GotoGenerate:hover,
+a.GotoCommunity:hover,
+a.GotoModify:hover,
+a.GotoTicket:hover,
+a.GotoSimilar:hover {
+    background: linear-gradient(135deg, #4e4e4e, #1e1e1e); /* 漸變背景色 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2); /* 增加陰影效果 */
+    transition: all 0.3s ease-in-out; /* 平滑過渡效果 */
+}
+
+/* 鼠標懸停時圖標縮放 */
+a span img.TicketIcon:hover,
+a span img.GenerateIcon:hover,
+a span img.ModifyIcon:hover,
+a span img.CommunityIcon:hover,
+a span img.SearchIcon:hover {
+    transform: scale(1.1); /* 圖標放大 */
+    transition: transform 0.2s ease-in-out; /* 平滑過渡效果 */
+}
+
+/* 按鈕激活效果 */
+a.GotoGenerate:active,
+a.GotoCommunity:active,
+a.GotoModify:active,
+a.GotoTicket:active,
+a.GotoSimilar:active {
+    background-color: #5e5e5e; /* 更深的按下效果 */
+    transform: scale(0.98); /* 輕微縮小 */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* 陰影縮小 */
+}
+
+/* 按鈕文字顏色變化 */
+a.GotoGenerate:hover,
+a.GotoCommunity:hover,
+a.GotoModify:hover,
+a.GotoTicket:hover,
+a.GotoSimilar:hover {
+    color: #ffffff; /* 保持文字白色以突出按鈕 */
 }

@@ -273,7 +273,9 @@ a.buttonClear {
 }
 
 a.buttonClear:hover {
-    background-color: #363636;
+    background: linear-gradient(135deg, #4e4e4e, #1e1e1e); /* 漸變背景色 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2); /* 增加陰影效果 */
+    transition: all 0.3s ease-in-out; /* 平滑過渡效果 */
 }
 
 .Execbtn {
@@ -365,7 +367,9 @@ a span img.executeIcon {
 }
 
 a.buttonAnalyse:hover, a.buttonExecute:hover {
-    background-color: #363636;
+    background: linear-gradient(135deg, #4e4e4e, #1e1e1e); /* 漸變背景色 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2); /* 增加陰影效果 */
+    transition: all 0.3s ease-in-out; /* 平滑過渡效果 */
 }
 
 input.message {
@@ -525,7 +529,9 @@ a.buttonUpload {
 }
 
 a.buttonUpload:hover {
-    background-color: #363636;
+    background: linear-gradient(135deg, #4e4e4e, #1e1e1e); /* 漸變背景色 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5), 0 0 5px rgba(255, 255, 255, 0.2); /* 增加陰影效果 */
+    transition: all 0.3s ease-in-out; /* 平滑過渡效果 */
 }
 
 .languageSelect {
