@@ -145,14 +145,33 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Hover effect for button */
 .buttonOpenFlipbook:hover {
     background: linear-gradient(45deg, #2980B9, #3498DB); /* Reverse gradient */
     transform: scale(1.1); /* Slightly larger */
 }
 
-.tooltipText:hover{
+.tooltipText {
+    font-size: 16px;
+    color: #FFFFFF;
+    background-color: rgba(52, 73, 94, 0.9); /* Dark background for tooltip */
+    padding: 8px 15px;
+    border-radius: 15px;
+    position: absolute;
+    top: 50%; /* Center vertically relative to the button */
+    left: -10px; /* Position tooltip to the left of the button */
+    transform: translate(-100%, -50%); /* Move tooltip entirely to the left and center vertically */
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     z-index: 1003;
-    color: red;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+/* Show tooltip when hovering over buttonOpenFlipbook */
+.buttonOpenFlipbook:hover .tooltipText {
+    opacity: 1;
+    visibility: visible;
 }
 /* Animations */
 @keyframes slideInFromRight {
