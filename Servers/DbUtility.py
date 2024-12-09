@@ -14,7 +14,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
 from fileFormatt import StringToJsonl
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 import bcrypt
 import jwt
 import pytz
@@ -519,7 +519,7 @@ class AuthSystem(MongoDBTools):
             "token_expires_time": None,
         }
         result = collection.insert_one(user_document)
-        print("User registered successfully.")
+
         return "User registered successfully."
 
     def login_user(self, user_name, password):
@@ -529,12 +529,10 @@ class AuthSystem(MongoDBTools):
         collection = self._get_collection(self.db_name, self.collection_name)
         user = collection.find_one({"user_name": user_name})
         if not user:
-            print("User not found.")
             return None
 
         # Verify password
         if not bcrypt.checkpw(password.encode('utf-8'), user["user_password"].encode('utf-8')):
-            print("Incorrect password.")
             return None
 
         # Generate token
@@ -551,7 +549,7 @@ class AuthSystem(MongoDBTools):
                 }
             },
         )
-        print("Login successful.")
+        print("User: " + user_name + " logged in successfully.")
         return token
 
     def verify_token(self, token):
@@ -565,7 +563,6 @@ class AuthSystem(MongoDBTools):
             user = collection.find_one({"_id": ObjectId(user_id), "token": token})
             if user:
                 return user
-            print("Token is invalid or expired.")
         except jwt.ExpiredSignatureError:
             print("Token has expired.")
         except jwt.InvalidTokenError:

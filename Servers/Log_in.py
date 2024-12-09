@@ -11,7 +11,7 @@ from flask_cors import CORS
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.primitives import serialization, hashes
 from LogHelper import initialize_logging  # For logging
-from DataBase import MongoDBTools, DocumentBuilder, AuthSystem  # Custom database tools
+from DbUtility import MongoDBTools, DocumentBuilder, AuthSystem  # Custom database tools
 
 # ---------------------------------------------------
 # System initialization and configuration

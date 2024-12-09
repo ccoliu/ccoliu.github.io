@@ -26,7 +26,7 @@ from LogHelper import initialize_logging  # For logging
 
 import FormatEnforcer
 from PlagiarismChecker import PlagiarismChecker
-from DataBase import MongoDBTools, DocumentBuilder
+from DbUtility import MongoDBTools, DocumentBuilder
 
 # ---------------------------------------------------
 '''System initialization and configuration'''

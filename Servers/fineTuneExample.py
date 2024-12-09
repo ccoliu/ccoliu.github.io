@@ -1,7 +1,6 @@
 from openai import OpenAI
 from trainingClass import TrainingTool
 import time
-import threading
 from fileFormatt import StringToJsonl
 from dataBase_old import dataBaseTools
 from bson import ObjectId

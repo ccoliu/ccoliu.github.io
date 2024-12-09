@@ -1,8 +1,6 @@
 import re
 import os
 import sys
-import random
-import time
 
 
 # 避免需要在不同的環境中更改路徑
