@@ -195,3 +195,8 @@ body {
     color: #fff !important;
     font-size: 20px !important; /* 字體變大 */
 }
+
+.content-darkened {
+    filter: brightness(0.2); /* 降低亮度，可以根據需要調整 */
+    transition: filter 0.5s; /* 添加平滑過渡效果 */
+}
