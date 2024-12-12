@@ -222,6 +222,8 @@ submitbtn.addEventListener("click", async () => {
     const code2 = document.querySelector('.input2').value;
     document.querySelector('.loadinggif').style.display = "flex";
 
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+
     const username = await fetch_username();
     console.log(username);
  
