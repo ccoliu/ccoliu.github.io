@@ -18,15 +18,17 @@ from DbUtility import MongoDBTools, DocumentBuilder, AuthSystem  # Custom databa
 # ---------------------------------------------------
 
 
+# Function to get the file path after packaging
 def resource_path(relative_path):
     """
-    Get the absolute path to the resource, whether in development or when packaged with PyInstaller.
+    Get absolute path to resource, works for development and PyInstaller executable.
     """
-    try:
-        # If using PyInstaller, the base path is in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
+    # Check if running as a PyInstaller bundle
+    if getattr(sys, 'frozen', False):  # Check if application is bundled with PyInstaller
+        base_path = os.path.dirname(sys.executable)  # Path to the folder containing the .exe
+    else:
+        base_path = os.path.abspath(".")  # Path for development environment
+
     return os.path.join(base_path, relative_path)
 
 

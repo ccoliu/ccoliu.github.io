@@ -13,27 +13,29 @@ import json
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson import ObjectId
-from fileFormatt import StringToJsonl
 from datetime import datetime, timedelta
 import bcrypt
 import jwt
 import pytz
 
 
-# To get the absolute path of the resource file, which works for both development and PyInstaller
+# Function to get the file path after packaging
 def resource_path(relative_path):
-    """Get absolute path to a resource, works for dev and PyInstaller"""
-    try:
-        base_path = sys._MEIPASS  # PyInstaller temp folder
-    except AttributeError:
-        base_path = os.path.abspath(".")
+    """
+    Get absolute path to resource, works for development and PyInstaller executable.
+    """
+    # Check if running as a PyInstaller bundle
+    if getattr(sys, 'frozen', False):  # Check if application is bundled with PyInstaller
+        base_path = os.path.dirname(sys.executable)  # Path to the folder containing the .exe
+    else:
+        base_path = os.path.abspath(".")  # Path for development environment
+
     return os.path.join(base_path, relative_path)
 
 
 class MongoDBTools:
     def __init__(self):
         self.client = self._initialize_client()
-        self.file_formatter = StringToJsonl()
 
     @staticmethod
     def _initialize_client():

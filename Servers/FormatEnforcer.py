@@ -3,14 +3,17 @@ import os
 import sys
 
 
-# 避免需要在不同的環境中更改路徑
+# Function to get the file path after packaging
 def resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
-    try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
+    """
+    Get absolute path to resource, works for development and PyInstaller executable.
+    """
+    # Check if running as a PyInstaller bundle
+    if getattr(sys, 'frozen', False):  # Check if application is bundled with PyInstaller
+        base_path = os.path.dirname(sys.executable)  # Path to the folder containing the .exe
+    else:
+        base_path = os.path.abspath(".")  # Path for development environment
+
     return os.path.join(base_path, relative_path)
 
 
