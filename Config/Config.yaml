@@ -3,6 +3,7 @@ ServerSettings:
   ConnectionPort:
     Rest: 61911
     Gen: 56494
+    logIn: 56123
   GptModel: gpt-3.5-turbo
 
 Roles:
