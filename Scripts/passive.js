@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    const LOGIN_SERVER = "https://127.0.0.1:56123/";
+    //const LOGIN_SERVER = "https://127.0.0.1:56123/";
+    const LOGIN_SERVER = "https://140.118.101.66:56123/";
     const loginbtn = document.querySelector('.loginUsername');
 
     const token = localStorage.getItem('auth_token');

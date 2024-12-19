@@ -1,6 +1,6 @@
 //////////////IP SETTINGS/////////////////////
-//const SERVERIP = "https://140.118.101.66:61911/"
-const SERVERIP = "https://127.0.0.1:61911/"
+const SERVERIP = "https://140.118.101.66:61911/"
+//const SERVERIP = "https://127.0.0.1:61911/"
 const LOGIN_SERVER = "https://127.0.0.1:56123/";
 /////////////////////////////////////////////
 
