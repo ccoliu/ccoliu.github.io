@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const label_password = document.getElementById('lb_password');
     const registerbtn = document.getElementById('registerbtn');
     //const LOGIN_SERVER = "https://127.0.0.1:56123/";
-    const LOGIN_SERVER = "https://140.118.101.66:56123/";
+    //const LOGIN_SERVER = "https://140.118.101.66:56123/";
+    const LOGIN_SERVER = "https://140.118.153.31:56123/";
     let PUBLIC_KEY = ""; // Public key initialized as empty
 
     // Fetch the public key

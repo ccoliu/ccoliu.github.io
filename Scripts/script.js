@@ -1,12 +1,13 @@
 //////////////IP SETTINGS/////////////////////
 //https://140.118.101.66:56494/ -> Generate Server
 //https://140.118.101.66:61911/ -> Analyze Server
-const GLOBALREST = "https://140.118.101.66:61911/"
+const GLOBALREST = "https://140.118.153.31:61911/"
 //const GLOBALGENERATE = "https://140.118.101.66:56494/"
-const GLOBALGENERATE = "https://140.118.101.66:56494/"
+const GLOBALGENERATE = "https://140.118.153.31:56494/"
 const LOCALREST = "https://127.0.0.1:61911/"
 const LOCALGENERATE = "https://127.0.0.1:56494/"
-const LOGIN_SERVER = "https://127.0.0.1:56123/";
+//const LOGIN_SERVER = "https://127.0.0.1:56123/";
+const LOGIN_SERVER = "https://140.118.153.31:56123/";
 currentGenerateServerIP = GLOBALGENERATE;
 currentRestServerIP = GLOBALREST;
 /////////////////////////////////////////////
