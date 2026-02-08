@@ -1,19 +1,53 @@
 # .gitignore
+
+# Sensitive files - API keys, secrets, certificates
+Keys/
 private_key.key
+private_key.pem
+public_key.pem
 csr.pem
 certificate.crt
-key.txt
-/Servers/__pycache__
-dbURI.txt
 server.crt
 server.key
 server.pfx
+key.txt
+dbURI.txt
+jwt_secret.txt
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
 /Log
-private_key.pem
-public_key.pem
+*.log
+
+# Python cache
+/Servers/__pycache__
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
 .vscode/*
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Specific sensitive locations
 /Servers/dbURI.txt
 /Servers/key.txt
 /Servers/certificate.crt
 /Servers/private_key.key
-Keys

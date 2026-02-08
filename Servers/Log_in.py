@@ -38,7 +38,20 @@ log_handler = initialize_logging("Log_in")
 # Initialize custom tools and systems
 database_tools = MongoDBTools()
 document_builder = DocumentBuilder()
-auth_system = AuthSystem(jwt_secret="my_testing_secret", jwt_expiry_hours=0.5)
+
+# Read JWT secret from file
+jwt_secret_path = resource_path("Keys\\jwt_secret.txt")
+try:
+    with open(jwt_secret_path, "r") as file:
+        jwt_secret = file.readline().strip()
+except FileNotFoundError:
+    raise FileNotFoundError(
+        f"JWT secret file not found at {jwt_secret_path}. "
+        "Please create it with a secure random string. "
+        "See Keys.example/jwt_secret.txt.example for reference."
+    )
+
+auth_system = AuthSystem(jwt_secret=jwt_secret, jwt_expiry_hours=0.5)
 
 
 # Load YAML configuration
