@@ -1,19 +1,38 @@
-# .gitignore
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+/Log
+
+# Node (not used by Flask backend)
+node_modules/
+
+# Old/legacy files
+old_files/
+
+# Secrets & certificates
 private_key.key
-csr.pem
+private_key.pem
+public_key.pem
 certificate.crt
-key.txt
-/Servers/__pycache__
-dbURI.txt
+csr.pem
 server.crt
 server.key
 server.pfx
-/Log
-private_key.pem
-public_key.pem
-.vscode/*
-/Servers/dbURI.txt
-/Servers/key.txt
-/Servers/certificate.crt
-/Servers/private_key.key
-Keys
+key.txt
+dbURI.txt
+Keys/
