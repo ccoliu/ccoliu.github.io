@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codoctopus"
+version = "2.0.0.dev0"
+description = "A provider-neutral agent orchestration framework that decomposes a goal into a verified task DAG."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Chia-Cheng Liu", email = "frgnd5433@gmail.com" },
+    { name = "Daniel Hsiao" },
+]
+keywords = ["agents", "llm", "orchestration", "dag", "task-decomposition"]
+dependencies = [
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+anthropic = ["anthropic>=0.69"]
+openai = ["openai>=1.60"]
+gemini = ["google-genai>=1.0"]
+ollama = ["httpx>=0.27"]
+all = [
+    "anthropic>=0.69",
+    "openai>=1.60",
+    "google-genai>=1.0",
+    "httpx>=0.27",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+codoctopus = "codoctopus.cli:main"
+
+[project.urls]
+Repository = "https://github.com/ccoliu/Codoctopus"
+
+[tool.setuptools.packages.find]
+include = ["codoctopus*"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

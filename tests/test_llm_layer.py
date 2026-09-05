@@ -1,0 +1,194 @@
+# ---------------------------------------------------
+# Codoctopus — LLM layer tests
+#
+# These run without any API key: a scripted provider stands in for a vendor,
+# which is exactly what the abstraction is for.
+# ---------------------------------------------------
+
+from __future__ import annotations
+
+from typing import Any
+
+import pytest
+from pydantic import BaseModel
+
+from codoctopus.llm import (
+    Completion,
+    Message,
+    Provider,
+    StructuredOutputError,
+    ToolCall,
+    ToolResult,
+    ToolSpec,
+    get_provider,
+    register_provider,
+)
+from codoctopus.llm.schema import to_strict_schema
+
+
+class Worksheet(BaseModel):
+    goal: str
+    steps: list[str]
+
+
+class ScriptedProvider(Provider):
+    """Replays a fixed list of replies and records what it was asked."""
+
+    name = "scripted"
+    default_model = "scripted-1"
+
+    def __init__(self, model: str | None = None, *, replies: list[str] | None = None, structured: bool = False, **options: Any) -> None:
+        super().__init__(model, **options)
+        self.replies = list(replies or [])
+        self.structured = structured
+        self.calls: list[dict[str, Any]] = []
+
+    @property
+    def supports_structured_output(self) -> bool:
+        return self.structured
+
+    async def _complete(self, messages, *, system, tools, output_schema, max_tokens, **kwargs) -> Completion:
+        self.calls.append({"messages": list(messages), "system": system, "tools": tools, "schema": output_schema})
+        text = self.replies.pop(0) if self.replies else ""
+        parsed = output_schema.model_validate_json(text) if output_schema and text else None
+        return Completion(text=text, model=self.model, parsed=parsed)
+
+
+# --- schema rendering ------------------------------------------------
+
+
+def test_strict_schema_is_self_contained_and_closed():
+    class Inner(BaseModel):
+        value: int
+
+    class Outer(BaseModel):
+        name: str
+        inner: Inner
+
+    schema = to_strict_schema(Outer)
+
+    assert "$defs" not in schema
+    assert "$ref" not in str(schema), "nested models must be inlined, not referenced"
+    assert schema["additionalProperties"] is False
+    assert sorted(schema["required"]) == ["inner", "name"]
+    assert schema["properties"]["inner"]["properties"]["value"]["type"] == "integer"
+
+
+def test_strict_schema_survives_a_recursive_model():
+    class Node(BaseModel):
+        label: str
+        child: "Node | None" = None
+
+    Node.model_rebuild()
+    schema = to_strict_schema(Node)
+
+    assert "$ref" not in str(schema)
+    assert schema["properties"]["label"]["type"] == "string"
+
+
+# --- structured output -----------------------------------------------
+
+
+async def test_native_structured_output_is_passed_through():
+    provider = ScriptedProvider(replies=['{"goal": "ship", "steps": ["a", "b"]}'], structured=True)
+
+    result = await provider.complete([Message.user("plan it")], output_schema=Worksheet)
+
+    assert isinstance(result.parsed, Worksheet)
+    assert result.parsed.steps == ["a", "b"]
+    assert provider.calls[0]["schema"] is Worksheet, "native providers receive the schema"
+
+
+async def test_fallback_parses_json_from_a_code_fence():
+    provider = ScriptedProvider(replies=['```json\n{"goal": "ship", "steps": ["a"]}\n```'])
+
+    result = await provider.complete([Message.user("plan it")], output_schema=Worksheet)
+
+    assert result.parsed == Worksheet(goal="ship", steps=["a"])
+    assert provider.calls[0]["schema"] is None, "fallback providers must not receive the schema"
+    assert "JSON Schema" in provider.calls[0]["system"]
+
+
+async def test_fallback_retries_with_the_validation_error():
+    provider = ScriptedProvider(
+        replies=['{"goal": "ship"}', '{"goal": "ship", "steps": ["a"]}']
+    )
+
+    result = await provider.complete([Message.user("plan it")], output_schema=Worksheet)
+
+    assert result.parsed == Worksheet(goal="ship", steps=["a"])
+    assert len(provider.calls) == 2
+    retry_prompt = provider.calls[1]["messages"][-1].content
+    assert "did not match the schema" in retry_prompt
+
+
+async def test_fallback_gives_up_with_a_clear_error():
+    provider = ScriptedProvider(replies=["not json", "still not json", "nope"])
+
+    with pytest.raises(StructuredOutputError, match="schema-valid output after 3 attempts"):
+        await provider.complete([Message.user("plan it")], output_schema=Worksheet, schema_retries=2)
+
+
+async def test_a_tool_call_short_circuits_the_schema_fallback():
+    """A model reaching for a tool is not yet done; do not force JSON on it."""
+
+    class ToolThenText(ScriptedProvider):
+        async def _complete(self, messages, *, system, tools, output_schema, max_tokens, **kwargs):
+            self.calls.append({"messages": list(messages), "system": system, "tools": tools, "schema": output_schema})
+            return Completion(
+                text="", model=self.model, tool_calls=[ToolCall(id="c1", name="read", arguments={})]
+            )
+
+    provider = ToolThenText()
+    result = await provider.complete([Message.user("go")], output_schema=Worksheet)
+
+    assert result.wants_tools
+    assert result.parsed is None
+    assert len(provider.calls) == 1, "must not retry a turn that asked for a tool"
+
+
+# --- registry ---------------------------------------------------------
+
+
+def test_custom_provider_resolves_through_the_registry():
+    register_provider("scripted", lambda model=None, **kw: ScriptedProvider(model, **kw))
+
+    provider = get_provider("scripted:my-model")
+
+    assert isinstance(provider, ScriptedProvider)
+    assert provider.model == "my-model"
+
+
+def test_bare_provider_name_takes_the_default_model():
+    register_provider("scripted", lambda model=None, **kw: ScriptedProvider(model, **kw))
+
+    assert get_provider("scripted").model == "scripted-1"
+
+
+def test_unknown_provider_lists_what_is_available():
+    with pytest.raises(Exception, match="Unknown provider 'nope'"):
+        get_provider("nope:model")
+
+
+# --- transcript round-trip -------------------------------------------
+
+
+def test_completion_folds_back_into_the_transcript():
+    completion = Completion(
+        text="calling out",
+        model="m",
+        tool_calls=[ToolCall(id="c1", name="read_file", arguments={"path": "a.py"})],
+    )
+
+    message = completion.to_message()
+
+    assert message.role == "assistant"
+    assert message.tool_calls[0].name == "read_file"
+
+
+def test_tool_results_form_their_own_turn():
+    message = Message.results([ToolResult(call_id="c1", content="ok")])
+
+    assert message.role == "user"
+    assert message.tool_results[0].call_id == "c1"
+    assert message.content is None

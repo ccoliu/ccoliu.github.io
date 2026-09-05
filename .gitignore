@@ -18,6 +18,10 @@ venv/
 # Logs
 /Log
 
+# Agent workspace (v2)
+.codoctopus/
+.pytest_cache/
+
 # Node (not used by Flask backend)
 node_modules/
 
