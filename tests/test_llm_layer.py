@@ -74,6 +74,22 @@ def test_strict_schema_is_self_contained_and_closed():
     assert schema["properties"]["inner"]["properties"]["value"]["type"] == "integer"
 
 
+def test_strict_schema_keeps_a_free_form_dict_field_usable():
+    """A dict[str, X] field is a mapping, not a fixed-shape object — its
+    additionalProperties is the value schema and must not be clobbered to
+    False, or the field becomes an object that may hold no keys at all."""
+
+    class WithHeaders(BaseModel):
+        headers: dict[str, str] = {}
+
+    schema = to_strict_schema(WithHeaders)
+    headers_schema = schema["properties"]["headers"]
+
+    assert headers_schema["type"] == "object"
+    assert headers_schema["additionalProperties"] == {"type": "string"}
+    assert "required" not in headers_schema, "a mapping type has no fixed keys to require"
+
+
 def test_strict_schema_survives_a_recursive_model():
     class Node(BaseModel):
         label: str

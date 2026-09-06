@@ -17,18 +17,17 @@ keywords = ["agents", "llm", "orchestration", "dag", "task-decomposition"]
 dependencies = [
     "pydantic>=2.7",
     "pyyaml>=6.0",
+    "httpx>=0.27",
 ]
 
 [project.optional-dependencies]
 anthropic = ["anthropic>=0.69"]
 openai = ["openai>=1.60"]
 gemini = ["google-genai>=1.0"]
-ollama = ["httpx>=0.27"]
 all = [
     "anthropic>=0.69",
     "openai>=1.60",
     "google-genai>=1.0",
-    "httpx>=0.27",
 ]
 dev = [
     "pytest>=8.0",

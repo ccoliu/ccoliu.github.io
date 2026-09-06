@@ -43,16 +43,23 @@ def _inline(node: Any, defs: dict[str, Any], seen: frozenset[str] = frozenset())
 
 def _tighten(node: Any) -> Any:
     """
-    Make every object node strict.
+    Make every fixed-shape object node strict.
 
     Strict mode has no notion of an optional property, so each one is listed in
     `required`; fields that are genuinely optional carry a null in their type
     union already, which is how absence is expressed.
+
+    Only nodes with a `properties` key are fixed-shape objects and get this
+    treatment. A pydantic `dict[str, X]` field renders as `{"type": "object",
+    "additionalProperties": {...value schema...}}` with no `properties` key —
+    that `additionalProperties` is the value schema, not a strictness flag, and
+    must be left alone or the field becomes unusable (an object that may hold
+    no keys at all).
     """
     if isinstance(node, dict):
         out = {k: _tighten(v) for k, v in node.items()}
-        if out.get("type") == "object" or "properties" in out:
-            props = out.get("properties", {})
+        if "properties" in out:
+            props = out["properties"]
             out.setdefault("type", "object")
             out["additionalProperties"] = False
             out["required"] = list(props.keys())
