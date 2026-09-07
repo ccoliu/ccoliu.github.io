@@ -27,6 +27,18 @@ class ToolRegistry:
     def specs(self) -> list[ToolSpec]:
         return [tool.spec() for tool in self._tools.values()]
 
+    def subset(self, names: list[str]) -> ToolRegistry:
+        """
+        A new registry holding only the named tools, sharing this one's workspace.
+
+        For a runtime that gives each Plan step its own tool list (`PlanStep.tools`)
+        without handing every step every tool the plan as a whole might use.
+        """
+        missing = [name for name in names if name not in self._tools]
+        if missing:
+            raise ValueError(f"unknown tool(s): {missing}; available: {sorted(self._tools)}")
+        return ToolRegistry([self._tools[name] for name in names], workspace=self._ctx.workspace)
+
     async def execute(self, call: ToolCall) -> ToolResult:
         tool = self._tools.get(call.name)
         if tool is None:

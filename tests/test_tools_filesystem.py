@@ -44,6 +44,25 @@ def test_specs_describe_every_registered_tool(registry):
     assert names == {"read_file", "write_file", "list_files"}
 
 
+def test_subset_returns_a_registry_scoped_to_the_named_tools(registry):
+    scoped = registry.subset(["read_file"])
+
+    assert {spec.name for spec in scoped.specs()} == {"read_file"}
+
+
+async def test_subset_shares_the_parent_workspace(registry, workspace):
+    scoped = registry.subset(["read_file"])
+
+    result = await scoped.execute(ToolCall(id="c1", name="read_file", arguments={"path": "hello.txt"}))
+
+    assert result.content == "hello, agent"
+
+
+def test_subset_rejects_an_unknown_tool_name(registry):
+    with pytest.raises(ValueError, match="unknown tool"):
+        registry.subset(["read_file", "delete_everything"])
+
+
 # --- read_file -------------------------------------------------------
 
 
