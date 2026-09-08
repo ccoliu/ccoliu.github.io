@@ -5,6 +5,7 @@
 # ---------------------------------------------------
 
 from codoctopus.runtime.base import Executor, PlanResult
+from codoctopus.runtime.coworkify import CoworkifyExecutor
 from codoctopus.runtime.local import LocalExecutor
 
-__all__ = ["Executor", "LocalExecutor", "PlanResult"]
+__all__ = ["CoworkifyExecutor", "Executor", "LocalExecutor", "PlanResult"]

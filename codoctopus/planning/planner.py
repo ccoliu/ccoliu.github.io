@@ -8,10 +8,16 @@
 # the model for a corrected plan. Same retry-with-the-error shape as the LLM
 # layer's own structured-output fallback (codoctopus.llm.base), just one
 # level up, because a schema-valid Plan can still be a semantically broken one.
+#
+# A Domain, if given, only shapes two things here: the prompt (which roles and
+# tools the planner is told about) and the returned Plan's `role` text (a
+# recognized role name is expanded to that domain's full prompt). Nothing
+# about domains reaches codoctopus.runtime — see codoctopus/domains/base.py.
 # ---------------------------------------------------
 
 from __future__ import annotations
 
+from codoctopus.domains.base import Domain
 from codoctopus.llm.base import Provider
 from codoctopus.llm.types import Message
 from codoctopus.planning.models import Plan
@@ -40,25 +46,54 @@ class PlanningError(RuntimeError):
     """The planner could not produce a valid Plan within its retry budget."""
 
 
+def _build_system_prompt(domain: Domain | None) -> str:
+    if domain is None:
+        return _SYSTEM_PROMPT
+
+    lines = [_SYSTEM_PROMPT, "", f"You are planning within the '{domain.name}' domain."]
+    if domain.planner_hint:
+        lines.append(domain.planner_hint)
+    if domain.roles:
+        lines.append(
+            "Use one of these exact names in a step's \"role\" field when it fits — the full "
+            "prompt behind each name will be filled in for you afterward. Write your own free-form "
+            "role text only when none of these fit:"
+        )
+        lines.extend(f"- {name}" for name in domain.roles)
+    if domain.default_tools:
+        lines.append(f"Tools available by default in this domain: {', '.join(domain.default_tools)}")
+    return "\n".join(lines)
+
+
+def _apply_domain(plan: Plan, domain: Domain) -> Plan:
+    """Expand any step whose role names a domain role into that role's full prompt text."""
+    resolved_steps = [
+        step.model_copy(update={"role": domain.roles[step.role]}) if step.role in domain.roles else step
+        for step in plan.steps
+    ]
+    return plan.model_copy(update={"steps": resolved_steps, "domain": domain.name})
+
+
 async def make_plan(
     provider: Provider,
     goal: str,
     *,
-    domain: str = "general",
+    domain: Domain | None = None,
     max_retries: int = 2,
 ) -> Plan:
     """Ask `provider` to decompose `goal` into a validated Plan."""
-    messages = [Message.user(f"Goal: {goal}\nDomain: {domain}")]
+    system = _build_system_prompt(domain)
+    domain_line = f"\nDomain: {domain.name}" if domain else ""
+    messages = [Message.user(f"Goal: {goal}{domain_line}")]
     last_error: Exception | None = None
 
     for _ in range(max_retries + 1):
-        completion = await provider.complete(messages, system=_SYSTEM_PROMPT, output_schema=Plan)
+        completion = await provider.complete(messages, system=system, output_schema=Plan)
         plan = completion.parsed
         assert plan is not None, "output_schema was requested; the LLM layer guarantees a parsed result"
 
         try:
             validate_plan(plan)
-            return plan
         except PlanValidationError as exc:
             last_error = exc
             messages = [
@@ -66,5 +101,8 @@ async def make_plan(
                 completion.to_message(),
                 Message.user(f"That plan is not valid: {exc}\nReturn a corrected plan."),
             ]
+            continue
+
+        return _apply_domain(plan, domain) if domain is not None else plan.model_copy(update={"domain": "general"})
 
     raise PlanningError(f"could not produce a valid plan after {max_retries + 1} attempt(s): {last_error}")
